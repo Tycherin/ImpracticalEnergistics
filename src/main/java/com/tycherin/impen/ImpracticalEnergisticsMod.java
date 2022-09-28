@@ -36,17 +36,6 @@ public class ImpracticalEnergisticsMod {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ImpracticalEnergisticsMod.MOD_ID);
     
-    public static final RegistryObject<Item> REFINED_CERTUS_CRYSTAL = ITEMS.register("refined_certus_crystal", () -> {
-        var item = new Item(new Item.Properties()
-                .tab(CreativeModeTab.TAB_MISC));
-        return item;
-    });
-    public static final RegistryObject<Item> SUPERCHARGED_CERTUS_CRYSTAL = ITEMS.register("supercharged_certus_crystal", () -> {
-        var item = new Item(new Item.Properties()
-                .tab(CreativeModeTab.TAB_MISC));
-        return item;
-    });
-    
     // Beamed Network Link
     public static final RegistryObject<BlockBeamedNetworkLink> BEAMED_NETWORK_LINK_BLOCK = BLOCKS.register("beamed_network_link", () -> {
         return new BlockBeamedNetworkLink(BlockBehaviour.Properties.of(Material.METAL)); 

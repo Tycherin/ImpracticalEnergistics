@@ -36,7 +36,8 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     private static final int MAX_DISTANCE = 16;
     private static final int CHECK_INTERVAL = 20;
 
-    private int lastCheck = 0;
+    private boolean dirtyBit = false;
+    private int ticksUntilNextCheck = 0;
     private boolean hasPower = false;
     private int lengthOfBeam = -1;
 
@@ -108,6 +109,15 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
         return this.beamColor;
     }
 
+    public void setDirtyBit() {
+        this.dirtyBit = true;
+    }
+    
+    public void forceUpdate() {
+        this.setDirtyBit();
+        this.ticksUntilNextCheck = 0;
+    }
+
     // ***
     // Methods related to Forge & AE2
     // ***
@@ -115,18 +125,10 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     @Override
     public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
         if (reason != IGridNodeListener.State.GRID_BOOT) {
-            boolean didUpdate = false;
-
             if (this.hasPower != this.getMainNode().isPowered()) {
                 this.hasPower = this.getMainNode().isPowered();
-                didUpdate = true;
             }
-
-            didUpdate = this.updateTarget() || didUpdate;
-            if (didUpdate) {
-                this.updateVisualState();
-                this.markForUpdate();
-            }
+            this.forceUpdate();
         }
     }
 
@@ -136,9 +138,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
             @Override
             public void onInWorldConnectionChanged(final BEBeamedNetworkLink nodeOwner, final IGridNode node) {
                 super.onInWorldConnectionChanged(nodeOwner, node);
-                nodeOwner.updateTarget();
-                nodeOwner.updateVisualState();
-                nodeOwner.markForUpdate();
+                nodeOwner.setDirtyBit();
             }
         });
     }
@@ -176,16 +176,26 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     public void setOrientation(final Direction inForward, final Direction inUp) {
         super.setOrientation(inForward, inUp);
         this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(inForward)));
-        if (this.updateTarget()) {
-            this.updateVisualState();
-            this.markForUpdate();
-        }
+        this.forceUpdate();
     }
 
     @Override
     public void onReady() {
-        this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(this.getForward())));
         super.onReady();
+        this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(this.getForward())));
+        this.forceUpdate();
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        this.removeConnectionIfPresent();
+        super.onChunkUnloaded();
+    }
+
+    @Override
+    public void setRemoved() {
+        this.removeConnectionIfPresent();
+        super.setRemoved();
     }
 
     // TODO It would be nice to get updates instantly, but without running the full updateTarget() search every time.
@@ -193,12 +203,20 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     // TODO Check power status here
     @Override
     public void serverTick() {
-        this.lastCheck++;
-        if (lastCheck > CHECK_INTERVAL) {
-            lastCheck = 0;
-            if (this.updateTarget()) {
-                this.markForUpdate();
-            }
+        if (this.isRemoved()) {
+            return;
+        }
+
+        this.ticksUntilNextCheck--;
+        if (ticksUntilNextCheck <= 0) {
+            ticksUntilNextCheck = CHECK_INTERVAL;
+            this.updateTarget();
+        }
+
+        if (this.dirtyBit) {
+            this.updateVisualState();
+            this.markForUpdate();
+            this.dirtyBit = false;
         }
     }
 
@@ -217,21 +235,22 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     }
 
     /** @return true if the target has changed; false otherwise */
-    public boolean updateTarget() {
+    public void updateTarget() {
         if (this.level.isClientSide) {
-            return false;
+            return;
         }
 
-        if (this.bnlConnection.isPresent() && !this.bnlConnection.get().isPrimarySide) {
+        if (this.bnlConnection.isPresent() && !this.bnlConnection.get().isPrimarySide
+                && !this.bnlConnection.get().pair.otherBnl.isRemoved()) {
             // This isn't the primary side, so skip update & let the primary side to handle it
             // TODO How does chunkloading interact with this?
-            return false;
+            return;
         }
 
         if (this.getGridNode() == null || !this.getGridNode().hasGridBooted()) {
             // Grid is in a weird state, don't bother checking things
             // TODO The second clause here might mess things up on loading?
-            return false;
+            return;
         }
 
         final Optional<BnlPair> latestBnlPair = this.findMatchingBnl();
@@ -239,14 +258,11 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
                 || (latestBnlPair.isPresent() && this.bnlConnection.isPresent()
                         && latestBnlPair.get().equals(this.bnlConnection.get().pair))) {
             // New target is the same as the old one, so don't change anything
-            return false;
+            return;
         }
         else {
-            boolean didChange = false;
-
             if (this.bnlConnection.isPresent()) {
-                this.removeConnection();
-                didChange = true;
+                this.removeConnectionIfPresent();
             }
 
             if (latestBnlPair.isPresent() && latestBnlPair.get().otherBnl.getGridNode() != null) {
@@ -276,20 +292,18 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
                 // attempt to create a connection at the same time and we wind up with duplicate connections.
                 if (thisPrimary) {
                     this.createConnection(latestBnlPair.get());
+                    this.setDirtyBit();
+                    latestBnlPair.get().otherBnl.forceUpdate();
                 }
                 else {
                     // Kinda hacky, but we want to force the update ASAP to avoid an awkward pause while we wait for the
                     // other BNL to tick
-                    latestBnlPair.get().otherBnl.lastCheck = Integer.MAX_VALUE;
+                    latestBnlPair.get().otherBnl.forceUpdate();
                 }
-
-                didChange = true;
             }
-
-            return didChange;
         }
     }
-
+    
     /** @return A BnlPair for the closest BNL facing this one within range; empty if there isn't a suitable one */
     private Optional<BnlPair> findMatchingBnl() {
 
@@ -363,10 +377,16 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
         }
     }
 
-    private void removeConnection() {
-        this.bnlConnection.get().gridConnection.ifPresent(IGridConnection::destroy);
-        this.bnlConnection.get().pair.otherBnl.setConnection(Optional.empty());
-        this.setConnection(Optional.empty());
+    private void removeConnectionIfPresent() {
+        if (this.bnlConnection.isPresent()) {
+            this.bnlConnection.get().gridConnection.ifPresent(IGridConnection::destroy);
+
+            this.bnlConnection.get().pair.otherBnl.setConnection(Optional.empty());
+            this.bnlConnection.get().pair.otherBnl.forceUpdate();
+
+            this.setConnection(Optional.empty());
+            this.setDirtyBit();
+        }
     }
 
     /**
@@ -421,7 +441,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
         else {
             this.lengthOfBeam = connection.get().pair.distanceBetween;
         }
-        this.markForUpdate();
+        this.setDirtyBit();
     }
 
     // ***
@@ -491,6 +511,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
                                 && this.bnlConnection.get().gridConnection.get().equals(connection));
                     })
                     .map(connection -> connection.getOtherSide(getGridNode()).getGridColor())
+                    .filter(color -> !color.equals(AEColor.TRANSPARENT))
                     .distinct()
                     .collect(Collectors.toList());
 
