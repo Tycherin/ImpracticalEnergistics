@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": ["aba", "bcb", "aba"],
+    "key": {
+        "a": { "item": "minecraft:stick" },
+        "b": { "item": "minecraft:redstone" },
+        "c": { "item": "ae2:certus_quartz_crystal" }
+    },
+    "result": {
+        "item": "impracticalenergistics:refined_certus_crystal"
+    }
+}
