@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
+import com.tycherin.impen.item.LunchboxCellItem;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
@@ -55,6 +56,10 @@ public class ImpracticalEnergisticsMod {
             () -> new AEBaseBlockItem(BEAMED_NETWORK_LINK_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    public static final RegistryObject<LunchboxCellItem> LUNCHBOX_CELL_ITEM = ITEMS.register("lunchbox_cell",
+            () -> new LunchboxCellItem());
+    
+    
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
 
