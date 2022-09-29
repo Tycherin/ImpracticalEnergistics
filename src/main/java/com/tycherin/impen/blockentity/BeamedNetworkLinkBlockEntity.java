@@ -30,7 +30,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerChannelState, ServerTickingBlockEntity {
+public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
+        implements IPowerChannelState, ServerTickingBlockEntity {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final int MAX_DISTANCE = 16;
@@ -48,7 +49,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     private Optional<BnlConnection> bnlConnection = Optional.empty();
 
     record BnlPair(/** BNL on the other side of the pair */
-    BEBeamedNetworkLink otherBnl,
+    BeamedNetworkLinkBlockEntity otherBnl,
             /** Distance between the two BNLs, including the other end */
             int distanceBetween) {
     }
@@ -71,7 +72,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
 
     // TODO Figure out how chunk loading/unloading works
 
-    public BEBeamedNetworkLink(final BlockPos pos, final BlockState blockState) {
+    public BeamedNetworkLinkBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BE.get(), pos, blockState);
 
         this.getMainNode()
@@ -112,7 +113,7 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
     public void setDirtyBit() {
         this.dirtyBit = true;
     }
-    
+
     public void forceUpdate() {
         this.setDirtyBit();
         this.ticksUntilNextCheck = 0;
@@ -134,9 +135,9 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
 
     @Override
     protected IManagedGridNode createMainNode() {
-        return GridHelper.createManagedNode(this, new BlockEntityNodeListener<BEBeamedNetworkLink>() {
+        return GridHelper.createManagedNode(this, new BlockEntityNodeListener<BeamedNetworkLinkBlockEntity>() {
             @Override
-            public void onInWorldConnectionChanged(final BEBeamedNetworkLink nodeOwner, final IGridNode node) {
+            public void onInWorldConnectionChanged(final BeamedNetworkLinkBlockEntity nodeOwner, final IGridNode node) {
                 super.onInWorldConnectionChanged(nodeOwner, node);
                 nodeOwner.setDirtyBit();
             }
@@ -303,13 +304,13 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
             }
         }
     }
-    
+
     /** @return A BnlPair for the closest BNL facing this one within range; empty if there isn't a suitable one */
     private Optional<BnlPair> findMatchingBnl() {
 
         BlockPos checkPos = this.getBlockPos();
         int checkDistance = 0;
-        BEBeamedNetworkLink targetBnl = null;
+        BeamedNetworkLinkBlockEntity targetBnl = null;
 
         for (; checkDistance < MAX_DISTANCE; checkDistance++) {
             checkPos = switch (this.getForward()) {
@@ -324,8 +325,8 @@ public class BEBeamedNetworkLink extends AENetworkBlockEntity implements IPowerC
             final BlockState bs = this.level.getBlockState(checkPos);
             if (bs.getBlock().equals(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BLOCK.get())) {
                 final BlockEntity be = this.level.getBlockEntity(checkPos);
-                if (be != null && be instanceof BEBeamedNetworkLink) {
-                    targetBnl = (BEBeamedNetworkLink) be;
+                if (be != null && be instanceof BeamedNetworkLinkBlockEntity) {
+                    targetBnl = (BeamedNetworkLinkBlockEntity) be;
                     boolean facingMatches = switch (this.getForward()) {
                     case UP -> targetBnl.getForward().equals(Direction.DOWN);
                     case DOWN -> targetBnl.getForward().equals(Direction.UP);

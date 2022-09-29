@@ -10,7 +10,7 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.tycherin.impen.blockentity.BEBeamedNetworkLink;
+import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -26,7 +26,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /** Adapted heavily from the vanilla BeaconRenderer code */
 @OnlyIn(Dist.CLIENT)
-public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BEBeamedNetworkLink> {
+public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BeamedNetworkLinkBlockEntity> {
 
     public static final ResourceLocation BEAM_TEXTURE_LOCATION = new ResourceLocation(
             "textures/entity/beacon_beam.png");
@@ -46,7 +46,7 @@ public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BEBeamedNe
     }
 
     @Override
-    public void render(final BEBeamedNetworkLink be, final float partialTicks, final PoseStack poseStack,
+    public void render(final BeamedNetworkLinkBlockEntity be, final float partialTicks, final PoseStack poseStack,
             final MultiBufferSource bufferIn, final int lightIn, final int overlayIn) {
         if (!be.isActive()) {
             return;
@@ -174,7 +174,7 @@ public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BEBeamedNe
     }
 
     @Override
-    public boolean shouldRenderOffScreen(final BEBeamedNetworkLink ignored) {
+    public boolean shouldRenderOffScreen(final BeamedNetworkLinkBlockEntity ignored) {
         return true;
     }
 
@@ -184,7 +184,7 @@ public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BEBeamedNe
     }
 
     @Override
-    public boolean shouldRender(final BEBeamedNetworkLink be, final Vec3 pos) {
+    public boolean shouldRender(final BeamedNetworkLinkBlockEntity be, final Vec3 pos) {
         if (!be.hasActiveConnection()) {
             return false;
         }

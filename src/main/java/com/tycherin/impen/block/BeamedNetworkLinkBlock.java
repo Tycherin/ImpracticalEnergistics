@@ -1,6 +1,6 @@
 package com.tycherin.impen.block;
 
-import com.tycherin.impen.blockentity.BEBeamedNetworkLink;
+import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 
 import appeng.block.AEBaseEntityBlock;
 import net.minecraft.core.Direction;
@@ -11,11 +11,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
-public class BlockBeamedNetworkLink extends AEBaseEntityBlock<BEBeamedNetworkLink> {
+public class BeamedNetworkLinkBlock extends AEBaseEntityBlock<BeamedNetworkLinkBlockEntity> {
     private static final BooleanProperty PROP_IS_ACTIVE = BooleanProperty.create("is_active");
     private static final EnumProperty<Direction> PROP_FACING = EnumProperty.create("facing", Direction.class);
 
-    public BlockBeamedNetworkLink(final BlockBehaviour.Properties props) {
+    public BeamedNetworkLinkBlock(final BlockBehaviour.Properties props) {
         super(props);
         props.requiresCorrectToolForDrops();
 
@@ -33,7 +33,8 @@ public class BlockBeamedNetworkLink extends AEBaseEntityBlock<BEBeamedNetworkLin
     }
 
     @Override
-    protected BlockState updateBlockStateFromBlockEntity(final BlockState currentState, final BEBeamedNetworkLink be) {
+    protected BlockState updateBlockStateFromBlockEntity(final BlockState currentState,
+            final BeamedNetworkLinkBlockEntity be) {
         return currentState
                 .setValue(PROP_IS_ACTIVE, be.isActive())
                 .setValue(PROP_FACING, be.getForward());
