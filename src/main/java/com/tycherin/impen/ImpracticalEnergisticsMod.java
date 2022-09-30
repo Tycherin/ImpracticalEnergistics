@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
+import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
+import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
 
 import appeng.block.AEBaseBlockItem;
@@ -59,6 +61,20 @@ public class ImpracticalEnergisticsMod {
     public static final RegistryObject<LunchboxCellItem> LUNCHBOX_CELL_ITEM = ITEMS.register("lunchbox_cell",
             () -> new LunchboxCellItem());
     
+    // Imaginary Space Manipulator
+    public static final RegistryObject<ImaginarySpaceManipulatorBlock> IMAGINARY_SPACE_MANIPULATOR_BLOCK = BLOCKS
+            .register("imaginary_space_manipulator", () -> {
+                return new ImaginarySpaceManipulatorBlock(BlockBehaviour.Properties.of(Material.METAL));
+            });
+    public static final RegistryObject<BlockEntityType<ImaginarySpaceManipulatorBlockEntity>> IMAGINARY_SPACE_MANIPULATOR_BE = BLOCK_ENTITIES
+            .register("imaginary_space_manipulator_be", () -> {
+                return BlockEntityType.Builder.of(ImaginarySpaceManipulatorBlockEntity::new, IMAGINARY_SPACE_MANIPULATOR_BLOCK.get())
+                        .build(null);
+            });
+    public static final RegistryObject<Item> IMAGINARY_SPACE_MANIPULATOR_ITEM = ITEMS.register(
+            IMAGINARY_SPACE_MANIPULATOR_BLOCK.getId().getPath(),
+            () -> new BlockItem(IMAGINARY_SPACE_MANIPULATOR_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -81,7 +97,8 @@ public class ImpracticalEnergisticsMod {
 
     public void commonSetup(final FMLCommonSetupEvent event) {
         BEAMED_NETWORK_LINK_BLOCK.get().setBlockEntity(BeamedNetworkLinkBlockEntity.class, BEAMED_NETWORK_LINK_BE.get(),
-                null,
-                (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+                null, (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+        IMAGINARY_SPACE_MANIPULATOR_BLOCK.get().setBlockEntity(ImaginarySpaceManipulatorBlockEntity.class,
+                IMAGINARY_SPACE_MANIPULATOR_BE.get(), null, null);
     }
 }
