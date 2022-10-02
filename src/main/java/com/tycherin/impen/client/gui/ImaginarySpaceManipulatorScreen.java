@@ -1,5 +1,8 @@
 package com.tycherin.impen.client.gui;
 
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.util.GuiComponentFactory;
 import com.tycherin.impen.util.GuiComponentFactory.GuiComponentWrapper;
 
@@ -8,7 +11,6 @@ import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.CommonButtons;
 import appeng.client.gui.widgets.ProgressBar;
 import appeng.client.gui.widgets.ProgressBar.Direction;
-import appeng.core.localization.GuiText;
 import appeng.util.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -19,11 +21,23 @@ public class ImaginarySpaceManipulatorScreen extends AEBaseScreen<ImaginarySpace
     private static final GuiComponentWrapper EFFECT_TEXT;
     private static final GuiComponentWrapper EFFECT_MISSING_TEXT;
     private static final GuiComponentWrapper POWER_TEXT;
+    private static final Map<Integer, GuiComponentWrapper> STATUS_CODE_TO_TEXT_KEY;
     static {
         final var factory = new GuiComponentFactory("imaginary_space_manipulator");
         EFFECT_TEXT = factory.build("effect_text");
         EFFECT_MISSING_TEXT = factory.build("effect_missing_text");
         POWER_TEXT = factory.build("power_text");
+        
+        STATUS_CODE_TO_TEXT_KEY = ImmutableMap.<Integer, GuiComponentWrapper>builder()
+                .put(IsmStatusCodes.IDLE, factory.build("status.idle"))
+                .put(IsmStatusCodes.READY, factory.build("status.ready"))
+                .put(IsmStatusCodes.RUNNING, factory.build("status.running"))
+                .put(IsmStatusCodes.OUTPUT_FULL, factory.build("status.output_full"))
+                .put(IsmStatusCodes.MISSING_CHANNEL, factory.build("status.missing_channel"))
+                .put(IsmStatusCodes.MISSING_SCS, factory.build("status.missing_scs"))
+                .put(IsmStatusCodes.SIZE_MISMATCH, factory.build("status.size_mismatch"))
+                .put(IsmStatusCodes.UNKNOWN, factory.build("status.unknown"))
+                .build();
     }
     
     private final ProgressBar prog;
@@ -50,14 +64,8 @@ public class ImaginarySpaceManipulatorScreen extends AEBaseScreen<ImaginarySpace
             setTextContent("chosen_effect", EFFECT_MISSING_TEXT.text());
             setTextContent("power_requirement", new TextComponent(""));
         }
-
-        final Component scsSizeText;
-        if (this.menu.xSize != 0 && this.menu.ySize != 0 && this.menu.zSize != 0) {
-            scsSizeText = GuiText.SCSSize.text(this.menu.xSize, this.menu.ySize, this.menu.zSize);
-        } else {
-            scsSizeText = GuiText.SCSInvalid.text();
-        }
-        setTextContent("scs_size", scsSizeText);
+        
+        setTextContent("status_text", STATUS_CODE_TO_TEXT_KEY.get(this.menu.statusCode).text());
         
         final int progress = (int)(this.menu.getCurrentProgressPercent() * 100);
         this.prog.setFullMsg(new TextComponent(progress + "%"));

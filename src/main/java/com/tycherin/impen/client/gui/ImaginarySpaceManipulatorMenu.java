@@ -32,15 +32,10 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
     public int maxProgress;
     @GuiSync(6)
     public String effectName;
+    @GuiSync(7)
+    public int statusCode;
     
     private int delay = 40;
-
-    @GuiSync(31)
-    public int xSize;
-    @GuiSync(32)
-    public int ySize;
-    @GuiSync(33)
-    public int zSize;
 
     public ImaginarySpaceManipulatorMenu(final int id, final Inventory playerInv, final ImaginarySpaceManipulatorBlockEntity ism) {
         super(TYPE, id, playerInv, ism);
@@ -48,7 +43,7 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
         // TODO Better decoupling for inventory management slots & things
         this.addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.SPATIAL_STORAGE_CELLS,
                 ism.getInternalInventory(), 0), SlotSemantics.MACHINE_INPUT);
-        this.addSlot(new OutputSlot(ism.getInternalInventory(), 2,
+        this.addSlot(new OutputSlot(ism.getInternalInventory(), 1,
                 RestrictedInputSlot.PlacableItemType.SPATIAL_STORAGE_CELLS.icon), SlotSemantics.MACHINE_OUTPUT);
 
         this.createPlayerInventorySlots(playerInv);
@@ -65,32 +60,20 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
             var gridNode = be.getGridNode();
             var grid = gridNode != null ? gridNode.getGrid() : null;
 
-            if (this.delay > 15 && grid != null) {
+            if (grid != null && ((this.delay > 15)) || (this.statusCode != be.getStatusCode())) {
                 this.delay = 0;
 
                 var eg = grid.getEnergyService();
                 this.setCurrentPower((long) (100.0 * eg.getStoredPower()));
                 this.setMaxPower((long) (100.0 * eg.getMaxStoredPower()));
                 
-                var sc = grid.getSpatialService();
                 this.setRequiredPower((long)(100.0 * 50)); // TODO Pull this from the BE once that's implemented
                 
                 this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
                 this.setMaxProgress(Math.max(1, be.getMaxProgress()));
                 this.setEffectName("default"); // TODO Pull this from the BE once that's implemented
-
-                var min = sc.getMin();
-                var max = sc.getMax();
-
-                if (min != null && max != null && sc.isValidRegion()) {
-                    this.xSize = sc.getMax().getX() - sc.getMin().getX() - 1;
-                    this.ySize = sc.getMax().getY() - sc.getMin().getY() - 1;
-                    this.zSize = sc.getMax().getZ() - sc.getMin().getZ() - 1;
-                } else {
-                    this.xSize = 0;
-                    this.ySize = 0;
-                    this.zSize = 0;
-                }
+                
+                this.statusCode = be.getStatusCode();
             }
         }
 
@@ -149,5 +132,9 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
     
     private void setEffectName(final String s) {
         this.effectName = s;
+    }
+    
+    public int getStatusCode() {
+        return this.statusCode;
     }
 }

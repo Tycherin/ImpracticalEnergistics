@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.client.gui.IsmStatusCodes;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -50,11 +51,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     private static class InventorySlots {
         public static final int INPUT = 0;
-        public static final int PROCESSING = 1;
-        public static final int OUTPUT = 2;
+        public static final int OUTPUT = 1;
     }
 
-    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 3);
+    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 2);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
     private YesNo lastRedstoneState = YesNo.UNDECIDED;
 
@@ -62,6 +62,8 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
+    
+    private int statusCode = IsmStatusCodes.IDLE;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_BE.get(), pos, blockState);
@@ -69,6 +71,8 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.getMainNode()
                 .addService(IGridTickable.class, this)
                 .setFlags();
+        
+        this.updateStatus();
     }
 
     // TODO Power requirements
@@ -91,37 +95,17 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (this.level.isClientSide) {
             return;
         }
-        final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
-        if (!this.isSpatialCell(cell)) {
-            // Shouldn't be possible, but check just in case
-            return;
-        }
-        if (!this.inv.getStackInSlot(InventorySlots.PROCESSING).isEmpty()
-                || !this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
-            return;
-        }
-        if (!this.getMainNode().isActive()) {
-            return;
-        }
-
-        final Optional<SpatialStoragePlot> plotOpt = this.getOrAllocatePlot(cell);
-        if (plotOpt.isPresent()) {
-            // Move the cell into the processing slot
-            this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
-            this.inv.setItemDirect(InventorySlots.PROCESSING, cell);
-
+        
+        this.updateStatus();
+        
+        if (this.statusCode == IsmStatusCodes.READY) {
             this.maxProgressTicks = TICKS_REQUIRED;
             this.progressTicks = 0;
+            this.statusCode = IsmStatusCodes.RUNNING;
 
             this.getMainNode().ifPresent((grid, node) -> {
                 grid.getTickManager().wakeDevice(node);
             });
-        }
-        else {
-            // Unable to allocate plot, e.g. because of size mismatch
-            // TODO It would be nice to signal this to the player somehow. Ideally we would show the failure on the UI
-            // rather than just doing nothing.
-            return;
         }
     }
 
@@ -129,68 +113,85 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (this.level.isClientSide) {
             return;
         }
-        final ItemStack cell = this.inv.getStackInSlot(InventorySlots.PROCESSING);
+        
+        boolean errorFlag = false;
+        
+        if (this.statusCode != IsmStatusCodes.RUNNING) {
+            errorFlag = true;
+        }
+        
+        final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
+        
         if (!this.isSpatialCell(cell)) {
+            errorFlag = true;
+        }
+        else if (!this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
             // Shouldn't be possible, but check just in case
-            return;
+            errorFlag = true;
         }
-        if (!this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
-            // Shouldn't be possible, but check just in case
-            return;
-        }
-        if (!this.getMainNode().isActive()) {
-            return;
-        }
-
-        final Optional<SpatialStoragePlot> plotOpt = this.getOrAllocatePlot(cell);
-
-        if (plotOpt.isPresent()) {
-            final SpatialStoragePlot plot = plotOpt.get();
-
-            // TODO Fancy block replacement logic (with gameplay mechanics!) goes here
-            // TODO Do this setup once during the relevant registry population event
-            // TODO Make this configurable - only replaceable ore types for the relevant blocks
-            final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
-            final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
-            final Random random = new Random();
-
-            final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-            final BlockPos startPos = plot.getOrigin();
-            final BlockPos endPos = new BlockPos(
-                    startPos.getX() + plot.getSize().getX() - 1,
-                    startPos.getY() + plot.getSize().getY() - 1,
-                    startPos.getZ() + plot.getSize().getZ() - 1);
-            final AtomicInteger updateCount = new AtomicInteger();
-            BlockPos.betweenClosedStream(startPos, endPos).forEach(pos -> {
-                final BlockState bs = spatialLevel.getBlockState(pos);
-                // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite those
-                if (bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block())) {
-
-                    final Block blockToPlace;
-                    if (random.nextDouble() > .9) {
-                        blockToPlace = oreTag.getRandomElement(random).orElse(Blocks.STONE);
-                    }
-                    else {
-                        blockToPlace = Blocks.STONE;
-                    }
-
-                    spatialLevel.setBlock(pos, blockToPlace.defaultBlockState(), Block.UPDATE_NONE);
-                    updateCount.incrementAndGet();
-                }
-            });
+        else if (!this.getMainNode().isActive()) {
+            errorFlag = true;
         }
         else {
-            // This should be caught when the operation is started, so it's weird to have it here
-            LOGGER.warn("Attempted to finish cell {}, but no plot was found",
-                    ((SpatialStorageCellItem) cell.getItem()).getAllocatedPlotId(cell));
+            final Optional<SpatialStoragePlot> plotOpt = this.getPlot(cell, true);
+            if (plotOpt.isPresent()) {
+                final SpatialStoragePlot plot = plotOpt.get();
+
+                // TODO Fancy block replacement logic (with gameplay mechanics!) goes here
+                // TODO Do this setup once during the relevant registry population event
+                // TODO Make this configurable - only replaceable ore types for the relevant blocks
+                final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
+                final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
+                final Random random = new Random();
+
+                final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
+                final BlockPos startPos = plot.getOrigin();
+                final BlockPos endPos = new BlockPos(
+                        startPos.getX() + plot.getSize().getX() - 1,
+                        startPos.getY() + plot.getSize().getY() - 1,
+                        startPos.getZ() + plot.getSize().getZ() - 1);
+                final AtomicInteger updateCount = new AtomicInteger();
+                BlockPos.betweenClosedStream(startPos, endPos).forEach(pos -> {
+                    final BlockState bs = spatialLevel.getBlockState(pos);
+                    // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite those
+                    if (bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block())) {
+
+                        final Block blockToPlace;
+                        if (random.nextDouble() > .9) {
+                            blockToPlace = oreTag.getRandomElement(random).orElse(Blocks.STONE);
+                        }
+                        else {
+                            blockToPlace = Blocks.STONE;
+                        }
+
+                        spatialLevel.setBlock(pos, blockToPlace.defaultBlockState(), Block.UPDATE_NONE);
+                        updateCount.incrementAndGet();
+                    }
+                });
+            }
+            else {
+                // This should be caught when the operation is started, so it's weird to have it here
+                LOGGER.warn("Attempted to finish cell {}, but no plot was found",
+                        ((SpatialStorageCellItem) cell.getItem()).getAllocatedPlotId(cell));
+            }
         }
 
-        // Move the cell into the output slot
-        this.inv.setItemDirect(InventorySlots.PROCESSING, ItemStack.EMPTY);
-        this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
+        if (errorFlag) {
+            // Something weird happened - call for an update and hope that displays an appropriate error
+            this.updateStatus();
+        }
+        else {
+            // Operation completed, so move the input to the output
+            this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
+            this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
+        }
     }
 
-    private Optional<SpatialStoragePlot> getOrAllocatePlot(final ItemStack cell) {
+    private Optional<SpatialStoragePlot> getPlot(final ItemStack cell, final boolean allocateIfNotFound) {
+        if (cell == null) {
+            return Optional.empty();
+        }
+        
         final var node = this.getMainNode();
         final var grid = node.getGrid();
         final var plotManager = SpatialStoragePlotManager.INSTANCE;
@@ -198,6 +199,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
         final SpatialStoragePlot existingPlot = plotManager.getPlot(spatialCell.getAllocatedPlotId(cell));
         if (existingPlot != null) {
+            if (!allocateIfNotFound) {
+                this.statusCode = IsmStatusCodes.READY;
+            }
             return Optional.of(existingPlot);
         }
         else {
@@ -212,9 +216,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             // No plot exists, so we need to create one. In order to figure out how large to make it, we use the size of
             // the network's SCS, or the max holding capacity of the cell, whichever is smaller
 
-            final int spatialCellMaxDim = spatialCell.getMaxStoredDim(cell);
             final BlockPos size;
             if (grid.getSpatialService() != null && grid.getSpatialService().isValidRegion()) {
+                final int spatialCellMaxDim = spatialCell.getMaxStoredDim(cell);
                 final ISpatialService spatialSvc = grid.getSpatialService();
                 final BlockPos spatialSvcSize = new BlockPos(
                         spatialSvc.getMax().getX() - spatialSvc.getMin().getX() - 1,
@@ -226,23 +230,26 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                         || spatialSvcSize.getZ() > spatialCellMaxDim) {
                     // The SCS is bigger than the cell can hold, meaning you can't swap this cell in this SCS. That's
                     // bad and unintuitive, so we just reject the action here.
-                    LOGGER.info("SCS has size {} but cell has size {}; aborting", spatialSvcSize, spatialCellMaxDim);
+                    this.statusCode = IsmStatusCodes.SIZE_MISMATCH;
                     return Optional.empty();
                 }
 
                 size = spatialSvcSize;
             }
             else {
-                LOGGER.info("No SCS found on grid, so unable to populate cell {}",
-                        spatialCell.getAllocatedPlotId(cell));
+                this.statusCode = IsmStatusCodes.MISSING_SCS;
                 return Optional.empty();
             }
 
-            LOGGER.info("Allocating new plot of size {} to cell {}", size, spatialCell.getAllocatedPlotId(cell));
-
-            final SpatialStoragePlot newPlot = plotManager.allocatePlot(size, playerId);
-            spatialCell.setStoredDimension(cell, newPlot.getId(), newPlot.getSize());
-            return Optional.of(newPlot);
+            if (allocateIfNotFound) {
+                final SpatialStoragePlot newPlot = plotManager.allocatePlot(size, playerId);
+                spatialCell.setStoredDimension(cell, newPlot.getId(), newPlot.getSize());
+                return Optional.of(newPlot);
+            }
+            else {
+                this.statusCode = IsmStatusCodes.READY;
+                return Optional.empty();
+            }
         }
     }
 
@@ -264,12 +271,12 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
-        return new TickingRequest(1, 1, !this.hasWork(), false);
+        return new TickingRequest(1, 1, !this.isRunning(), false);
     }
 
     @Override
     public TickRateModulation tickingRequest(final IGridNode node, final int ticksSinceLastCall) {
-        if (!this.hasWork()) {
+        if (!this.isRunning()) {
             return TickRateModulation.SLEEP;
         }
 
@@ -283,6 +290,35 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
         else {
             return TickRateModulation.SAME;
+        }
+    }
+    
+    public void updateStatus() {
+        final int oldStatusCode = this.statusCode;
+        if (!this.getMainNode().isActive()) {
+            this.statusCode = IsmStatusCodes.MISSING_CHANNEL;
+        }
+        else if (this.inv.getStackInSlot(InventorySlots.INPUT).isEmpty()) {
+            this.statusCode = IsmStatusCodes.IDLE;
+        }
+        else if (!this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
+            this.statusCode = IsmStatusCodes.OUTPUT_FULL;
+        }
+        else {
+            // getPlot() will set a status code based on the state of the plot, so we don't need to do anything here
+            this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT), false);
+        }
+        
+        if (oldStatusCode != this.statusCode) {
+            if (oldStatusCode == IsmStatusCodes.RUNNING) {
+                // Something has gone wrong while the operation was running, so cancel it out
+                this.progressTicks = -1;
+                this.maxProgressTicks = -1;
+            }
+            
+            this.getMainNode().ifPresent((grid, node) -> {
+                grid.getTickManager().wakeDevice(node);
+            });
         }
     }
 
@@ -354,6 +390,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     @Override
     public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
         if (reason != IGridNodeListener.State.GRID_BOOT) {
+            this.updateStatus();
             this.markForUpdate();
         }
     }
@@ -362,7 +399,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (!cell.isEmpty() && cell.getItem() instanceof ISpatialStorageCell spatialCell) {
             return spatialCell.isSpatialStorage(cell);
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
     @Override
@@ -382,6 +421,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     @Override
     public void onChangeInventory(final InternalInventory inv, final int slot) {
+        this.updateStatus();
     }
 
     public int getCurrentProgress() {
@@ -392,8 +432,11 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         return this.maxProgressTicks;
     }
 
-    public boolean hasWork() {
-        return this.getMaxProgress() > 0;
+    public boolean isRunning() {
+        return this.statusCode == IsmStatusCodes.RUNNING;
     }
 
+    public int getStatusCode() {
+        return this.statusCode;
+    }
 }

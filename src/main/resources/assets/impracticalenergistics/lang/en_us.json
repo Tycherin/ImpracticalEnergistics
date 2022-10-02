@@ -7,5 +7,14 @@
     "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_missing_text": "No effect selected",
-    "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s"
+    "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s",
+    
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.idle": "Idle",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.ready": "Ready",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.running": "Running",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.output_full": "Blocked - output full",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_channel": "Blocked - device missing channel",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_scs": "Blocked - missing SCS on AE network",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.size_mismatch": "Blocked - cell size does not match SCS size",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue"
 }
