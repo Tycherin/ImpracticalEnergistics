@@ -1,5 +1,11 @@
 {
     "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
     "block.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
-    "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell"
+    
+    "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
+    
+    "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
+    "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",
+    "gui.impracticalenergistics.imaginary_space_manipulator.effect_missing_text": "No effect selected",
+    "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s"
 }

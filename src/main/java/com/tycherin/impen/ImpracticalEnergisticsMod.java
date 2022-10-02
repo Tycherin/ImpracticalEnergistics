@@ -7,10 +7,12 @@ import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
+import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -88,6 +91,11 @@ public class ImpracticalEnergisticsMod {
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addGenericListener(MenuType.class, ImpracticalEnergisticsMod::registerMenus);
+    }
+    
+    public static void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
+        event.getRegistry().registerAll(ImaginarySpaceManipulatorMenu.TYPE);
     }
 
     private static RegistryObject<Item> createBlockItem(final RegistryObject<? extends Block> block) {
