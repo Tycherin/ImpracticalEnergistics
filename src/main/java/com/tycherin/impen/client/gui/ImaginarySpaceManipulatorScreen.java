@@ -3,6 +3,7 @@ package com.tycherin.impen.client.gui;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
+import com.tycherin.impen.logic.ism.IsmStatusCodes;
 import com.tycherin.impen.util.GuiComponentFactory;
 import com.tycherin.impen.util.GuiComponentFactory.GuiComponentWrapper;
 

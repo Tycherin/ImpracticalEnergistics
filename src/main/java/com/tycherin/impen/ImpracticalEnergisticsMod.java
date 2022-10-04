@@ -9,6 +9,7 @@ import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
+import com.tycherin.impen.logic.ism.IsmService;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
@@ -87,6 +88,8 @@ public class ImpracticalEnergisticsMod {
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        
+        IsmService.init();
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 

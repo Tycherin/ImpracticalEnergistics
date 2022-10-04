@@ -1,14 +1,15 @@
 package com.tycherin.impen.blockentity;
 
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.client.gui.IsmStatusCodes;
+import com.tycherin.impen.logic.ism.IsmService;
+import com.tycherin.impen.logic.ism.IsmStatusCodes;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -34,14 +35,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
 
 public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
 
@@ -62,7 +58,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
-    
+
     private int statusCode = IsmStatusCodes.IDLE;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
@@ -71,7 +67,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.getMainNode()
                 .addService(IGridTickable.class, this)
                 .setFlags();
-        
+
         this.updateStatus();
     }
 
@@ -95,9 +91,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (this.level.isClientSide) {
             return;
         }
-        
+
         this.updateStatus();
-        
+
         if (this.statusCode == IsmStatusCodes.READY) {
             this.maxProgressTicks = TICKS_REQUIRED;
             this.progressTicks = 0;
@@ -113,15 +109,15 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (this.level.isClientSide) {
             return;
         }
-        
+
         boolean errorFlag = false;
-        
+
         if (this.statusCode != IsmStatusCodes.RUNNING) {
             errorFlag = true;
         }
-        
+
         final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
-        
+
         if (!this.isSpatialCell(cell)) {
             errorFlag = true;
         }
@@ -137,12 +133,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             if (plotOpt.isPresent()) {
                 final SpatialStoragePlot plot = plotOpt.get();
 
-                // TODO Fancy block replacement logic (with gameplay mechanics!) goes here
-                // TODO Do this setup once during the relevant registry population event
-                // TODO Make this configurable - only replaceable ore types for the relevant blocks
-                final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
-                final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
-                final Random random = new Random();
+                final Supplier<Block> blockSupplier = this.getIsmService().getBlockSupplier();
 
                 final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
                 final BlockPos startPos = plot.getOrigin();
@@ -153,18 +144,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 final AtomicInteger updateCount = new AtomicInteger();
                 BlockPos.betweenClosedStream(startPos, endPos).forEach(pos -> {
                     final BlockState bs = spatialLevel.getBlockState(pos);
-                    // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite those
+                    // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite
+                    // those
                     if (bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block())) {
-
-                        final Block blockToPlace;
-                        if (random.nextDouble() > .9) {
-                            blockToPlace = oreTag.getRandomElement(random).orElse(Blocks.STONE);
-                        }
-                        else {
-                            blockToPlace = Blocks.STONE;
-                        }
-
-                        spatialLevel.setBlock(pos, blockToPlace.defaultBlockState(), Block.UPDATE_NONE);
+                        spatialLevel.setBlock(pos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
                         updateCount.incrementAndGet();
                     }
                 });
@@ -191,7 +174,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (cell == null) {
             return Optional.empty();
         }
-        
+
         final var node = this.getMainNode();
         final var grid = node.getGrid();
         final var plotManager = SpatialStoragePlotManager.INSTANCE;
@@ -215,6 +198,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
             // No plot exists, so we need to create one. In order to figure out how large to make it, we use the size of
             // the network's SCS, or the max holding capacity of the cell, whichever is smaller
+
+            // TODO Probably ditch the allocation stuff, it feels like more trouble than it's worth
+            // Forcing a human to initialize each cell avoids a whole slew of problems, not the least of which is
+            // unbounded allocation of space
 
             final BlockPos size;
             if (grid.getSpatialService() != null && grid.getSpatialService().isValidRegion()) {
@@ -292,7 +279,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return TickRateModulation.SAME;
         }
     }
-    
+
     public void updateStatus() {
         final int oldStatusCode = this.statusCode;
         if (!this.getMainNode().isActive()) {
@@ -308,14 +295,14 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             // getPlot() will set a status code based on the state of the plot, so we don't need to do anything here
             this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT), false);
         }
-        
+
         if (oldStatusCode != this.statusCode) {
             if (oldStatusCode == IsmStatusCodes.RUNNING) {
                 // Something has gone wrong while the operation was running, so cancel it out
                 this.progressTicks = -1;
                 this.maxProgressTicks = -1;
             }
-            
+
             this.getMainNode().ifPresent((grid, node) -> {
                 grid.getTickManager().wakeDevice(node);
             });
@@ -438,5 +425,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     public int getStatusCode() {
         return this.statusCode;
+    }
+    
+    private IsmService getIsmService() {
+        return  ((IsmService) (this.getMainNode().getGrid().getService(IsmService.class)));
     }
 }
