@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
+
 import appeng.api.networking.GridServices;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridService;
@@ -26,6 +30,8 @@ import net.minecraftforge.registries.tags.ITag;
  *
  */
 public class IsmService implements IGridService, IGridServiceProvider {
+    
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     /** This method should be called during mod initialization */
     public static void init() {
@@ -51,6 +57,7 @@ public class IsmService implements IGridService, IGridServiceProvider {
     @Override
     public void addNode(final IGridNode node) {
         if (node.getOwner() instanceof IsmWeightProvider) {
+            LOGGER.info("Adding IsmWeightProvider: {}", ((IsmWeightProvider) (node.getOwner())).getId());
             this.weightTracker.add((IsmWeightProvider) (node.getOwner()));
         }
     }
@@ -58,6 +65,7 @@ public class IsmService implements IGridService, IGridServiceProvider {
     @Override
     public void removeNode(final IGridNode node) {
         if (node.getOwner() instanceof IsmWeightProvider) {
+            LOGGER.info("Removing IsmWeightProvider: {}", ((IsmWeightProvider) (node.getOwner())).getId());
             this.weightTracker.remove((IsmWeightProvider) (node.getOwner()));
         }
     }

@@ -1,6 +1,7 @@
 {
     "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
     "block.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
+    "block.impracticalenergistics.imaginary_space_stabilizer": "Imaginary Space Stabilizer",
     
     "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
     
@@ -15,5 +16,7 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.output_full": "Blocked - output full",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_channel": "Blocked - device missing channel",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.not_formatted": "Blocked - drive is not formatted",
-    "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue"
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue",
+    
+    "ignore.me": "This space intentionally left blank"
 }

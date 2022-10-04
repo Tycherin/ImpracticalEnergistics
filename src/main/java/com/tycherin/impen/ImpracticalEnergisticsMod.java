@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
+import com.tycherin.impen.block.ImaginarySpaceStabilizerBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
+import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
@@ -80,6 +82,21 @@ public class ImpracticalEnergisticsMod {
             () -> new BlockItem(IMAGINARY_SPACE_MANIPULATOR_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
+    // Imaginary Space Stabilizer
+    public static final RegistryObject<ImaginarySpaceStabilizerBlock> IMAGINARY_SPACE_STABILIZER_BLOCK = BLOCKS
+            .register("imaginary_space_stabilizer", () -> {
+                return new ImaginarySpaceStabilizerBlock(BlockBehaviour.Properties.of(Material.METAL));
+            });
+    public static final RegistryObject<BlockEntityType<ImaginarySpaceStabilizerBlockEntity>> IMAGINARY_SPACE_STABILIZER_BE = BLOCK_ENTITIES
+            .register("imaginary_space_stabilizer_be", () -> {
+                return BlockEntityType.Builder.of(ImaginarySpaceStabilizerBlockEntity::new, IMAGINARY_SPACE_STABILIZER_BLOCK.get())
+                        .build(null);
+            });
+    public static final RegistryObject<Item> IMAGINARY_SPACE_STABILIZER_ITEM = ITEMS.register(
+            IMAGINARY_SPACE_STABILIZER_BLOCK.getId().getPath(),
+            () -> new BlockItem(IMAGINARY_SPACE_STABILIZER_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -111,5 +128,7 @@ public class ImpracticalEnergisticsMod {
                 null, (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
         IMAGINARY_SPACE_MANIPULATOR_BLOCK.get().setBlockEntity(ImaginarySpaceManipulatorBlockEntity.class,
                 IMAGINARY_SPACE_MANIPULATOR_BE.get(), null, null);
+        IMAGINARY_SPACE_STABILIZER_BLOCK.get().setBlockEntity(ImaginarySpaceStabilizerBlockEntity.class,
+                IMAGINARY_SPACE_STABILIZER_BE.get(), null, null);
     }
 }
