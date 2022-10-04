@@ -8,8 +8,7 @@ public class IsmStatusCodes {
 
     public static final int OUTPUT_FULL = 100;
     public static final int MISSING_CHANNEL = 101;
-    public static final int MISSING_SCS = 102;
-    public static final int SIZE_MISMATCH = 103;
+    public static final int NOT_FORMATTED = 102;
 
     public static final int UNKNOWN = 9999;
 

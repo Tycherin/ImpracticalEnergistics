@@ -14,7 +14,6 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.running": "Running",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.output_full": "Blocked - output full",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_channel": "Blocked - device missing channel",
-    "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_scs": "Blocked - missing SCS on AE network",
-    "gui.impracticalenergistics.imaginary_space_manipulator.status.size_mismatch": "Blocked - cell size does not match SCS size",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.not_formatted": "Blocked - drive is not formatted",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue"
 }

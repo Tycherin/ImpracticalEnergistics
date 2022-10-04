@@ -35,8 +35,7 @@ public class ImaginarySpaceManipulatorScreen extends AEBaseScreen<ImaginarySpace
                 .put(IsmStatusCodes.RUNNING, factory.build("status.running"))
                 .put(IsmStatusCodes.OUTPUT_FULL, factory.build("status.output_full"))
                 .put(IsmStatusCodes.MISSING_CHANNEL, factory.build("status.missing_channel"))
-                .put(IsmStatusCodes.MISSING_SCS, factory.build("status.missing_scs"))
-                .put(IsmStatusCodes.SIZE_MISMATCH, factory.build("status.size_mismatch"))
+                .put(IsmStatusCodes.NOT_FORMATTED, factory.build("status.not_formatted"))
                 .put(IsmStatusCodes.UNKNOWN, factory.build("status.unknown"))
                 .build();
     }
