@@ -1,9 +1,7 @@
 package com.tycherin.impen.logic.ism;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
@@ -13,12 +11,8 @@ import appeng.api.networking.GridServices;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridService;
 import appeng.api.networking.IGridServiceProvider;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITag;
 
 /**
  * Grid-wide service implementing Imaginary Space Manipulator (ISM) functionality. Tracks nodes that add ISM information
@@ -30,7 +24,7 @@ import net.minecraftforge.registries.tags.ITag;
  *
  */
 public class IsmService implements IGridService, IGridServiceProvider {
-    
+
     private static final Logger LOGGER = LogUtils.getLogger();
 
     /** This method should be called during mod initialization */
@@ -41,12 +35,11 @@ public class IsmService implements IGridService, IGridServiceProvider {
     private final IsmWeightTracker weightTracker;
 
     public IsmService() {
-        // TODO Make the tag configurable
-        // TODO I'm not sure how this interacts with registry initialization timing?
-        final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
-        final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
-        final List<Block> blocks = oreTag.stream().collect(Collectors.toList());
-        this.weightTracker = new IsmWeightTracker(Blocks.STONE, blocks);
+        // TODO Configurable tag-based features for base blocks and whatnot
+//        final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
+//        final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
+//        final List<Block> blocks = oreTag.stream().collect(Collectors.toList());
+        this.weightTracker = new IsmWeightTracker(Blocks.STONE);
     }
 
     @Override
@@ -57,7 +50,6 @@ public class IsmService implements IGridService, IGridServiceProvider {
     @Override
     public void addNode(final IGridNode node) {
         if (node.getOwner() instanceof IsmWeightProvider) {
-            LOGGER.info("Adding IsmWeightProvider: {}", ((IsmWeightProvider) (node.getOwner())).getId());
             this.weightTracker.add((IsmWeightProvider) (node.getOwner()));
         }
     }
@@ -65,12 +57,11 @@ public class IsmService implements IGridService, IGridServiceProvider {
     @Override
     public void removeNode(final IGridNode node) {
         if (node.getOwner() instanceof IsmWeightProvider) {
-            LOGGER.info("Removing IsmWeightProvider: {}", ((IsmWeightProvider) (node.getOwner())).getId());
             this.weightTracker.remove((IsmWeightProvider) (node.getOwner()));
         }
     }
 
-    public Map<Block, Integer> getweights() {
+    public Map<Block, Integer> getWeights() {
         return this.weightTracker.getWeights();
     }
 

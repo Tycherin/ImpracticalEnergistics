@@ -10,6 +10,7 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.logic.ism.IsmStatusCodes;
+import com.tycherin.impen.logic.ism.IsmWeightTracker;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -134,6 +135,8 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         else {
             final Optional<SpatialStoragePlot> plotOpt = this.getPlot(cell);
             if (plotOpt.isPresent()) {
+                LOGGER.info("Triggering oreify! Current weights: {}", IsmWeightTracker.asString(this.getIsmService().getWeights()));
+                
                 final SpatialStoragePlot plot = plotOpt.get();
 
                 final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();

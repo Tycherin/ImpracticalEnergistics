@@ -47,18 +47,20 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     
     private Optional<Collection<IsmWeight>> weightsOpt = Optional.empty();
     private String id; // See {@link getId} for an explanation of why we lazy load this
-    private boolean needsUpdate = false;
+    private boolean weightsHaveChanged = false;
     
     public ImaginarySpaceStabilizerBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_BE.get(), pos, blockState);
 
         this.getMainNode()
                 .setFlags();
-        
-        this.updateWeights();
     }
     
     public void updateWeights() {
+        if (this.isClientSide()) {
+            return;
+        }
+        
         final var oldWeightsOpt = this.weightsOpt;
         
         final ItemStack input = inv.getStackInSlot(0);
@@ -66,9 +68,12 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         if (!input.isEmpty()) {
             this.weightsOpt = Optional.of(CATALYSTS.get(input.getItem()));
         }
+        else {
+            this.weightsOpt = Optional.empty();
+        }
         
         if (!oldWeightsOpt.equals(this.weightsOpt)) {
-            this.needsUpdate = true;
+            this.weightsHaveChanged = true;
         }
     }
     
@@ -109,6 +114,8 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         for (int i = 0; i < this.inv.size(); i++) {
             this.inv.setItemDirect(i, data.readItem());
         }
+        
+        this.updateWeights();
 
         return ret;
     }
@@ -116,6 +123,7 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     @Override
     public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
         if (reason != IGridNodeListener.State.GRID_BOOT) {
+            this.updateWeights();
             this.markForUpdate();
         }
     }
@@ -140,8 +148,7 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         // Normally we'd build this string when the BE is constructed, but the level isn't available then, so we defer
         // it until the first invocation
         if (this.id == null) {
-            this.id = this.level.dimension().getRegistryName().toString() + "@" + this.getBlockPos().toShortString();
-            LOGGER.info("Creating ISStab with ID: {}", id);
+            this.id = this.level.dimension().location().toString() + "@" + this.getBlockPos().toShortString();
         }
         return this.id;
     }
@@ -152,12 +159,12 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     }
 
     @Override
-    public boolean needsUpdate() {
-        return this.needsUpdate;
+    public boolean hasUpdate() {
+        return this.weightsHaveChanged;
     }
 
     @Override
     public void markUpdateSuccessful() {
-        this.needsUpdate = false;
+        this.weightsHaveChanged = false;
     }
 }

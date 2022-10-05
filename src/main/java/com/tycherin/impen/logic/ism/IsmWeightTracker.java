@@ -2,13 +2,16 @@ package com.tycherin.impen.logic.ism;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.world.level.block.Block;
 
@@ -20,25 +23,21 @@ import net.minecraft.world.level.block.Block;
  */
 public class IsmWeightTracker {
 
-    private static final int BASELINE_WEIGHT = 1000;
-    private static final double DIMINISHING_RETURNS_PCT = 0.05;
-    private static final double DIMINISHING_RETURNS_FACTOR = 1.5;
+    private static final Logger LOGGER = LogUtils.getLogger();
+
+    private static final int BASELINE_WEIGHT = 1000; // TODO It's weird to have this here while the others are elsewhere
 
     private final Block baseBlock;
-    private final Map<String, IsmWeightProvider> providers;
-    private final Map<Block, Integer> weights;
+    private final Map<String, IsmWeightProvider> providers = new HashMap<>();
+    private final Map<Block, Integer> weights = new HashMap<>();
     private final Random rand = new Random();
 
     private boolean needsUpdate = false;;
     private int totalWeight = 0;
     private BlockSupplier blockSupplier;
 
-    public IsmWeightTracker(final Block baseBlock, final List<Block> weightBlocks) {
+    public IsmWeightTracker(final Block baseBlock) {
         this.baseBlock = baseBlock;
-        this.weights = new HashMap<>();
-        weights.put(baseBlock, 0);
-        weightBlocks.forEach(wb -> weights.put(wb, 0));
-        this.providers = new HashMap<>();
         this.update();
     }
 
@@ -72,10 +71,8 @@ public class IsmWeightTracker {
 
     /** Updates the state of this tracker only if one of the components has changed */
     public void updateIfNeeded() {
-        if (this.needsUpdate ||
-                this.providers.values().stream().anyMatch(IsmWeightProvider::needsUpdate)) {
+        if (this.needsUpdate || this.providers.values().stream().anyMatch(IsmWeightProvider::hasUpdate)) {
             this.update();
-            this.providers.values().forEach(IsmWeightProvider::markUpdateSuccessful);
         }
     }
 
@@ -88,8 +85,7 @@ public class IsmWeightTracker {
     }
 
     private void update() {
-        // Reset weights to zero
-        weights.replaceAll((block, weight) -> 0);
+        weights.clear();
         weights.put(baseBlock, BASELINE_WEIGHT);
 
         // Re-sum weights from providers
@@ -104,17 +100,7 @@ public class IsmWeightTracker {
 
         // Sum of all the individual weights being added
         final int addedWeight = weights.values().stream().mapToInt(i -> i).sum();
-        // Amount of weight that exceeds the diminishing returns threshold
-        final int weightOverDimRet = Math.max(addedWeight - (int) (BASELINE_WEIGHT * DIMINISHING_RETURNS_PCT), 0);
-        if (weightOverDimRet > 0) {
-            // Weight below the threshold is not subject to DR; weight over is
-            this.totalWeight = BASELINE_WEIGHT + (addedWeight - weightOverDimRet)
-                    + (int) Math.pow(weightOverDimRet, DIMINISHING_RETURNS_FACTOR);
-        }
-        else {
-            // Otherwise, weights are applied normally
-            this.totalWeight = BASELINE_WEIGHT + addedWeight;
-        }
+        this.totalWeight = BASELINE_WEIGHT + addedWeight;
 
         // Create a structure containing the probabilities of getting each block
         final int numEntries = weights.size() + 1;
@@ -136,6 +122,7 @@ public class IsmWeightTracker {
         this.blockSupplier = new BlockSupplier(probabilities, blocks, this.totalWeight, this.rand);
 
         this.needsUpdate = false;
+        this.providers.values().forEach(IsmWeightProvider::markUpdateSuccessful);
     }
 
     private static class BlockSupplier implements Supplier<Block> {
@@ -171,5 +158,13 @@ public class IsmWeightTracker {
             // If the list is constructed properly, this should never happen
             throw new RuntimeException("Dice roll not found in probability list, somehow???");
         }
+    }
+
+    public static String asString(final Map<Block, Integer> weights) {
+        return String.join(",", weights.entrySet().stream()
+                .map(entry -> {
+                    return String.format("[%s:%d]", entry.getKey().getRegistryName(), entry.getValue());
+                })
+                .collect(Collectors.toList()));
     }
 }

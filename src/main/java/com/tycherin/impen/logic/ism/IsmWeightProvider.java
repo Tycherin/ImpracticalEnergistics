@@ -11,7 +11,7 @@ public interface IsmWeightProvider {
     Collection<IsmWeight> getWeights();
 
     /** @return true if this provider's weights have been updated; false otherwise */
-    boolean needsUpdate();
+    boolean hasUpdate();
     
     /** Called when the update has been successfully processed */
     void markUpdateSuccessful();
