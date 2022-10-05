@@ -1,7 +1,5 @@
 package com.tycherin.impen.block;
 
-import java.util.Optional;
-
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -20,42 +18,39 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class ImaginarySpaceManipulatorBlock extends AEBaseEntityBlock<ImaginarySpaceManipulatorBlockEntity> {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    
+
     public ImaginarySpaceManipulatorBlock(final Properties props) {
         super(props);
     }
-    
+
     @Override
-    public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p, final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
+    public void neighborChanged(final BlockState state, final Level level, final BlockPos pos, final Block blockIn,
+            final BlockPos fromPos, final boolean isMoving) {
+        final ImaginarySpaceManipulatorBlockEntity be = this.getBlockEntity(level, pos);
+        if (be != null) {
+            be.updateRedstoneState();
+        }
+    }
+
+    @Override
+    public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p,
+            final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
         if (!InteractionUtil.isInAlternateUseMode(p)) {
-            final var be = (ImaginarySpaceManipulatorBlockEntity) level.getBlockEntity(pos);
+            final ImaginarySpaceManipulatorBlockEntity be = this.getBlockEntity(level, pos);
             if (be != null) {
                 if (!level.isClientSide()) {
                     MenuOpener.open(ImaginarySpaceManipulatorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }
-            else {
-                return InteractionResult.PASS;
-            }
         }
-        else {
-          final var beOpt = Optional.of(level.getBlockEntity(pos));
-          beOpt.ifPresent(be -> {
-              if (!be.isRemoved()) {
-                  ((ImaginarySpaceManipulatorBlockEntity) be).triggerOreify();
-              }
-          });
-          return InteractionResult.sidedSuccess(level.isClientSide());
-          
-          
-          // When the above stuff gets removed
-          // return InteractionResult.PASS;
-        }
+        return InteractionResult.PASS;
     }
 }

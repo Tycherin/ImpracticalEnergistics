@@ -180,7 +180,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     private Optional<SpatialStoragePlot> getPlot(final ItemStack cell) {
         final var plotManager = SpatialStoragePlotManager.INSTANCE;
         final var spatialCell = (SpatialStorageCellItem) cell.getItem();
-        return Optional.of(plotManager.getPlot(spatialCell.getAllocatedPlotId(cell)));
+        return Optional.ofNullable(plotManager.getPlot(spatialCell.getAllocatedPlotId(cell)));
     }
 
     private class InventoryItemFilter implements IAEItemFilter {
