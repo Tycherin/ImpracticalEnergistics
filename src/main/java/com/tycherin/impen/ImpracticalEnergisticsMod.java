@@ -10,6 +10,7 @@ import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
+import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
 
@@ -115,7 +116,9 @@ public class ImpracticalEnergisticsMod {
     }
     
     public static void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
-        event.getRegistry().registerAll(ImaginarySpaceManipulatorMenu.TYPE);
+        event.getRegistry().registerAll(
+                ImaginarySpaceManipulatorMenu.TYPE,
+                ImaginarySpaceStabilizerMenu.TYPE);
     }
 
     private static RegistryObject<Item> createBlockItem(final RegistryObject<? extends Block> block) {

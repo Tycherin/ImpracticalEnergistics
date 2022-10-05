@@ -9,6 +9,7 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_missing_text": "No effect selected",
     "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s",
+    "gui.impracticalenergistics.imaginary_space_stabilizer": "Imaginary Space Stabilizer",
     
     "gui.impracticalenergistics.imaginary_space_manipulator.status.idle": "Idle",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.ready": "Ready",

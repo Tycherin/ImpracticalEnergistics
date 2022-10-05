@@ -3,8 +3,11 @@ package com.tycherin.impen.block;
 import javax.annotation.Nullable;
 
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
+import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 
 import appeng.block.AEBaseEntityBlock;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import appeng.util.InteractionUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -24,17 +27,16 @@ public class ImaginarySpaceStabilizerBlock extends AEBaseEntityBlock<ImaginarySp
     public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p,
             final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
         if (!InteractionUtil.isInAlternateUseMode(p)) {
-            // TODO Add this stuff in once the menu is implemented
-//            final var be = (ImaginarySpaceManipulatorBlockEntity) level.getBlockEntity(pos);
-//            if (be != null) {
-//                if (!level.isClientSide()) {
-//                    MenuOpener.open(ImaginarySpaceManipulatorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
-//                }
-//                return InteractionResult.sidedSuccess(level.isClientSide());
-//            }
-//            else {
-//                return InteractionResult.PASS;
-//            }
+            final var be = (ImaginarySpaceStabilizerBlockEntity) level.getBlockEntity(pos);
+            if (be != null) {
+                if (!level.isClientSide()) {
+                    MenuOpener.open(ImaginarySpaceStabilizerMenu.TYPE, p, MenuLocators.forBlockEntity(be));
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide());
+            }
+            else {
+                return InteractionResult.PASS;
+            }
         }
 
         return InteractionResult.PASS;
