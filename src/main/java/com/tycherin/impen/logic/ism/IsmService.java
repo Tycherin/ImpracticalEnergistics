@@ -1,18 +1,17 @@
 package com.tycherin.impen.logic.ism;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
+import com.tycherin.impen.logic.ism.IsmWeightTracker.IsmWeightWrapper;
 
 import appeng.api.networking.GridServices;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridService;
 import appeng.api.networking.IGridServiceProvider;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import appeng.api.networking.IManagedGridNode;
+import appeng.me.helpers.IGridConnectedBlockEntity;
 
 /**
  * Grid-wide service implementing Imaginary Space Manipulator (ISM) functionality. Tracks nodes that add ISM information
@@ -25,47 +24,45 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class IsmService implements IGridService, IGridServiceProvider {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     /** This method should be called during mod initialization */
     public static void init() {
         GridServices.register(IsmService.class, IsmService.class);
     }
 
-    private final IsmWeightTracker weightTracker;
-
-    public IsmService() {
-        // TODO Configurable tag-based features for base blocks and whatnot
-//        final TagKey<Block> oreTagKey = Tags.Blocks.ORES;
-//        final ITag<Block> oreTag = ForgeRegistries.BLOCKS.tags().getTag(oreTagKey);
-//        final List<Block> blocks = oreTag.stream().collect(Collectors.toList());
-        this.weightTracker = new IsmWeightTracker(Blocks.STONE);
-    }
-
-    @Override
-    public void onServerStartTick() {
-        this.weightTracker.updateIfNeeded();
-    }
+    private final Map<String, IsmCatalystProvider> providers = new HashMap<>();
+    private final IsmWeightTracker weightTracker = new IsmWeightTracker();
 
     @Override
     public void addNode(final IGridNode node) {
-        if (node.getOwner() instanceof IsmWeightProvider) {
-            this.weightTracker.add((IsmWeightProvider) (node.getOwner()));
+        if (node.getOwner() instanceof IsmCatalystProvider) {
+            final var provider = (IsmCatalystProvider) (node.getOwner());
+            this.providers.put(provider.getId(), provider);
+            this.weightTracker.addProvider(provider);
         }
     }
 
     @Override
     public void removeNode(final IGridNode node) {
-        if (node.getOwner() instanceof IsmWeightProvider) {
-            this.weightTracker.remove((IsmWeightProvider) (node.getOwner()));
+        if (node.getOwner() instanceof IsmCatalystProvider) {
+            final var provider = (IsmCatalystProvider) (node.getOwner());
+            this.providers.remove(provider.getId());
+            this.weightTracker.removeProvider(provider);
         }
     }
 
-    public Map<Block, Integer> getWeights() {
+    /** Called by {@link IsmCatalystProvider} when the provider has been updated */
+    public void updateProvider(final IsmCatalystProvider provider) {
+        this.weightTracker.updateProvider(provider);
+    }
+
+    public IsmWeightWrapper getWeights() {
         return this.weightTracker.getWeights();
     }
 
-    public Supplier<Block> getBlockSupplier() {
-        return this.weightTracker.getSupplier();
+    /** Gets the {@link IsmService} associated with a grid node, if one exists */
+    public static Optional<IsmService> get(final IGridConnectedBlockEntity be) {
+        return Optional.ofNullable(be.getMainNode())
+                .map(IManagedGridNode::getGrid)
+                .map(grid -> grid.getService(IsmService.class));
     }
 }

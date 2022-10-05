@@ -10,7 +10,6 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.logic.ism.IsmStatusCodes;
-import com.tycherin.impen.logic.ism.IsmWeightTracker;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -109,9 +108,12 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         });
     }
 
-    public void doOreify() {
+    public boolean doOreify() {
         if (this.level.isClientSide) {
-            return;
+            return false;
+        }
+        else if (IsmService.get(this).isEmpty()) {
+            return false;
         }
 
         boolean errorFlag = false;
@@ -135,12 +137,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         else {
             final Optional<SpatialStoragePlot> plotOpt = this.getPlot(cell);
             if (plotOpt.isPresent()) {
-                LOGGER.info("Triggering oreify! Current weights: {}", IsmWeightTracker.asString(this.getIsmService().getWeights()));
-                
                 final SpatialStoragePlot plot = plotOpt.get();
 
                 final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-                final Supplier<Block> blockSupplier = this.getIsmService().getBlockSupplier();
+                final Supplier<Block> blockSupplier = IsmService.get(this).get().getWeights().getSupplier();
                 this.getModifiableBlocks(plot).forEach(blockPos -> {
                     spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
                 });
@@ -156,11 +156,13 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (errorFlag) {
             // Something weird happened - call for an update and hope that displays an appropriate error
             this.updateStatus();
+            return false;
         }
         else {
             // Operation completed, so move the input to the output
             this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
             this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
+            return true;
         }
     }
     
@@ -223,19 +225,22 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.progressTicks++;
 
         if (this.progressTicks >= this.maxProgressTicks) {
-            this.doOreify();
-            this.resetProgress();
-            return TickRateModulation.SLEEP;
+            if (this.doOreify()) {
+                this.resetProgress();
+                return TickRateModulation.SLEEP;
+            }
         }
-        else {
-            return TickRateModulation.SAME;
-        }
+        
+        return TickRateModulation.SAME;
     }
 
     public void updateStatus() {
         final int oldStatusCode = this.statusCode;
         if (!this.getMainNode().isActive()) {
             this.statusCode = IsmStatusCodes.MISSING_CHANNEL;
+        }
+        else if (IsmService.get(this) == null) {
+            this.statusCode = IsmStatusCodes.UNKNOWN;
         }
         else if (this.inv.getStackInSlot(InventorySlots.INPUT).isEmpty()) {
             this.statusCode = IsmStatusCodes.IDLE;
@@ -384,9 +389,5 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     public int getStatusCode() {
         return this.statusCode;
-    }
-    
-    private IsmService getIsmService() {
-        return  ((IsmService) (this.getMainNode().getGrid().getService(IsmService.class)));
     }
 }
