@@ -1,15 +1,15 @@
 package com.tycherin.impen.blockentity;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
+import com.google.common.collect.Lists;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.logic.ism.IsmStatusCodes;
+import com.tycherin.impen.logic.ism.IsmWeightTracker.IsmWeightWrapper;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -34,13 +34,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static class InventorySlots {
         public static final int INPUT = 0;
@@ -49,13 +48,13 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 2);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
-    private YesNo lastRedstoneState = YesNo.UNDECIDED;
-
+    private final AppEngInternalInventory catalystInv = new AppEngInternalInventory(this, IsmService.MAX_CATALYSTS);
     private final ILevelRunnable callback = level -> startOreify();
 
+    private Optional<IsmWeightWrapper> activeWeights = Optional.empty();
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
-
+    private YesNo lastRedstoneState = YesNo.UNDECIDED;
     private int statusCode = IsmStatusCodes.IDLE;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
@@ -90,11 +89,24 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
 
         this.updateStatus();
-        
+
         if (this.statusCode != IsmStatusCodes.READY) {
             return;
         }
-        
+
+        final Collection<Item> catalysts = IsmService.get(this).get().triggerOperation();
+        if (catalysts.size() <= 0) {
+            this.statusCode = IsmStatusCodes.NO_CATALYSTS;
+            this.markForUpdate();
+            return;
+        }
+
+        catalysts.forEach(item -> {
+            this.catalystInv.addItems(new ItemStack(item, 1));
+        });
+        final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
+        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems));
+
         // TODO Implement locking so that the inputs can't change while we're in progress
         final SpatialStoragePlot plot = this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT)).get();
         final int totalBlocks = plot.getSize().getX() * plot.getSize().getY() * plot.getSize().getZ();
@@ -106,6 +118,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.getMainNode().ifPresent((grid, node) -> {
             grid.getTickManager().wakeDevice(node);
         });
+        this.markForUpdate();
     }
 
     public boolean doOreify() {
@@ -116,56 +129,36 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return false;
         }
 
-        boolean errorFlag = false;
-
-        if (this.statusCode != IsmStatusCodes.RUNNING) {
-            errorFlag = true;
-        }
-
         final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
-
-        if (!this.isSpatialCell(cell)) {
-            errorFlag = true;
-        }
-        else if (!this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
-            // Shouldn't be possible, but check just in case
-            errorFlag = true;
-        }
-        else if (!this.getMainNode().isActive()) {
-            errorFlag = true;
-        }
-        else {
-            final Optional<SpatialStoragePlot> plotOpt = this.getPlot(cell);
-            if (plotOpt.isPresent()) {
-                final SpatialStoragePlot plot = plotOpt.get();
-
-                final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-                final Supplier<Block> blockSupplier = IsmService.get(this).get().getWeights().getSupplier();
-                this.getModifiableBlocks(plot).forEach(blockPos -> {
-                    spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
-                });
-                
-            }
-            else {
-                // This should be caught when the operation is started, so it's weird to have it here
-                LOGGER.warn("Attempted to finish cell {}, but no plot was found",
-                        ((SpatialStorageCellItem) cell.getItem()).getAllocatedPlotId(cell));
-            }
-        }
-
-        if (errorFlag) {
+        if (this.statusCode != IsmStatusCodes.RUNNING
+                || !this.isSpatialCell(cell)
+                || !this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()
+                || !this.getMainNode().isActive()) {
             // Something weird happened - call for an update and hope that displays an appropriate error
             this.updateStatus();
             return false;
         }
-        else {
-            // Operation completed, so move the input to the output
-            this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
-            this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
-            return true;
+
+        // TODO Limit the number of blocks that can be updated in a single operation
+
+        final SpatialStoragePlot plot = this.getPlot(cell).get();
+        final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
+        final Supplier<Block> blockSupplier = this.activeWeights.get().getSupplier();
+        this.getModifiableBlocks(plot).forEach(blockPos -> {
+            spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
+        });
+
+        // Operation completed, so move the input to the output
+        this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
+        this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
+        for (int i = 0; i < this.catalystInv.size(); i++) {
+            this.catalystInv.setItemDirect(i, ItemStack.EMPTY);
         }
+        this.activeWeights = Optional.empty();
+
+        return true;
     }
-    
+
     private Stream<BlockPos> getModifiableBlocks(final SpatialStoragePlot plot) {
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         final BlockPos startPos = plot.getOrigin();
@@ -199,7 +192,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return slot == InventorySlots.INPUT && ImaginarySpaceManipulatorBlockEntity.this.isSpatialCell(stack);
         }
     }
-    
+
     /** @return The work rate, in ticks per operation */
     private double getWorkRate() {
         // TODO Make this configurable
@@ -230,11 +223,15 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 return TickRateModulation.SLEEP;
             }
         }
-        
+
         return TickRateModulation.SAME;
     }
 
     public void updateStatus() {
+        if (this.isClientSide()) {
+            return;
+        }
+
         final int oldStatusCode = this.statusCode;
         if (!this.getMainNode().isActive()) {
             this.statusCode = IsmStatusCodes.MISSING_CHANNEL;
@@ -251,9 +248,12 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         else {
             final ItemStack is = this.inv.getStackInSlot(InventorySlots.INPUT);
             final Optional<SpatialStoragePlot> plotOpt = this.getPlot(is);
-            this.statusCode = plotOpt.isPresent()
-                    ? IsmStatusCodes.READY
-                    : IsmStatusCodes.NOT_FORMATTED;
+            if (plotOpt.isEmpty()) {
+                this.statusCode = IsmStatusCodes.NOT_FORMATTED;
+            }
+            else {
+                this.statusCode = IsmStatusCodes.READY;
+            }
         }
 
         if (oldStatusCode != this.statusCode) {
@@ -262,12 +262,13 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 this.resetProgress();
             }
 
+            this.markForUpdate();
             this.getMainNode().ifPresent((grid, node) -> {
                 grid.getTickManager().wakeDevice(node);
             });
         }
     }
-    
+
     private void resetProgress() {
         this.progressTicks = -1;
         this.maxProgressTicks = -1;
@@ -296,9 +297,13 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         super.writeToStream(data);
         data.writeInt(maxProgressTicks);
         data.writeInt(progressTicks);
+        data.writeInt(statusCode);
 
         for (int i = 0; i < this.inv.size(); i++) {
             data.writeItem(inv.getStackInSlot(i));
+        }
+        for (int i = 0; i < this.catalystInv.size(); i++) {
+            data.writeItem(catalystInv.getStackInSlot(i));
         }
     }
 
@@ -312,9 +317,15 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         final int prevProgress = this.progressTicks;
         this.progressTicks = data.readInt();
         ret |= (prevProgress != this.progressTicks);
+        final int prevStatusCode = this.statusCode;
+        this.statusCode = data.readInt();
+        ret |= (prevStatusCode != this.statusCode);
 
         for (int i = 0; i < this.inv.size(); i++) {
             this.inv.setItemDirect(i, data.readItem());
+        }
+        for (int i = 0; i < this.catalystInv.size(); i++) {
+            this.catalystInv.setItemDirect(i, data.readItem());
         }
 
         return ret;

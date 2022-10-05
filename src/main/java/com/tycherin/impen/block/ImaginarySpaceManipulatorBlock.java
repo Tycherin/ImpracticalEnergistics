@@ -2,9 +2,6 @@ package com.tycherin.impen.block;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 
@@ -24,8 +21,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class ImaginarySpaceManipulatorBlock extends AEBaseEntityBlock<ImaginarySpaceManipulatorBlockEntity> {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     public ImaginarySpaceManipulatorBlock(final Properties props) {
         super(props);
     }
@@ -40,13 +35,13 @@ public class ImaginarySpaceManipulatorBlock extends AEBaseEntityBlock<ImaginaryS
     }
 
     @Override
-    public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p,
+    public InteractionResult onActivated(final Level level, final BlockPos pos, final Player player,
             final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
-        if (!InteractionUtil.isInAlternateUseMode(p)) {
+        if (!InteractionUtil.isInAlternateUseMode(player)) {
             final ImaginarySpaceManipulatorBlockEntity be = this.getBlockEntity(level, pos);
             if (be != null) {
                 if (!level.isClientSide()) {
-                    MenuOpener.open(ImaginarySpaceManipulatorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
+                    MenuOpener.open(ImaginarySpaceManipulatorMenu.TYPE, player, MenuLocators.forBlockEntity(be));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }

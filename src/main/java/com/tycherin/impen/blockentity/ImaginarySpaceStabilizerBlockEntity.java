@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmCatalyst;
 import com.tycherin.impen.logic.ism.IsmCatalystProvider;
-import com.tycherin.impen.logic.ism.IsmService;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNodeListener;
@@ -63,15 +62,12 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
             this.inv.setItemDirect(i, data.readItem());
         }
         
-        this.notifyService();
-
         return ret;
     }
     
     @Override
     public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
         if (reason != IGridNodeListener.State.GRID_BOOT) {
-            this.notifyService();
             this.markForUpdate();
         }
     }
@@ -88,11 +84,6 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
 
     @Override
     public void onChangeInventory(final InternalInventory inv, final int slot) {
-        this.notifyService();
-    }
-    
-    private void notifyService() {
-        IsmService.get(this).ifPresent(service -> service.updateProvider(this));
     }
 
     @Override
@@ -109,5 +100,18 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     public Optional<Item> getCatalyst() {
         final ItemStack is = this.inv.getStackInSlot(0);
         return is.isEmpty() ? Optional.empty() : Optional.of(is.getItem());
+    }
+
+    @Override
+    public Optional<Item> consumeCatalyst() {
+        final ItemStack is = this.inv.getStackInSlot(0);
+        if (is.isEmpty()) {
+            return Optional.empty();
+        }
+        else {
+            final Item item = is.getItem();
+            is.setCount(is.getCount() - 1);
+            return Optional.of(item);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.tycherin.impen.logic.ism;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -24,6 +25,8 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class IsmWeightTracker {
 
+    // TODO Get rid of unused code in this class
+    
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private final Map<String, Item> catalystsByProvider = new HashMap<>();
@@ -84,6 +87,9 @@ public class IsmWeightTracker {
     }
 
     public IsmWeightWrapper getWeights() {
+        if (wrapper == null) {
+            this.rebuildWeightWrapper();
+        }
         return wrapper;
     }
 
@@ -96,7 +102,6 @@ public class IsmWeightTracker {
         IsmCatalyst.getWeights(catalyst).forEach(weight -> {
             runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
         });
-        LOGGER.info("Incremented catalyst {}, oldCount={}, multiplier={}", catalyst, oldCount, multiplier);
     }
 
     private void decrementCatalyst(final Item catalyst) {
@@ -109,9 +114,15 @@ public class IsmWeightTracker {
         // Use oldCount - 1 here because we want to undo using the previous multiplier, not the next one
         final double multiplier = Math.pow(IsmCatalyst.DIMINISHING_RETURNS_RATE, oldCount - 1);
         IsmCatalyst.getWeights(catalyst).forEach(weight -> {
-            runningWeights.merge(weight.block(), -(weight.probability() * multiplier), Double::sum);
+            final double lastValue = runningWeights.get(weight.block());
+            final double newValue = lastValue - (weight.probability() * multiplier);
+            if (newValue >= 0.00001) {
+                runningWeights.remove(weight.block());
+            }
+            else {
+                runningWeights.put(weight.block(), newValue);
+            }
         });
-        LOGGER.info("Decremented catalyst {}, oldCount={}, multiplier={}", catalyst, oldCount, multiplier);
     }
 
     private void rebuildWeightWrapper() {
@@ -119,15 +130,33 @@ public class IsmWeightTracker {
                 .map(entry -> new IsmWeight(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
         // TODO Implement conflict detection
-        this.wrapper = new IsmWeightWrapper(actualWeights, actualWeights, false);
+        this.wrapper = new IsmWeightWrapper(actualWeights, actualWeights, false, actualWeights.size() > 1);
         LOGGER.info("Weights have updated! New weights: {}",
                 String.join(", ", actualWeights.stream().map(Object::toString).collect(Collectors.toList())));
     }
 
     public static record IsmWeightWrapper(List<IsmWeight> displayedWeights, List<IsmWeight> actualWeights,
-            boolean isConflict) {
+            boolean isConflict, boolean hasCatalysts) {
         public Supplier<Block> getSupplier() {
             return new IsmBlockSupplier(actualWeights);
+        }
+
+        /** Creates an IsmWeightWrapper from a given collection of catalyst items */
+        public static IsmWeightWrapper fromCatalysts(final Collection<ItemStack> items) {
+            final IsmWeightTracker tracker = new IsmWeightTracker();
+            for (final ItemStack is : items) {
+                if (!IsmCatalyst.isCatalyst(is)) {
+                    LOGGER.warn("ItemStack {} is not a catalyst and will be ignored", is);
+                    continue;
+                }
+                else {
+                    for (int i = 0; i < is.getCount(); i++) {
+                        tracker.incrementCatalyst(is.getItem());
+                    }
+                }
+            }
+            tracker.rebuildWeightWrapper();
+            return tracker.getWeights();
         }
     }
 
@@ -155,8 +184,6 @@ public class IsmWeightTracker {
             }
 
             this.totalProbability = cumulativeProbability;
-            LOGGER.info("Constructed IsmBlockSupplier. probabilities=({}), blocks=({}), totalProb={}",
-                    Arrays.toString(probabilities), Arrays.toString(blocks), totalProbability);
         }
 
         @Override
