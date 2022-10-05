@@ -3,8 +3,8 @@ package com.tycherin.impen.blockentity;
 import java.util.Optional;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.logic.ism.IsmCatalyst;
 import com.tycherin.impen.logic.ism.IsmCatalystProvider;
+import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNodeListener;
@@ -41,7 +41,8 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return IsmCatalyst.isCatalyst(stack);
+            return ImaginarySpaceStabilizerBlockEntity.this.level.getRecipeManager()
+                    .getRecipeFor(IsmCatalystRecipe.TYPE, inv.toContainer(), level).isPresent();
         }
     }
     

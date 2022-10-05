@@ -13,13 +13,18 @@ import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
+import com.tycherin.impen.recipe.IsmCatalystRecipe;
+import com.tycherin.impen.recipe.IsmCatalystRecipeSerializer;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import net.minecraft.core.Registry;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -48,6 +53,11 @@ public class ImpracticalEnergisticsMod {
             ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
             .create(ForgeRegistries.BLOCK_ENTITIES, ImpracticalEnergisticsMod.MOD_ID);
+    
+    public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
+            .create(Registry.RECIPE_TYPE_REGISTRY, ImpracticalEnergisticsMod.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister
+            .create(ForgeRegistries.RECIPE_SERIALIZERS, ImpracticalEnergisticsMod.MOD_ID);
 
     // Beamed Network Link
     public static final RegistryObject<BeamedNetworkLinkBlock> BEAMED_NETWORK_LINK_BLOCK = BLOCKS
@@ -98,6 +108,11 @@ public class ImpracticalEnergisticsMod {
             () -> new BlockItem(IMAGINARY_SPACE_STABILIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
+    public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
+            .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
+    public static final RegistryObject<RecipeSerializer<?>> ISM_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register("ism_catalyst", () -> IsmCatalystRecipeSerializer.INSTANCE);
+    
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -106,16 +121,18 @@ public class ImpracticalEnergisticsMod {
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        RECIPE_TYPES.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
         
         IsmService.init();
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addGenericListener(MenuType.class, ImpracticalEnergisticsMod::registerMenus);
+        modEventBus.addGenericListener(MenuType.class, this::registerMenus);
     }
     
-    public static void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
+    public void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
                 ImaginarySpaceManipulatorMenu.TYPE,
                 ImaginarySpaceStabilizerMenu.TYPE);

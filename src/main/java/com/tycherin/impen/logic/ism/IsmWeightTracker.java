@@ -2,20 +2,25 @@ package com.tycherin.impen.logic.ism;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
-import net.minecraft.world.item.Item;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 /**
  * Class for tracking weights of blocks for the ISM system
@@ -25,115 +30,10 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class IsmWeightTracker {
 
-    // TODO Get rid of unused code in this class
-    
+    // TODO Make configurable?
+    public static final double DIMINISHING_RETURNS_RATE = 0.75;
+
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    private final Map<String, Item> catalystsByProvider = new HashMap<>();
-    private final Map<Item, Integer> catalystCounts = new HashMap<>();
-    private final Map<Block, Double> runningWeights = new HashMap<>();
-
-    private IsmWeightWrapper wrapper;
-
-    public IsmWeightTracker() {
-        this.runningWeights.put(Blocks.STONE, 100.0); // TODO Switch this over to recipe system
-    }
-
-    public void addProvider(final IsmCatalystProvider provider) {
-        if (provider.getCatalyst().isPresent()) {
-            catalystsByProvider.put(provider.getId(), provider.getCatalyst().get());
-            this.incrementCatalyst(provider.getCatalyst().get());
-            this.rebuildWeightWrapper();
-        }
-    }
-
-    public void removeProvider(final IsmCatalystProvider provider) {
-        final var previousCatalyst = catalystsByProvider.get(provider.getId());
-        if (previousCatalyst != null) {
-            catalystsByProvider.remove(provider.getId());
-            this.decrementCatalyst(previousCatalyst);
-            this.rebuildWeightWrapper();
-        }
-    }
-
-    public void updateProvider(final IsmCatalystProvider provider) {
-        final var previousCatalyst = catalystsByProvider.get(provider.getId());
-        final var newCatalyst = provider.getCatalyst();
-
-        if (previousCatalyst == null) {
-            if (newCatalyst.isEmpty()) {
-                return;
-            }
-            else {
-                this.addProvider(provider);
-            }
-        }
-        else {
-            if (newCatalyst.isEmpty()) {
-                this.removeProvider(provider);
-            }
-            else {
-                if (previousCatalyst.equals(newCatalyst.get())) {
-                    return;
-                }
-                else {
-                    this.decrementCatalyst(previousCatalyst);
-                    this.incrementCatalyst(newCatalyst.get());
-                    catalystsByProvider.put(provider.getId(), newCatalyst.get());
-                    this.rebuildWeightWrapper();
-                }
-            }
-        }
-    }
-
-    public IsmWeightWrapper getWeights() {
-        if (wrapper == null) {
-            this.rebuildWeightWrapper();
-        }
-        return wrapper;
-    }
-
-    private void incrementCatalyst(final Item catalyst) {
-        final int oldCount = catalystCounts.containsKey(catalyst) ? catalystCounts.get(catalyst) : 0;
-        catalystCounts.merge(catalyst, 1, Integer::sum);
-
-        // Multiplier is (newCount - 1) ^ 0.75, which is equivalent to the below code
-        final double multiplier = Math.pow(IsmCatalyst.DIMINISHING_RETURNS_RATE, oldCount);
-        IsmCatalyst.getWeights(catalyst).forEach(weight -> {
-            runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
-        });
-    }
-
-    private void decrementCatalyst(final Item catalyst) {
-        final int oldCount = catalystCounts.get(catalyst);
-        catalystCounts.merge(catalyst, -1, Integer::sum);
-        if (catalystCounts.get(catalyst) == 0) {
-            catalystCounts.remove(catalyst);
-        }
-
-        // Use oldCount - 1 here because we want to undo using the previous multiplier, not the next one
-        final double multiplier = Math.pow(IsmCatalyst.DIMINISHING_RETURNS_RATE, oldCount - 1);
-        IsmCatalyst.getWeights(catalyst).forEach(weight -> {
-            final double lastValue = runningWeights.get(weight.block());
-            final double newValue = lastValue - (weight.probability() * multiplier);
-            if (newValue >= 0.00001) {
-                runningWeights.remove(weight.block());
-            }
-            else {
-                runningWeights.put(weight.block(), newValue);
-            }
-        });
-    }
-
-    private void rebuildWeightWrapper() {
-        final List<IsmWeight> actualWeights = runningWeights.entrySet().stream()
-                .map(entry -> new IsmWeight(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-        // TODO Implement conflict detection
-        this.wrapper = new IsmWeightWrapper(actualWeights, actualWeights, false, actualWeights.size() > 1);
-        LOGGER.info("Weights have updated! New weights: {}",
-                String.join(", ", actualWeights.stream().map(Object::toString).collect(Collectors.toList())));
-    }
 
     public static record IsmWeightWrapper(List<IsmWeight> displayedWeights, List<IsmWeight> actualWeights,
             boolean isConflict, boolean hasCatalysts) {
@@ -142,21 +42,54 @@ public class IsmWeightTracker {
         }
 
         /** Creates an IsmWeightWrapper from a given collection of catalyst items */
-        public static IsmWeightWrapper fromCatalysts(final Collection<ItemStack> items) {
-            final IsmWeightTracker tracker = new IsmWeightTracker();
+        public static IsmWeightWrapper fromCatalysts(final Collection<ItemStack> items, final Level level) {
+            final RecipeManager rm = level.getRecipeManager();
+
+            final Map<IsmCatalystRecipe, Integer> recipeCounts = new HashMap<>();
+            final Map<Block, Double> runningWeights = new HashMap<>();
+
+            final Set<Block> baseBlocks = new HashSet<>();
             for (final ItemStack is : items) {
-                if (!IsmCatalyst.isCatalyst(is)) {
-                    LOGGER.warn("ItemStack {} is not a catalyst and will be ignored", is);
+                final Optional<IsmCatalystRecipe> recipeOpt = rm.getRecipeFor(IsmCatalystRecipe.TYPE, new SimpleContainer(is), level);
+                if (recipeOpt.isEmpty()) {
+                    LOGGER.warn("ItemStack {} has no registered recipes and will be ignored", is);
                     continue;
                 }
                 else {
+                    final IsmCatalystRecipe recipe = recipeOpt.get();
                     for (int i = 0; i < is.getCount(); i++) {
-                        tracker.incrementCatalyst(is.getItem());
+                        final int oldCount = recipeCounts.containsKey(recipe) ? recipeCounts.get(recipe) : 0;
+                        recipeCounts.merge(recipe, 1, Integer::sum);
+
+                        // Multiplier is (newCount - 1) ^ 0.75, which is equivalent to the below code
+                        final double multiplier = Math.pow(IsmWeightTracker.DIMINISHING_RETURNS_RATE, oldCount);
+                        recipe.getWeights().forEach(weight -> {
+                            runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
+                        });
                     }
+                    baseBlocks.add(recipe.getBaseBlock());
                 }
             }
-            tracker.rebuildWeightWrapper();
-            return tracker.getWeights();
+
+            if (baseBlocks.size() > 1) {
+                // TODO Implement conflict detection
+                throw new RuntimeException("Not yet implemented");
+            }
+            final Block baseBlock = baseBlocks.stream().findAny().get();
+
+            final List<IsmWeight> actualWeights = runningWeights.entrySet().stream()
+                    .map(entry -> new IsmWeight(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+
+            final double totalWeight = actualWeights.stream().mapToDouble(IsmWeight::probability).sum();
+            if (totalWeight < 100.0) {
+                actualWeights.add(new IsmWeight(baseBlock, 100 - totalWeight));
+            }
+
+            LOGGER.info("Weights have updated! New weights: {}",
+                    String.join(", ", actualWeights.stream().map(Object::toString).collect(Collectors.toList())));
+
+            return new IsmWeightWrapper(actualWeights, actualWeights, false, actualWeights.size() > 1);
         }
     }
 

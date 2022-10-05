@@ -105,7 +105,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             this.catalystInv.addItems(new ItemStack(item, 1));
         });
         final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
-        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems));
+        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems, this.level));
 
         // TODO Implement locking so that the inputs can't change while we're in progress
         final SpatialStoragePlot plot = this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT)).get();

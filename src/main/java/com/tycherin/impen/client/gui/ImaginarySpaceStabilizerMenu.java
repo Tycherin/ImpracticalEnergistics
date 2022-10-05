@@ -1,7 +1,7 @@
 package com.tycherin.impen.client.gui;
 
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
-import com.tycherin.impen.logic.ism.IsmCatalyst;
+import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
 import appeng.api.config.SecurityPermissions;
 import appeng.api.inventories.InternalInventory;
@@ -9,9 +9,11 @@ import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.slot.AppEngSlot;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ImaginarySpaceStabilizerMenu extends AEBaseMenu {
     
@@ -29,7 +31,7 @@ public class ImaginarySpaceStabilizerMenu extends AEBaseMenu {
     public ImaginarySpaceStabilizerMenu(final int id, final Inventory playerInv, final ImaginarySpaceStabilizerBlockEntity be) {
         super(TYPE, id, playerInv, be);
 
-        this.addSlot(new CatalystItemSlot(be.getInternalInventory(), 0), SlotSemantics.PROCESSING_INPUTS);
+        this.addSlot(new CatalystItemSlot(be.getInternalInventory(), 0, be), SlotSemantics.PROCESSING_INPUTS);
 
         this.createPlayerInventorySlots(playerInv);
     }
@@ -54,13 +56,17 @@ public class ImaginarySpaceStabilizerMenu extends AEBaseMenu {
     }
     
     private static class CatalystItemSlot extends AppEngSlot {
-        public CatalystItemSlot(InternalInventory inv, int invSlot) {
+        private final BlockEntity be;
+        
+        public CatalystItemSlot(InternalInventory inv, int invSlot, BlockEntity be) {
             super(inv, invSlot);
+            this.be = be;
         }
 
         @Override
         public boolean mayPlace(final ItemStack stack) {
-            return super.mayPlace(stack) && IsmCatalyst.isCatalyst(stack);
+            return super.mayPlace(stack) && be.getLevel().getRecipeManager()
+                    .getRecipeFor(IsmCatalystRecipe.TYPE, new SimpleContainer(stack), be.getLevel()).isPresent();
         }
     }
 }
