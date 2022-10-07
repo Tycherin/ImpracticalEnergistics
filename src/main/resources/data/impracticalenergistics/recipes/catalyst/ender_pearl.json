@@ -1,0 +1,15 @@
+{
+    "type": "impracticalenergistics:ism_catalyst",
+    "catalyst_item": {"item": "minecraft:ender_pearl"},
+    "base_block": {"block": "minecraft:end_stone"},
+    "block_weights": [
+        { "block": "minecraft:stone", "value": 99.9 },
+        { "block": "minecraft:podzol", "value": 10 },
+        { "block": "minecraft:sand", "value": 5 },
+        { "block": "minecraft:gold_ore", "value": 0.1 },
+        { "block": "minecraft:diorite", "value": 0.01 },
+        { "block": "minecraft:cobblestone", "value": 10.01 },
+        { "block": "minecraft:red_sand", "value": 10 },
+        { "block": "minecraft:lapis_ore", "value": 10 }
+    ]
+}

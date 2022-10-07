@@ -114,5 +114,6 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
             is.setCount(is.getCount() - 1);
             return Optional.of(item);
         }
+        // TODO What if the catalyst is something in a container, e.g. a bucket of water?
     }
 }

@@ -15,19 +15,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 public class IsmCatalystRecipe implements Recipe<Container> {
-    
-    // TODO Surface these in JEI
 
     public static final RecipeType<IsmCatalystRecipe> TYPE = RecipeType
             .register(new ResourceLocation("impracticalenergistics:ism_catalyst").toString());
 
     private final ResourceLocation id;
-    
+
     private final Item catalyst;
     private final Block baseBlock;
     private final List<IsmWeight> weights;
-    
-    public IsmCatalystRecipe(final ResourceLocation id, final Item catalyst, final Block baseBlock, final List<IsmWeight> weights) {
+
+    public IsmCatalystRecipe(final ResourceLocation id, final Item catalyst, final Block baseBlock,
+            final List<IsmWeight> weights) {
         this.id = id;
         this.catalyst = catalyst;
         this.baseBlock = baseBlock;
@@ -45,7 +44,7 @@ public class IsmCatalystRecipe implements Recipe<Container> {
     public List<IsmWeight> getWeights() {
         return this.weights;
     }
-    
+
     @Override
     public boolean matches(final Container container, final Level level) {
         if (container.getContainerSize() > 1) {
@@ -53,7 +52,7 @@ public class IsmCatalystRecipe implements Recipe<Container> {
         }
         return container.countItem(getCatalyst()) > 0;
     }
-    
+
     // ***
     // Recipe boilerplate
     // ***

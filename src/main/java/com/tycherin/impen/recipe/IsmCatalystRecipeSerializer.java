@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.tycherin.impen.logic.ism.IsmWeight;
@@ -26,6 +27,8 @@ public class IsmCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSerial
 
     public static final IsmCatalystRecipeSerializer INSTANCE = new IsmCatalystRecipeSerializer();
 
+    private static final int MAX_OUTPUTS = 8;
+
     private IsmCatalystRecipeSerializer() {
     }
 
@@ -35,13 +38,21 @@ public class IsmCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSerial
         final Item catalyst = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "catalyst_item"));
         final Block baseBlock = this.getAsBlock(GsonHelper.getAsJsonObject(json, "base_block"));
         final List<IsmWeight> weights = new ArrayList<>();
-        GsonHelper.getAsJsonArray(json, "block_weights").forEach(weightJson -> {
+        // TODO Add dimension restrictions... somehow?
+        final JsonArray blockWeightsJson = GsonHelper.getAsJsonArray(json, "block_weights");
+        if (blockWeightsJson.size() > MAX_OUTPUTS) {
+            throw new JsonSyntaxException(String.format("Too many outputs for '%s'", recipeId));
+        }
+        blockWeightsJson.forEach(weightJson -> {
             if (!weightJson.isJsonObject()) {
                 throw new JsonSyntaxException(String.format("Invalid weight '%s'", weightJson));
             }
             final JsonObject weightObj = weightJson.getAsJsonObject();
             final Block weightBlock = this.getAsBlock(weightObj);
             final Double weightValue = GsonHelper.getAsDouble(weightObj, "value");
+            if ((weightValue > 100) || (weightValue < 0)) {
+                throw new JsonSyntaxException(String.format("Weights must be between 100 and 0 '%s'", weightValue));
+            }
             weights.add(new IsmWeight(weightBlock, weightValue));
         });
 

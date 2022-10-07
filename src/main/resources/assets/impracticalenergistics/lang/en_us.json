@@ -20,5 +20,8 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.no_catalysts": "Blocked - no catalysts available",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue",
     
+    "gui.impracticalenergistics.jei.ism_recipe_title": "Imaginary Space Catalyst",
+    "gui.impracticalenergistics.jei.base_block_explanation": "Base Block - This will spawn by default, unless another block spawns instead",
+    
     "ignore.me": "This space intentionally left blank"
 }
