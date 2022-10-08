@@ -6,8 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class ImaginarySpaceStabilizerScreen extends AEBaseScreen<ImaginarySpaceStabilizerMenu> {
-    
-    
+
     public ImaginarySpaceStabilizerScreen(final ImaginarySpaceStabilizerMenu menu, final Inventory playerInventory,
             final Component title, final ScreenStyle style) {
         super(menu, playerInventory, title, style);

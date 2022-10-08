@@ -4,6 +4,8 @@ import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorScreen;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerScreen;
+import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
+import com.tycherin.impen.client.gui.SpatialCrystallizerScreen;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
 import appeng.client.gui.style.ScreenStyle;
@@ -49,6 +51,12 @@ public class ImpracticalEnergisticsClientSetup {
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_stabilizer.json");
                     return new ImaginarySpaceStabilizerScreen(menu, playerInv, title, style);
+                });
+        MenuScreens.<SpatialCrystallizerMenu, SpatialCrystallizerScreen>register(
+                SpatialCrystallizerMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_crystallizer.json");
+                    return new SpatialCrystallizerScreen(menu, playerInv, title, style);
                 });
     }
 }

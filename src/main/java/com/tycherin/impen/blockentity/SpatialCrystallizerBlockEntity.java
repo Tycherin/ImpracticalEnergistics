@@ -3,9 +3,6 @@ package com.tycherin.impen.blockentity;
 import java.util.EnumSet;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeManager;
@@ -21,12 +18,11 @@ import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final int PROGRESS_TICKS = 60 * 20;
 
@@ -73,7 +69,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
-        return new TickingRequest(1, 10, !this.hasRecipe(), false);
+        return new TickingRequest(1, 1, !this.hasRecipe(), false);
     }
 
     @Override
@@ -103,8 +99,41 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
         return this.getRecipe().isPresent();
     }
 
+    public int getProgress() {
+        return this.progress;
+    }
+    
+    public int getMaxProgress() {
+        return PROGRESS_TICKS;
+    }
+
     public Optional<SpatialCrystallizerRecipe> getRecipe() {
         return SpatialCrystallizerRecipeManager.getRecipe(this.getLevel());
+    }
+
+    @Override
+    protected void writeToStream(final FriendlyByteBuf data) {
+        super.writeToStream(data);
+        data.writeInt(progress);
+
+        for (int i = 0; i < this.inv.size(); i++) {
+            data.writeItem(inv.getStackInSlot(i));
+        }
+    }
+
+    @Override
+    protected boolean readFromStream(final FriendlyByteBuf data) {
+        boolean ret = super.readFromStream(data);
+
+        final int prevProgress = this.progress;
+        this.progress = data.readInt();
+        ret |= (prevProgress != this.progress);
+
+        for (int i = 0; i < this.inv.size(); i++) {
+            this.inv.setItemDirect(i, data.readItem());
+        }
+
+        return ret;
     }
 
     private class InventoryItemFilter implements IAEItemFilter {
