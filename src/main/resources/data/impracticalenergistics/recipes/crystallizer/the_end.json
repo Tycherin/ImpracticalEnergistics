@@ -1,0 +1,5 @@
+{
+    "type": "impracticalenergistics:spatial_crystallizer",
+    "dimension": "minecraft:the_end",
+    "result": {"item": "minecraft:ender_pearl"}
+}

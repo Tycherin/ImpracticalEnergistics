@@ -6,15 +6,19 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
 import com.tycherin.impen.block.ImaginarySpaceStabilizerBlock;
+import com.tycherin.impen.block.SpatialCrystallizerBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.IsmCatalystRecipeSerializer;
+import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
+import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
@@ -108,10 +112,29 @@ public class ImpracticalEnergisticsMod {
             () -> new BlockItem(IMAGINARY_SPACE_STABILIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
+    // Spatial Crystallizer
+    public static final RegistryObject<SpatialCrystallizerBlock> SPATIAL_CRYSTALLIZER_BLOCK = BLOCKS
+            .register("spatial_crystallizer", () -> {
+                return new SpatialCrystallizerBlock(BlockBehaviour.Properties.of(Material.METAL));
+            });
+    public static final RegistryObject<BlockEntityType<SpatialCrystallizerBlockEntity>> SPATIAL_CRYSTALLIZER_BE = BLOCK_ENTITIES
+            .register("spatial_crystallizer_be", () -> {
+                return BlockEntityType.Builder.of(SpatialCrystallizerBlockEntity::new, SPATIAL_CRYSTALLIZER_BLOCK.get())
+                        .build(null);
+            });
+    public static final RegistryObject<Item> SPATIAL_CRYSTALLIZER_ITEM = ITEMS.register(
+            SPATIAL_CRYSTALLIZER_BLOCK.getId().getPath(),
+            () -> new AEBaseBlockItem(SPATIAL_CRYSTALLIZER_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
             .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
     public static final RegistryObject<RecipeSerializer<?>> ISM_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("ism_catalyst", () -> IsmCatalystRecipeSerializer.INSTANCE);
+    public static final RegistryObject<RecipeType<SpatialCrystallizerRecipe>> SPATIAL_CRYSTALLIZER_RECIPE_TYPE = RECIPE_TYPES
+            .register("spatial_crystallizer", () -> SpatialCrystallizerRecipe.TYPE);
+    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register("spatial_crystallizer", () -> SpatialCrystallizerRecipeSerializer.INSTANCE);
     
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -150,5 +173,7 @@ public class ImpracticalEnergisticsMod {
                 IMAGINARY_SPACE_MANIPULATOR_BE.get(), null, null);
         IMAGINARY_SPACE_STABILIZER_BLOCK.get().setBlockEntity(ImaginarySpaceStabilizerBlockEntity.class,
                 IMAGINARY_SPACE_STABILIZER_BE.get(), null, null);
+        SPATIAL_CRYSTALLIZER_BLOCK.get().setBlockEntity(SpatialCrystallizerBlockEntity.class,
+                SPATIAL_CRYSTALLIZER_BE.get(), null, null);
     }
 }

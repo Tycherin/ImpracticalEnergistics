@@ -1,0 +1,5 @@
+{
+    "type": "impracticalenergistics:spatial_crystallizer",
+    "dimension": "minecraft:the_nether",
+    "result": {"item": "minecraft:nether_brick"}
+}
