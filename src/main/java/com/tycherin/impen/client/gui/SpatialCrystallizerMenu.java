@@ -1,8 +1,5 @@
 package com.tycherin.impen.client.gui;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
 
 import appeng.api.config.SecurityPermissions;
@@ -16,8 +13,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
 public class SpatialCrystallizerMenu extends AEBaseMenu implements IProgressProvider {
-    
-    private static final Logger LOGGER = LogUtils.getLogger();
     
     public static final MenuType<SpatialCrystallizerMenu> TYPE = MenuTypeBuilder
             .create(SpatialCrystallizerMenu::new, SpatialCrystallizerBlockEntity.class)
@@ -44,7 +39,6 @@ public class SpatialCrystallizerMenu extends AEBaseMenu implements IProgressProv
     @Override
     public void broadcastChanges() {
         this.progress = ((SpatialCrystallizerBlockEntity) this.getBlockEntity()).getProgress();
-        LOGGER.info("Progress is now: {}", this.progress);
         super.broadcastChanges();
     }
 

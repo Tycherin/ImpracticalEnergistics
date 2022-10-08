@@ -2,6 +2,7 @@ package com.tycherin.impen.integrations;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
+import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -20,6 +21,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
     private static final RecipeType<IsmCatalystRecipe> ISM_CATALYST_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "ism_catalyst", IsmCatalystRecipe.class);
+    private static final RecipeType<SpatialCrystallizerRecipe> SPATIAL_CRYSTALLIZER_RECIPE_TYPE = RecipeType
+            .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_crystallizer", SpatialCrystallizerRecipe.class);
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -28,7 +31,10 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(final IRecipeCategoryRegistration registry) {
-        registry.addRecipeCategories(new IsmCatalystRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+        final var guiHelper = registry.getJeiHelpers().getGuiHelper();
+        registry.addRecipeCategories(
+                new IsmCatalystRecipeCategory(guiHelper),
+                new SpatialCrystallizerRecipeCategory(guiHelper));
     }
 
     @Override
@@ -38,6 +44,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
         registry.addRecipes(ISM_CATALYST_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get()));
+        registry.addRecipes(SPATIAL_CRYSTALLIZER_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()));
 
         // In-world recipes go here
         // https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/forge/1.18.2/src/main/java/appeng/integration/modules/jei/JEIPlugin.java#L140
@@ -53,6 +61,9 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(
                 ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_ITEM.get().getDefaultInstance(),
                 ISM_CATALYST_RECIPE_TYPE);
+        registry.addRecipeCatalyst(
+                ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
+                SPATIAL_CRYSTALLIZER_RECIPE_TYPE);
     }
 
 }

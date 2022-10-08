@@ -22,8 +22,13 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.no_catalysts": "Blocked - no catalysts available",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue",
     
-    "gui.impracticalenergistics.jei.ism_recipe_title": "Imaginary Space Catalyst",
+    "gui.impracticalenergistics.jei.ism_recipe_title": "Imaginary Space Manipulation",
+    "gui.impracticalenergistics.jei.spatial_crystallizer_recipe_title": "Spatial Crystallization",
     "gui.impracticalenergistics.jei.base_block_explanation": "Base Block - This will spawn by default, unless another block spawns instead",
+    
+    "dimension.minecraft:overworld": "Overworld",
+    "dimension.minecraft:the_nether": "The Nether",
+    "dimension.minecraft:the_end": "The End",
     
     "ignore.me": "This space intentionally left blank"
 }
