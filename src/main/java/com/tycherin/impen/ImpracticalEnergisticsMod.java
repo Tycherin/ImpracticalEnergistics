@@ -195,7 +195,6 @@ public class ImpracticalEnergisticsMod {
         SPATIAL_CRYSTALLIZER_BLOCK.get().setBlockEntity(SpatialCrystallizerBlockEntity.class,
                 SPATIAL_CRYSTALLIZER_BE.get(), null, null);
         POSSIBILITY_DISINTEGRATOR_BLOCK.get().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
-                POSSIBILITY_DISINTEGRATOR_BE.get(), null,
-                (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+                POSSIBILITY_DISINTEGRATOR_BE.get(), null, null);
     }
 }
