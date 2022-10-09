@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class SpatialCrystallizerBlock extends AEBaseEntityBlock<SpatialCrystallizerBlockEntity>{
+public class SpatialCrystallizerBlock extends AEBaseEntityBlock<SpatialCrystallizerBlockEntity> {
 
     private static final EnumProperty<Direction> PROP_FACING = EnumProperty.create("facing", Direction.class);
     

@@ -6,10 +6,12 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
 import com.tycherin.impen.block.ImaginarySpaceStabilizerBlock;
+import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialCrystallizerBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
@@ -128,6 +130,21 @@ public class ImpracticalEnergisticsMod {
             () -> new AEBaseBlockItem(SPATIAL_CRYSTALLIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
+    // Possibility Disintegrator
+    public static final RegistryObject<PossibilityDisintegratorBlock> POSSIBILITY_DISINTEGRATOR_BLOCK = BLOCKS
+            .register("possibility_disintegrator", () -> {
+                return new PossibilityDisintegratorBlock(BlockBehaviour.Properties.of(Material.METAL));
+            });
+    public static final RegistryObject<BlockEntityType<PossibilityDisintegratorBlockEntity>> POSSIBILITY_DISINTEGRATOR_BE = BLOCK_ENTITIES
+            .register("possibility_disintegrator_be", () -> {
+                return BlockEntityType.Builder.of(PossibilityDisintegratorBlockEntity::new, POSSIBILITY_DISINTEGRATOR_BLOCK.get())
+                        .build(null);
+            });
+    public static final RegistryObject<Item> POSSIBILITY_DISINTEGRATOR_ITEM = ITEMS.register(
+            POSSIBILITY_DISINTEGRATOR_BLOCK.getId().getPath(),
+            () -> new BlockItem(POSSIBILITY_DISINTEGRATOR_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
             .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
     public static final RegistryObject<RecipeSerializer<?>> ISM_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
@@ -177,5 +194,8 @@ public class ImpracticalEnergisticsMod {
                 IMAGINARY_SPACE_STABILIZER_BE.get(), null, null);
         SPATIAL_CRYSTALLIZER_BLOCK.get().setBlockEntity(SpatialCrystallizerBlockEntity.class,
                 SPATIAL_CRYSTALLIZER_BE.get(), null, null);
+        POSSIBILITY_DISINTEGRATOR_BLOCK.get().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
+                POSSIBILITY_DISINTEGRATOR_BE.get(), null,
+                (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
     }
 }
