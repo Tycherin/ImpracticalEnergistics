@@ -11,6 +11,8 @@ import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.style.StyleManager;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,6 +37,11 @@ public class ImpracticalEnergisticsClientSetup {
     public static void clientSetupEvent(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
+
+            ItemBlockRenderTypes.setRenderLayer(ImpracticalEnergisticsMod.PLANTABLE_CERTUS_BLOCK.get(),
+                    RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ImpracticalEnergisticsMod.PLANTABLE_FLUIX_BLOCK.get(),
+                    RenderType.cutout());
         });
     }
 

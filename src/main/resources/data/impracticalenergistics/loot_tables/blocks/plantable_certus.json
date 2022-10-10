@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:block",
+    "pools": [{
+        "rolls": 1.0,
+        "bonus_rolls": 0.0,
+        "entries": [{
+            "type": "minecraft:alternatives",
+            "children": [
+                {
+                    "type": "minecraft:item",
+                    "conditions": [{
+                        "condition": "minecraft:block_state_property",
+                        "block": "impracticalenergistics:plantable_certus",
+                        "properties": { "age": "3" }
+                    }],
+                    "name": "ae2:certus_quartz_crystal"
+                },
+                {
+                  "type": "minecraft:item",
+                  "name": "impracticalenergistics:plantable_certus_seeds"
+                }
+            ]
+        }]
+    }]
+}

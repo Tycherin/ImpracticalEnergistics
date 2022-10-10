@@ -6,6 +6,8 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.ImaginarySpaceManipulatorBlock;
 import com.tycherin.impen.block.ImaginarySpaceStabilizerBlock;
+import com.tycherin.impen.block.PlantableCertusBlock;
+import com.tycherin.impen.block.PlantableFluixBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialCrystallizerBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
@@ -30,9 +32,11 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -144,6 +148,21 @@ public class ImpracticalEnergisticsMod {
             POSSIBILITY_DISINTEGRATOR_BLOCK.getId().getPath(),
             () -> new BlockItem(POSSIBILITY_DISINTEGRATOR_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
+    // Plantable seeds
+    public static final RegistryObject<PlantableCertusBlock> PLANTABLE_CERTUS_BLOCK = BLOCKS.register(
+            "plantable_certus", () -> new PlantableCertusBlock(BlockBehaviour.Properties.of(Material.PLANT)
+                    .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
+    public static final RegistryObject<Item> PLANTABLE_CERTUS_SEEDS_ITEM = ITEMS.register(
+            "plantable_certus_seeds",
+            () -> new ItemNameBlockItem(PLANTABLE_CERTUS_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
+    public static final RegistryObject<PlantableFluixBlock> PLANTABLE_FLUIX_BLOCK = BLOCKS.register(
+            "plantable_fluix", () -> new PlantableFluixBlock(BlockBehaviour.Properties.of(Material.PLANT)
+                    .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
+    public static final RegistryObject<Item> PLANTABLE_FLUIX_SEEDS_ITEM = ITEMS.register(
+            "plantable_fluix_seeds",
+            () -> new ItemNameBlockItem(PLANTABLE_FLUIX_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
             .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);

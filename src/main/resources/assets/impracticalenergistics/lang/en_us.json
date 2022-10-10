@@ -4,8 +4,12 @@
     "block.impracticalenergistics.imaginary_space_stabilizer": "Imaginary Space Stabilizer",
     "block.impracticalenergistics.spatial_crystallizer": "Spatial Crystallizer",
     "block.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
+    "block.impracticalenergistics.plantable_certus": "Certus Quartz Plant",
+    "block.impracticalenergistics.plantable_fluix": "Fluix Crystal Plant",
     
     "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
+    "item.impracticalenergistics.plantable_certus_seeds": "Plantable Certus Seeds",
+    "item.impracticalenergistics.plantable_fluix_seeds": "Plantable Fluix Seeds",
     
     "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",

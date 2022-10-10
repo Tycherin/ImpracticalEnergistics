@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "ae2:certus_crystal_seed"
+        }
+    ],
+    "result": {
+        "item": "impracticalenergistics:plantable_certus_seeds"
+    }
+}
