@@ -18,6 +18,7 @@ import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
+import com.tycherin.impen.entity.FluixCatalystEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.part.CapturePlanePart;
@@ -29,9 +30,12 @@ import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 import appeng.api.parts.PartModels;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import net.minecraft.core.Registry;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -68,6 +72,8 @@ public class ImpracticalEnergisticsMod {
             ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
             .create(ForgeRegistries.BLOCK_ENTITIES, ImpracticalEnergisticsMod.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES,
+            ImpracticalEnergisticsMod.MOD_ID);
 
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
             .create(Registry.RECIPE_TYPE_REGISTRY, ImpracticalEnergisticsMod.MOD_ID);
@@ -177,6 +183,14 @@ public class ImpracticalEnergisticsMod {
             "plantable_fluix_seeds",
             () -> new ItemNameBlockItem(PLANTABLE_FLUIX_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
+    // Fluix Catalyst
+    public static final RegistryObject<Item> FLUIX_CATALYST_ITEM = ITEMS.register("fluix_catalyst",
+            () -> new CustomEntityItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC), FluixCatalystEntity::new));
+    public static final RegistryObject<EntityType<FluixCatalystEntity>> FLUIX_CATALYST_ENTITY = ENTITIES
+            .register(FLUIX_CATALYST_ITEM.getId().getPath(), () -> EntityType.Builder
+                    .<FluixCatalystEntity>of(FluixCatalystEntity::new, MobCategory.MISC).sized(0.25F, 0.25F)
+                    .clientTrackingRange(6).updateInterval(20).build(MOD_ID));
 
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
             .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
@@ -195,6 +209,7 @@ public class ImpracticalEnergisticsMod {
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        ENTITIES.register(modEventBus);
         RECIPE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
 

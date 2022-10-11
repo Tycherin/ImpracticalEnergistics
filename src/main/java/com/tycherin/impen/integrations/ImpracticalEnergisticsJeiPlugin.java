@@ -1,9 +1,16 @@
 package com.tycherin.impen.integrations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 
+import appeng.core.AEConfig;
+import appeng.core.definitions.AEItems;
+import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterCategory;
+import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterDisplay;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
@@ -12,6 +19,8 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 @JeiPlugin
@@ -47,8 +56,18 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipes(SPATIAL_CRYSTALLIZER_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()));
 
-        // In-world recipes go here
-        // https://github.com/AppliedEnergistics/Applied-Energistics-2/blob/forge/1.18.2/src/main/java/appeng/integration/modules/jei/JEIPlugin.java#L140
+        final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
+        if (AEConfig.instance().isInWorldFluixEnabled()) {
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE),
+                            Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
+                            Ingredient.of(ImpracticalEnergisticsMod.FLUIX_CATALYST_ITEM.get())),
+                    AEItems.FLUIX_DUST.stack(4),
+                    false));
+        }
+        // Make a new RecipeType here because AE2 is still doing things the old way
+        registry.addRecipes(new RecipeType<>(ThrowingInWaterCategory.ID, ThrowingInWaterDisplay.class), waterRecipes);
 
         // Item descriptions go here
     }

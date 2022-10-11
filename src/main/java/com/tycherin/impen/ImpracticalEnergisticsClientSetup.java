@@ -14,8 +14,10 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -27,6 +29,7 @@ public class ImpracticalEnergisticsClientSetup {
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(ImpracticalEnergisticsClientSetup::modelRegistryEvent);
         modEventBus.addListener(ImpracticalEnergisticsClientSetup::clientSetupEvent);
+        modEventBus.addListener(ImpracticalEnergisticsClientSetup::registerEntityRenderers);
     }
 
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
@@ -65,5 +68,9 @@ public class ImpracticalEnergisticsClientSetup {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_crystallizer.json");
                     return new SpatialCrystallizerScreen(menu, playerInv, title, style);
                 });
+    }
+
+    public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ImpracticalEnergisticsMod.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
     }
 }
