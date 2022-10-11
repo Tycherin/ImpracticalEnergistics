@@ -20,13 +20,17 @@ import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.logic.ism.IsmService;
+import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.IsmCatalystRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 
+import appeng.api.parts.PartModels;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.items.parts.PartItem;
+import appeng.items.parts.PartModelsHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -64,7 +68,7 @@ public class ImpracticalEnergisticsMod {
             ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister
             .create(ForgeRegistries.BLOCK_ENTITIES, ImpracticalEnergisticsMod.MOD_ID);
-    
+
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
             .create(Registry.RECIPE_TYPE_REGISTRY, ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister
@@ -88,7 +92,7 @@ public class ImpracticalEnergisticsMod {
 
     public static final RegistryObject<LunchboxCellItem> LUNCHBOX_CELL_ITEM = ITEMS.register("lunchbox_cell",
             () -> new LunchboxCellItem());
-    
+
     // Imaginary Space Manipulator
     public static final RegistryObject<ImaginarySpaceManipulatorBlock> IMAGINARY_SPACE_MANIPULATOR_BLOCK = BLOCKS
             .register("imaginary_space_manipulator", () -> {
@@ -96,14 +100,15 @@ public class ImpracticalEnergisticsMod {
             });
     public static final RegistryObject<BlockEntityType<ImaginarySpaceManipulatorBlockEntity>> IMAGINARY_SPACE_MANIPULATOR_BE = BLOCK_ENTITIES
             .register("imaginary_space_manipulator_be", () -> {
-                return BlockEntityType.Builder.of(ImaginarySpaceManipulatorBlockEntity::new, IMAGINARY_SPACE_MANIPULATOR_BLOCK.get())
+                return BlockEntityType.Builder
+                        .of(ImaginarySpaceManipulatorBlockEntity::new, IMAGINARY_SPACE_MANIPULATOR_BLOCK.get())
                         .build(null);
             });
     public static final RegistryObject<Item> IMAGINARY_SPACE_MANIPULATOR_ITEM = ITEMS.register(
             IMAGINARY_SPACE_MANIPULATOR_BLOCK.getId().getPath(),
             () -> new BlockItem(IMAGINARY_SPACE_MANIPULATOR_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+
     // Imaginary Space Stabilizer
     public static final RegistryObject<ImaginarySpaceStabilizerBlock> IMAGINARY_SPACE_STABILIZER_BLOCK = BLOCKS
             .register("imaginary_space_stabilizer", () -> {
@@ -111,14 +116,15 @@ public class ImpracticalEnergisticsMod {
             });
     public static final RegistryObject<BlockEntityType<ImaginarySpaceStabilizerBlockEntity>> IMAGINARY_SPACE_STABILIZER_BE = BLOCK_ENTITIES
             .register("imaginary_space_stabilizer_be", () -> {
-                return BlockEntityType.Builder.of(ImaginarySpaceStabilizerBlockEntity::new, IMAGINARY_SPACE_STABILIZER_BLOCK.get())
+                return BlockEntityType.Builder
+                        .of(ImaginarySpaceStabilizerBlockEntity::new, IMAGINARY_SPACE_STABILIZER_BLOCK.get())
                         .build(null);
             });
     public static final RegistryObject<Item> IMAGINARY_SPACE_STABILIZER_ITEM = ITEMS.register(
             IMAGINARY_SPACE_STABILIZER_BLOCK.getId().getPath(),
             () -> new BlockItem(IMAGINARY_SPACE_STABILIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+
     // Spatial Crystallizer
     public static final RegistryObject<SpatialCrystallizerBlock> SPATIAL_CRYSTALLIZER_BLOCK = BLOCKS
             .register("spatial_crystallizer", () -> {
@@ -133,7 +139,7 @@ public class ImpracticalEnergisticsMod {
             SPATIAL_CRYSTALLIZER_BLOCK.getId().getPath(),
             () -> new AEBaseBlockItem(SPATIAL_CRYSTALLIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+
     // Possibility Disintegrator
     public static final RegistryObject<PossibilityDisintegratorBlock> POSSIBILITY_DISINTEGRATOR_BLOCK = BLOCKS
             .register("possibility_disintegrator", () -> {
@@ -141,29 +147,37 @@ public class ImpracticalEnergisticsMod {
             });
     public static final RegistryObject<BlockEntityType<PossibilityDisintegratorBlockEntity>> POSSIBILITY_DISINTEGRATOR_BE = BLOCK_ENTITIES
             .register("possibility_disintegrator_be", () -> {
-                return BlockEntityType.Builder.of(PossibilityDisintegratorBlockEntity::new, POSSIBILITY_DISINTEGRATOR_BLOCK.get())
+                return BlockEntityType.Builder
+                        .of(PossibilityDisintegratorBlockEntity::new, POSSIBILITY_DISINTEGRATOR_BLOCK.get())
                         .build(null);
             });
     public static final RegistryObject<Item> POSSIBILITY_DISINTEGRATOR_ITEM = ITEMS.register(
             POSSIBILITY_DISINTEGRATOR_BLOCK.getId().getPath(),
             () -> new BlockItem(POSSIBILITY_DISINTEGRATOR_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+
+    // Capture Plane
+    public static final RegistryObject<Item> CAPTURE_PLANE_ITEM = ITEMS.register(
+            "capture_plane", () -> new PartItem<>(new Item.Properties().tab(CreativeModeTab.TAB_MISC),
+                    CapturePlanePart.class, (part) -> new CapturePlanePart(part)));
+
     // Plantable seeds
     public static final RegistryObject<PlantableCertusBlock> PLANTABLE_CERTUS_BLOCK = BLOCKS.register(
             "plantable_certus", () -> new PlantableCertusBlock(BlockBehaviour.Properties.of(Material.PLANT)
                     .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
     public static final RegistryObject<Item> PLANTABLE_CERTUS_SEEDS_ITEM = ITEMS.register(
             "plantable_certus_seeds",
-            () -> new ItemNameBlockItem(PLANTABLE_CERTUS_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+            () -> new ItemNameBlockItem(PLANTABLE_CERTUS_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
     public static final RegistryObject<PlantableFluixBlock> PLANTABLE_FLUIX_BLOCK = BLOCKS.register(
             "plantable_fluix", () -> new PlantableFluixBlock(BlockBehaviour.Properties.of(Material.PLANT)
                     .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
     public static final RegistryObject<Item> PLANTABLE_FLUIX_SEEDS_ITEM = ITEMS.register(
             "plantable_fluix_seeds",
-            () -> new ItemNameBlockItem(PLANTABLE_FLUIX_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-    
+            () -> new ItemNameBlockItem(PLANTABLE_FLUIX_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
             .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
     public static final RegistryObject<RecipeSerializer<?>> ISM_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
@@ -172,7 +186,7 @@ public class ImpracticalEnergisticsMod {
             .register("spatial_crystallizer", () -> SpatialCrystallizerRecipe.TYPE);
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("spatial_crystallizer", () -> SpatialCrystallizerRecipeSerializer.INSTANCE);
-    
+
     public ImpracticalEnergisticsMod() {
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -183,15 +197,19 @@ public class ImpracticalEnergisticsMod {
         BLOCK_ENTITIES.register(modEventBus);
         RECIPE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
-        
+
         IsmService.init();
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addGenericListener(MenuType.class, this::registerMenus);
+
+        MinecraftForge.EVENT_BUS.addListener(CapturePlanePart::handleProjectileEvent);
+
+        PartModels.registerModels(PartModelsHelper.createModels(CapturePlanePart.class));
     }
-    
+
     public void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
                 ImaginarySpaceManipulatorMenu.TYPE,

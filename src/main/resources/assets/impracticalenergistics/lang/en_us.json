@@ -10,6 +10,7 @@
     "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
     "item.impracticalenergistics.plantable_certus_seeds": "Plantable Certus Seeds",
     "item.impracticalenergistics.plantable_fluix_seeds": "Plantable Fluix Seeds",
+    "item.impracticalenergistics.capture_plane": "Capture Plane",
     
     "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",
