@@ -119,10 +119,10 @@ public class FluixCatalystEntity extends ItemEntity {
             final double ySpeed = RAND.nextDouble() * .25 - 0.125;
             final double zSpeed = RAND.nextDouble() * .25 - 0.125;
 
-            final ItemEntity entity = new ItemEntity(this.level, x, y, z, AEItems.FLUIX_DUST.stack(4));
-            entity.setDeltaMovement(xSpeed, ySpeed, zSpeed);
-            this.level.addFreshEntity(entity);
-
+            final ItemEntity itemEntity = new ItemEntity(level, x, y, z, AEItems.FLUIX_DUST.stack(4));
+            itemEntity.setDeltaMovement(xSpeed, ySpeed, zSpeed);
+            level.addFreshEntity(itemEntity);
+            
             return true;
         }
         else {

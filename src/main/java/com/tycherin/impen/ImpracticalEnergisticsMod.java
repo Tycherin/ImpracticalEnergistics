@@ -10,11 +10,13 @@ import com.tycherin.impen.block.PlantableCertusBlock;
 import com.tycherin.impen.block.PlantableFluixBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialCrystallizerBlock;
+import com.tycherin.impen.block.ToasterDriveBlock;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
+import com.tycherin.impen.blockentity.ToasterDriveBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
@@ -30,6 +32,7 @@ import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 import appeng.api.parts.PartModels;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.blockentity.storage.ChestBlockEntity;
 import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
@@ -162,6 +165,17 @@ public class ImpracticalEnergisticsMod {
             () -> new BlockItem(POSSIBILITY_DISINTEGRATOR_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
+    // Toaster Drive
+    public static final RegistryObject<ToasterDriveBlock> TOASTER_DRIVE_BLOCK = BLOCKS
+            .register("toaster_drive", () -> new ToasterDriveBlock());
+    public static final RegistryObject<BlockEntityType<ToasterDriveBlockEntity>> TOASTER_DRIVE_BE = BLOCK_ENTITIES
+            .register("toaster_drive_be", () -> BlockEntityType.Builder.of(ToasterDriveBlockEntity::new, TOASTER_DRIVE_BLOCK.get())
+                        .build(null));
+    public static final RegistryObject<Item> TOASTER_DRIVE_ITEM = ITEMS.register(
+            TOASTER_DRIVE_BLOCK.getId().getPath(),
+            () -> new AEBaseBlockItem(TOASTER_DRIVE_BLOCK.get(),
+                    new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    
     // Capture Plane
     public static final RegistryObject<Item> CAPTURE_PLANE_ITEM = ITEMS.register(
             "capture_plane", () -> new PartItem<>(new Item.Properties().tab(CreativeModeTab.TAB_MISC),
@@ -248,5 +262,7 @@ public class ImpracticalEnergisticsMod {
                 SPATIAL_CRYSTALLIZER_BE.get(), null, null);
         POSSIBILITY_DISINTEGRATOR_BLOCK.get().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
                 POSSIBILITY_DISINTEGRATOR_BE.get(), null, null);
+        TOASTER_DRIVE_BLOCK.get().setBlockEntity(ToasterDriveBlockEntity.class, TOASTER_DRIVE_BE.get(), null,
+                (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
     }
 }
