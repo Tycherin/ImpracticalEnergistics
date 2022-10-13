@@ -21,7 +21,13 @@ import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
 import com.tycherin.impen.entity.FluixCatalystEntity;
+import com.tycherin.impen.entity.SpatialToolCatalystEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
+import com.tycherin.impen.item.SpatialAxeItem;
+import com.tycherin.impen.item.SpatialHoeItem;
+import com.tycherin.impen.item.SpatialPickaxeItem;
+import com.tycherin.impen.item.SpatialSpadeItem;
+import com.tycherin.impen.item.SpatialSwordItem;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
@@ -32,7 +38,6 @@ import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 import appeng.api.parts.PartModels;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
-import appeng.blockentity.storage.ChestBlockEntity;
 import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
@@ -204,6 +209,25 @@ public class ImpracticalEnergisticsMod {
     public static final RegistryObject<EntityType<FluixCatalystEntity>> FLUIX_CATALYST_ENTITY = ENTITIES
             .register(FLUIX_CATALYST_ITEM.getId().getPath(), () -> EntityType.Builder
                     .<FluixCatalystEntity>of(FluixCatalystEntity::new, MobCategory.MISC).sized(0.25F, 0.25F)
+                    .clientTrackingRange(6).updateInterval(20).build(MOD_ID));
+
+    // Tools
+    public static final RegistryObject<Item> SPATIAL_AXE_ITEM = ITEMS.register("spatial_axe",
+            () -> new SpatialAxeItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> SPATIAL_HOE_ITEM = ITEMS.register("spatial_hoe",
+            () -> new SpatialHoeItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> SPATIAL_PICKAXE_ITEM = ITEMS.register("spatial_pickaxe",
+            () -> new SpatialPickaxeItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> SPATIAL_SPADE_ITEM = ITEMS.register("spatial_spade",
+            () -> new SpatialSpadeItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> SPATIAL_SWORD_ITEM = ITEMS.register("spatial_sword",
+            () -> new SpatialSwordItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+
+    public static final RegistryObject<Item> SPATIAL_TOOL_CATALYST_ITEM = ITEMS.register("spatial_tool_catalyst",
+            () -> new CustomEntityItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC), SpatialToolCatalystEntity::new));
+    public static final RegistryObject<EntityType<SpatialToolCatalystEntity>> SPATIAL_TOOL_CATALYST_ENTITY = ENTITIES
+            .register(SPATIAL_TOOL_CATALYST_ITEM.getId().getPath(), () -> EntityType.Builder
+                    .<SpatialToolCatalystEntity>of(SpatialToolCatalystEntity::new, MobCategory.MISC).sized(0.25F, 0.25F)
                     .clientTrackingRange(6).updateInterval(20).build(MOD_ID));
 
     public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES

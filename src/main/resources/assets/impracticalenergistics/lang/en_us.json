@@ -13,6 +13,12 @@
     "item.impracticalenergistics.plantable_fluix_seeds": "Plantable Fluix Seeds",
     "item.impracticalenergistics.capture_plane": "Capture Plane",
     "item.impracticalenergistics.fluix_catalyst": "Fluix Catalyst",
+    "item.impracticalenergistics.spatial_tool_catalyst": "Spatial Tool Catalyst",
+    "item.impracticalenergistics.spatial_axe": "Spatial Axe",
+    "item.impracticalenergistics.spatial_hoe": "Spatial Hoe",
+    "item.impracticalenergistics.spatial_pickaxe": "Spatial Pickaxe",
+    "item.impracticalenergistics.spatial_spade": "Spatial Spade",
+    "item.impracticalenergistics.spatial_sword": "Spatial Sword",
     
     "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",

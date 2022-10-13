@@ -72,5 +72,6 @@ public class ImpracticalEnergisticsClientSetup {
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ImpracticalEnergisticsMod.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
+        event.registerEntityRenderer(ImpracticalEnergisticsMod.SPATIAL_TOOL_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
     }
 }
