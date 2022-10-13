@@ -253,7 +253,7 @@ public class ImpracticalEnergisticsMod {
         ENTITIES.register(modEventBus);
         RECIPE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
-
+        
         IsmService.init();
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
