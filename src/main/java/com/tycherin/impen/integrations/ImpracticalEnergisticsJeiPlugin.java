@@ -3,6 +3,10 @@ package com.tycherin.impen.integrations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+
+import com.google.common.collect.ImmutableList;
+import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
@@ -13,12 +17,15 @@ import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterCategory;
 import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterDisplay;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -26,12 +33,17 @@ import net.minecraft.world.item.crafting.RecipeManager;
 @JeiPlugin
 public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     private static final ResourceLocation PLUGIN_ID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "core");
 
     private static final RecipeType<IsmCatalystRecipe> ISM_CATALYST_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "ism_catalyst", IsmCatalystRecipe.class);
     private static final RecipeType<SpatialCrystallizerRecipe> SPATIAL_CRYSTALLIZER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_crystallizer", SpatialCrystallizerRecipe.class);
+    
+    private static final List<Item> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
+            ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_ITEM.get());
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -69,7 +81,13 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         // Make a new RecipeType here because AE2 is still doing things the old way
         registry.addRecipes(new RecipeType<>(ThrowingInWaterCategory.ID, ThrowingInWaterDisplay.class), waterRecipes);
 
-        // Item descriptions go here
+        ITEMS_WITH_DESCRIPTION.forEach(item -> {
+            LOGGER.info("Boop the snoot: {}", item.getRegistryName().getPath());
+            final String translationKey = "jei.impracticalenergistics.description."
+                    + item.getRegistryName().getPath();
+            registry.addIngredientInfo(item.getDefaultInstance(), VanillaTypes.ITEM_STACK,
+                    new TranslatableComponent(translationKey));
+        });
     }
 
     @Override

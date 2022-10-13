@@ -38,5 +38,7 @@
     "dimension.minecraft:the_nether": "The Nether",
     "dimension.minecraft:the_end": "The End",
     
+    "jei.impracticalenergistics.description.beamed_network_link": "Beamed Network Link blocks can be used to link AE2 networks across distances without cables. If two BNLs are within 16 blocks of each other, and they are facing each other, they will connect automatically.",
+    
     "ignore.me": "This space intentionally left blank"
 }
