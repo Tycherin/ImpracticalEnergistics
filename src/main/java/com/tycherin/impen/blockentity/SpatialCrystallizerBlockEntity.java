@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeManager;
 
@@ -24,19 +25,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
 
-    private static final int PROGRESS_TICKS = 60 * 20;
+//    private static final int PROGRESS_TICKS = 60 * 20;
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 1);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
-
+    private final int baseProgressTicks;
+    
     private int progress = 0;
 
     public SpatialCrystallizerBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_BE.get(), pos, blockState);
 
         this.getMainNode()
-                .setIdlePowerUsage(10.0)
+                .setIdlePowerUsage(ImpenConfig.POWER.spaceCrystallizerCost())
                 .addService(IGridTickable.class, this);
+        this.baseProgressTicks = ImpenConfig.SETTINGS.spatialCrystallizerWorkRate();
     }
 
     @Override
@@ -80,7 +83,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
 
         this.progress += ticksSinceLastCall;
 
-        if (this.progress > PROGRESS_TICKS) {
+        if (this.progress > this.baseProgressTicks) {
             final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResultItem());
             if (leftover.equals(ItemStack.EMPTY)) {
                 this.progress = 0;
@@ -104,7 +107,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
     }
     
     public int getMaxProgress() {
-        return PROGRESS_TICKS;
+        return this.baseProgressTicks;
     }
 
     public Optional<SpatialCrystallizerRecipe> getRecipe() {

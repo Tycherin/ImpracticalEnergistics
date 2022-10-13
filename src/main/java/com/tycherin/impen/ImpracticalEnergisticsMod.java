@@ -20,7 +20,7 @@ import com.tycherin.impen.blockentity.ToasterDriveBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
-import com.tycherin.impen.config.ImpracticalEnergisticsConfig;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.entity.FluixCatalystEntity;
 import com.tycherin.impen.entity.SpatialToolCatalystEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -265,7 +265,7 @@ public class ImpracticalEnergisticsMod {
 
         PartModels.registerModels(PartModelsHelper.createModels(CapturePlanePart.class));
         
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImpracticalEnergisticsConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImpenConfig.SPEC);
     }
 
     public void registerMenus(RegistryEvent.Register<MenuType<?>> event) {

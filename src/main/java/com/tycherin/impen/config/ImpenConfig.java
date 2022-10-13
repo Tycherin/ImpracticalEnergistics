@@ -7,16 +7,16 @@ import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
-public class ImpracticalEnergisticsConfig {
+public class ImpenConfig {
 
-    private static final ImpracticalEnergisticsConfig INSTANCE;
+    private static final ImpenConfig INSTANCE;
     public static final FeatureFlags FLAGS;
     public static final ForgeConfigSpec SPEC;
     public static final PowerValues POWER;
     public static final MiscellaneousConfig MISC;
     public static final MachineSettings SETTINGS;
     static {
-        INSTANCE = new ImpracticalEnergisticsConfig();
+        INSTANCE = new ImpenConfig();
         FLAGS = INSTANCE.flags;
         SPEC = INSTANCE.spec;
         POWER = INSTANCE.power;
@@ -30,7 +30,7 @@ public class ImpracticalEnergisticsConfig {
     private final MachineSettings settings;
     private final MiscellaneousConfig misc;
 
-    public ImpracticalEnergisticsConfig() {
+    public ImpenConfig() {
         final Builder builder = new Builder();
 
         builder.push("FeatureFlags");
@@ -130,7 +130,6 @@ public class ImpracticalEnergisticsConfig {
         private final DoubleValue globalModifier;
         private final IntValue bnl;
         private final IntValue ism;
-        private final IntValue iss;
         private final IntValue psdTick;
         private final IntValue psdOp;
         private final IntValue spc;
@@ -144,8 +143,6 @@ public class ImpracticalEnergisticsConfig {
                     .defineInRange("beamed_network_link", 10, 0, Integer.MAX_VALUE);
             this.ism = builder.comment("Imaginary Space Manipulator consumption per operation")
                     .defineInRange("imaginary_space_manipulator", 10, 0, Integer.MAX_VALUE);
-            this.iss = builder.comment("Imaginary Space Stabilizer consumption per tick")
-                    .defineInRange("imaginary_space_stabilizer", 10, 0, Integer.MAX_VALUE);
             this.psdTick = builder.comment("Possibility Disintegrator consumption per tick")
                     .defineInRange("possibility_disintegrator_tick", 10, 0, Integer.MAX_VALUE);
             this.psdOp = builder.comment("Possibility Disintegrator consumption per operation")
@@ -160,10 +157,6 @@ public class ImpracticalEnergisticsConfig {
 
         public double imaginarySpaceManipulatorCost() {
             return ism.get() * globalModifier.get();
-        }
-
-        public double imaginarySpaceStabilizerCost() {
-            return iss.get() * globalModifier.get();
         }
 
         public double possibilityDisintegratorCostTick() {

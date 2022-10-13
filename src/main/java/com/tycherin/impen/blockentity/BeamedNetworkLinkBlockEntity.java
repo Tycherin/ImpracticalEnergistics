@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 
 import appeng.api.exceptions.ExistingConnectionException;
 import appeng.api.exceptions.FailedConnectionException;
@@ -34,9 +35,9 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
         implements IPowerChannelState, ServerTickingBlockEntity {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private static final int MAX_DISTANCE = 16;
     private static final int CHECK_INTERVAL = 20;
 
+    private final int maxRange;
     private boolean dirtyBit = false;
     private int ticksUntilNextCheck = 0;
     private boolean hasPower = false;
@@ -77,8 +78,11 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
 
         this.getMainNode()
                 .setExposedOnSides(EnumSet.noneOf(Direction.class))
-                .setIdlePowerUsage(10) // TODO This should only be drained if the BNL is active
+                // TODO This should only be drained if the BNL is active
+                .setIdlePowerUsage(ImpenConfig.POWER.beamedNetworkLinkCost())
                 .setFlags(); // force to not require a channel
+        
+        this.maxRange = ImpenConfig.SETTINGS.beamedNetworkLinkRange();
     }
 
     // ***
@@ -312,7 +316,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
         int checkDistance = 0;
         BeamedNetworkLinkBlockEntity targetBnl = null;
 
-        for (; checkDistance < MAX_DISTANCE; checkDistance++) {
+        for (; checkDistance < this.maxRange; checkDistance++) {
             checkPos = switch (this.getForward()) {
             case UP -> checkPos.above();
             case DOWN -> checkPos.below();
@@ -366,7 +370,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             }
         }
 
-        if (checkDistance == MAX_DISTANCE) {
+        if (checkDistance == this.maxRange) {
             checkDistance = -1;
         }
 

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
@@ -45,13 +46,13 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final Random RAND = new Random();
-    private static final int DISINTEGRATION_DELAY_TICKS = 2 * 20;
     private static final DamageSource DAMAGE_SOURCE = new DamageSource("possibility_disintegrator");
 
     private static final double EGG_CHANCE_BASE = .4;
     private static final double LOOT_CHANCE_BASE = .1;
 
     private final Map<Mob, TargetStats> targets = new HashMap<>();
+    private final int ticksPerOperation;
 
     private static class TargetStats {
         public int disintegrationDelay = 0;
@@ -65,8 +66,9 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
         this.getMainNode()
                 .setExposedOnSides(EnumSet.complementOf(EnumSet.of(Direction.UP)))
                 .addService(IGridTickable.class, this)
-                .setIdlePowerUsage(10.0)
+                .setIdlePowerUsage(ImpenConfig.POWER.possibilityDisintegratorCostTick())
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
+        this.ticksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
     }
 
     public void handleEntity(final Entity entity) {
@@ -116,7 +118,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
             else {
                 final var stats = entry.getValue();
                 stats.disintegrationDelay += ticksSinceLastCall;
-                if (stats.disintegrationDelay >= DISINTEGRATION_DELAY_TICKS) {
+                if (stats.disintegrationDelay >= this.ticksPerOperation) {
                     this.disintegrate(target, stats);
                     if (target.isAlive()) {
                         stats.disintegrationDelay = 0;
