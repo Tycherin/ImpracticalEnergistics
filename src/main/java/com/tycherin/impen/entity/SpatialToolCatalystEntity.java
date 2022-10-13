@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 
 import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
@@ -60,7 +61,7 @@ public class SpatialToolCatalystEntity extends ItemEntity {
     public void tick() {
         super.tick();
 
-        if (this.isRemoved() || !AEConfig.instance().isInWorldFluixEnabled()) {
+        if (this.isRemoved() || !ImpenConfig.MISC.isInWorldCraftingEnabled()) {
             return;
         }
 

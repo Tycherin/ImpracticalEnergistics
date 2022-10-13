@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 
-import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
@@ -49,7 +49,7 @@ public class FluixCatalystEntity extends ItemEntity {
     public void tick() {
         super.tick();
 
-        if (this.isRemoved() || !AEConfig.instance().isInWorldFluixEnabled()) {
+        if (this.isRemoved() || !ImpenConfig.MISC.isInWorldCraftingEnabled()) {
             return;
         }
 
