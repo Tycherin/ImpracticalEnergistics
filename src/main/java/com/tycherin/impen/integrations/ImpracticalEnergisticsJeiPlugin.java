@@ -3,10 +3,7 @@ package com.tycherin.impen.integrations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-
 import com.google.common.collect.ImmutableList;
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
@@ -33,8 +30,6 @@ import net.minecraft.world.item.crafting.RecipeManager;
 @JeiPlugin
 public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-    
     private static final ResourceLocation PLUGIN_ID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "core");
 
     private static final RecipeType<IsmCatalystRecipe> ISM_CATALYST_RECIPE_TYPE = RecipeType
@@ -82,7 +77,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipes(new RecipeType<>(ThrowingInWaterCategory.ID, ThrowingInWaterDisplay.class), waterRecipes);
 
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
-            LOGGER.info("Boop the snoot: {}", item.getRegistryName().getPath());
             final String translationKey = "jei.impracticalenergistics.description."
                     + item.getRegistryName().getPath();
             registry.addIngredientInfo(item.getDefaultInstance(), VanillaTypes.ITEM_STACK,
