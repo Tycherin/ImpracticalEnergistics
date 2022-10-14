@@ -50,6 +50,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -233,12 +234,13 @@ public class ImpracticalEnergisticsMod {
                     .<SpatialToolCatalystEntity>of(SpatialToolCatalystEntity::new, MobCategory.MISC).sized(0.25F, 0.25F)
                     .clientTrackingRange(6).updateInterval(20).build(MOD_ID));
 
-    public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE = RECIPE_TYPES
-            .register("ism_catalyst", () -> IsmCatalystRecipe.TYPE);
+    // Custom recipe types
+    public static final RegistryObject<RecipeType<IsmCatalystRecipe>> ISM_CATALYST_RECIPE_TYPE =
+            ImpracticalEnergisticsMod.<IsmCatalystRecipe>makeRecipeType("ism_catalyst");
     public static final RegistryObject<RecipeSerializer<?>> ISM_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("ism_catalyst", () -> IsmCatalystRecipeSerializer.INSTANCE);
-    public static final RegistryObject<RecipeType<SpatialCrystallizerRecipe>> SPATIAL_CRYSTALLIZER_RECIPE_TYPE = RECIPE_TYPES
-            .register("spatial_crystallizer", () -> SpatialCrystallizerRecipe.TYPE);
+    public static final RegistryObject<RecipeType<SpatialCrystallizerRecipe>> SPATIAL_CRYSTALLIZER_RECIPE_TYPE =
+            ImpracticalEnergisticsMod.<SpatialCrystallizerRecipe>makeRecipeType("spatial_crystallizer");
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register("spatial_crystallizer", () -> SpatialCrystallizerRecipeSerializer.INSTANCE);
 
@@ -268,13 +270,13 @@ public class ImpracticalEnergisticsMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImpenConfig.SPEC);
     }
 
-    public void registerMenus(RegistryEvent.Register<MenuType<?>> event) {
+    public void registerMenus(final RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
                 ImaginarySpaceManipulatorMenu.TYPE,
                 ImaginarySpaceStabilizerMenu.TYPE,
                 SpatialCrystallizerMenu.TYPE);
     }
-
+    
     private static RegistryObject<Item> createBlockItem(final RegistryObject<? extends Block> block) {
         return ITEMS.register(block.getId().getPath(),
                 () -> new BlockItem(block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
@@ -293,5 +295,14 @@ public class ImpracticalEnergisticsMod {
                 POSSIBILITY_DISINTEGRATOR_BE.get(), null, null);
         TOASTER_DRIVE_BLOCK.get().setBlockEntity(ToasterDriveBlockEntity.class, TOASTER_DRIVE_BE.get(), null,
                 (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+    }
+    
+    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {
+        return RECIPE_TYPES.register(key, () -> new RecipeType<T>() {
+            @Override
+            public String toString() {
+                return key;
+            }
+        });
     }
 }

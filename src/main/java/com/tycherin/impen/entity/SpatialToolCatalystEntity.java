@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
 
-import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;

@@ -42,7 +42,8 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             return ImaginarySpaceStabilizerBlockEntity.this.level.getRecipeManager()
-                    .getRecipeFor(IsmCatalystRecipe.TYPE, inv.toContainer(), level).isPresent();
+                    .getRecipeFor(ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get(), inv.toContainer(), level)
+                    .isPresent();
         }
     }
     

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
 import net.minecraft.world.SimpleContainer;
@@ -50,7 +51,8 @@ public class IsmWeightTracker {
 
             final Set<Block> baseBlocks = new HashSet<>();
             for (final ItemStack is : items) {
-                final Optional<IsmCatalystRecipe> recipeOpt = rm.getRecipeFor(IsmCatalystRecipe.TYPE, new SimpleContainer(is), level);
+                final Optional<IsmCatalystRecipe> recipeOpt = rm.getRecipeFor(
+                        ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get(), new SimpleContainer(is), level);
                 if (recipeOpt.isEmpty()) {
                     LOGGER.warn("ItemStack {} has no registered recipes and will be ignored", is);
                     continue;

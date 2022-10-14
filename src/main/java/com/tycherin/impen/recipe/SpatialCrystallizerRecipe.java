@@ -2,6 +2,8 @@ package com.tycherin.impen.recipe;
 
 import java.util.Optional;
 
+import com.tycherin.impen.ImpracticalEnergisticsMod;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -12,9 +14,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class SpatialCrystallizerRecipe implements Recipe<Container> {
-
-    public static final RecipeType<SpatialCrystallizerRecipe> TYPE = RecipeType
-            .register(new ResourceLocation("impracticalenergistics:spatial_crystallizer").toString());
 
     private final ResourceLocation id;
 
@@ -79,6 +78,6 @@ public class SpatialCrystallizerRecipe implements Recipe<Container> {
 
     @Override
     public RecipeType<?> getType() {
-        return SpatialCrystallizerRecipe.TYPE;
+        return ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get();
     }
 }

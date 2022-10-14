@@ -1,5 +1,6 @@
 package com.tycherin.impen.client.gui;
 
+import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
@@ -66,7 +67,9 @@ public class ImaginarySpaceStabilizerMenu extends AEBaseMenu {
         @Override
         public boolean mayPlace(final ItemStack stack) {
             return super.mayPlace(stack) && be.getLevel().getRecipeManager()
-                    .getRecipeFor(IsmCatalystRecipe.TYPE, new SimpleContainer(stack), be.getLevel()).isPresent();
+                    .getRecipeFor(ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get(), new SimpleContainer(stack),
+                            be.getLevel())
+                    .isPresent();
         }
     }
 }
