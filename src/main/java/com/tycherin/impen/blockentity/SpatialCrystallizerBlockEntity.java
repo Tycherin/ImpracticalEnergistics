@@ -1,6 +1,7 @@
 package com.tycherin.impen.blockentity;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
@@ -13,24 +14,30 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.grid.AENetworkInvBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
-
-//    private static final int PROGRESS_TICKS = 60 * 20;
+public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
+        implements IGridTickable, IUpgradeableObject {
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 1);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
+    private final IUpgradeInventory upgrades;
     private final int baseProgressTicks;
-    
+
     private int progress = 0;
 
     public SpatialCrystallizerBlockEntity(final BlockPos pos, final BlockState blockState) {
@@ -39,6 +46,9 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
         this.getMainNode()
                 .setIdlePowerUsage(ImpenConfig.POWER.spaceCrystallizerCost())
                 .addService(IGridTickable.class, this);
+        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get(), 3,
+                this::saveChanges);
+        // TODO Tick time should be pulled from the recipe, and config should dictate the speed
         this.baseProgressTicks = ImpenConfig.SETTINGS.spatialCrystallizerWorkRate();
     }
 
@@ -81,7 +91,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
             return TickRateModulation.SLEEP;
         }
 
-        this.progress += ticksSinceLastCall;
+        this.progress += ticksSinceLastCall * this.getWorkRate();
 
         if (this.progress > this.baseProgressTicks) {
             final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResultItem());
@@ -105,13 +115,29 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
     public int getProgress() {
         return this.progress;
     }
-    
+
     public int getMaxProgress() {
         return this.baseProgressTicks;
     }
 
     public Optional<SpatialCrystallizerRecipe> getRecipe() {
         return SpatialCrystallizerRecipeManager.getRecipe(this.getLevel());
+    }
+
+    public int getWorkRate() {
+        return 1 + this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD);
+    }
+
+    @Override
+    public void saveAdditional(final CompoundTag data) {
+        super.saveAdditional(data);
+        this.upgrades.writeToNBT(data, "upgrades");
+    }
+
+    @Override
+    public void loadTag(final CompoundTag data) {
+        super.loadTag(data);
+        this.upgrades.readFromNBT(data, "upgrades");
     }
 
     @Override
@@ -137,6 +163,17 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity impl
         }
 
         return ret;
+    }
+
+    @Override
+    public void addAdditionalDrops(final Level level, final BlockPos pos, final List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        upgrades.forEach(drops::add);
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades() {
+        return upgrades;
     }
 
     private class InventoryItemFilter implements IAEItemFilter {

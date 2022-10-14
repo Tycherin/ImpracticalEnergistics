@@ -2,7 +2,6 @@ package com.tycherin.impen.client.gui;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.blockentity.ImaginarySpaceStabilizerBlockEntity;
-import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
 import appeng.api.config.SecurityPermissions;
 import appeng.api.inventories.InternalInventory;

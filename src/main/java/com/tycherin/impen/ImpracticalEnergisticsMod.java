@@ -37,8 +37,10 @@ import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeSerializer;
 
 import appeng.api.parts.PartModels;
+import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
@@ -295,6 +297,10 @@ public class ImpracticalEnergisticsMod {
                 POSSIBILITY_DISINTEGRATOR_BE.get(), null, null);
         TOASTER_DRIVE_BLOCK.get().setBlockEntity(ToasterDriveBlockEntity.class, TOASTER_DRIVE_BE.get(), null,
                 (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+
+        // AE2 upgrades need to be registered after normal registry events
+        Upgrades.add(AEItems.SPEED_CARD, SPATIAL_CRYSTALLIZER_ITEM.get(), 3);
+        Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
     }
     
     private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {

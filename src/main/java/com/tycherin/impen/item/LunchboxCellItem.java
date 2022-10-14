@@ -3,13 +3,8 @@ package com.tycherin.impen.item;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
-import appeng.api.config.IncludeExclude;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.AmountFormat;
@@ -19,11 +14,8 @@ import appeng.api.storage.cells.IBasicCellItem;
 import appeng.api.storage.cells.StorageCell;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.UpgradeInventories;
-import appeng.core.localization.GuiText;
 import appeng.core.localization.Tooltips;
 import appeng.items.contents.CellConfig;
-import appeng.items.storage.BasicStorageCell;
-import appeng.me.cells.BasicCellInventory;
 import appeng.util.ConfigInventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -45,8 +37,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LunchboxCellItem extends Item implements IBasicCellItem {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-    
     public LunchboxCellItem() {
         super(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
     }

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmCatalystProvider;
-import com.tycherin.impen.recipe.IsmCatalystRecipe;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNodeListener;

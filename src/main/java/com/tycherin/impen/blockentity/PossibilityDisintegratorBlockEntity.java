@@ -3,13 +3,11 @@ package com.tycherin.impen.blockentity;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
 
@@ -21,10 +19,15 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.grid.AENetworkBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.me.helpers.MachineSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,7 +36,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -41,9 +46,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 
-public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity implements IGridTickable {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
+public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
+        implements IGridTickable, IUpgradeableObject {
 
     private static final Random RAND = new Random();
     private static final DamageSource DAMAGE_SOURCE = new DamageSource("possibility_disintegrator");
@@ -52,7 +56,10 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
     private static final double LOOT_CHANCE_BASE = .1;
 
     private final Map<Mob, TargetStats> targets = new HashMap<>();
-    private final int ticksPerOperation;
+    private final IUpgradeInventory upgrades;
+    private final int baseTicksPerOperation;
+
+    private int disintegrationDelay;
 
     private static class TargetStats {
         public int disintegrationDelay = 0;
@@ -68,7 +75,12 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
                 .addService(IGridTickable.class, this)
                 .setIdlePowerUsage(ImpenConfig.POWER.possibilityDisintegratorCostTick())
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
-        this.ticksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
+
+        // TODO Expose upgrade inventory in UI
+        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2,
+                this::saveChanges);
+        this.baseTicksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
+        this.disintegrationDelay = this.baseTicksPerOperation;
     }
 
     public void handleEntity(final Entity entity) {
@@ -118,7 +130,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
             else {
                 final var stats = entry.getValue();
                 stats.disintegrationDelay += ticksSinceLastCall;
-                if (stats.disintegrationDelay >= this.ticksPerOperation) {
+                if (stats.disintegrationDelay >= this.disintegrationDelay) {
                     this.disintegrate(target, stats);
                     if (target.isAlive()) {
                         stats.disintegrationDelay = 0;
@@ -154,6 +166,8 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
             return;
         }
 
+        // TODO This breaks Magma Cubes spawning cubelets
+
         target.setNoAi(true);
         target.moveTo(this.getBlockPos().above(), target.getYRot(), target.getXRot());
 
@@ -166,9 +180,20 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
         target.setNoAi(false);
     }
 
+    private void recalculateDisintegrationDelay() {
+        final int delay = switch (this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) {
+        case 0 -> this.baseTicksPerOperation;
+        case 1 -> (int) (this.baseTicksPerOperation * .6);
+        case 2 -> (int) (this.baseTicksPerOperation * .4);
+        default -> this.baseTicksPerOperation;
+        };
+        this.disintegrationDelay = Math.max(1, delay);
+    }
+
     private void disintegrate(final Mob target, final TargetStats stats) {
         // TODO Use real items instead of placeholders
         // TODO Power consumption as well
+        // TODO Expose ingredients in UI
 
         final boolean isLucky = this.consumeIngredient(Items.ACACIA_BUTTON);
 
@@ -182,7 +207,6 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
 
             if (!target.isAlive()) {
                 final var spawnEgg = ForgeSpawnEggItem.fromEntityType(target.getType());
-                LOGGER.info("Found spawn egg: {}", spawnEgg);
                 if (spawnEgg != null && this.rollRandom(EGG_CHANCE_BASE * (isLucky ? 1 : 2))
                         && this.consumeIngredient(Items.EGG)) {
                     target.spawnAtLocation(spawnEgg);
@@ -218,5 +242,34 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity im
     private boolean consumeIngredient(final Item ingredient) {
         final MEStorage storage = this.getGridNode().getGrid().getStorageService().getInventory();
         return storage.extract(AEItemKey.of(ingredient), 1, Actionable.MODULATE, new MachineSource(this)) == 1;
+    }
+
+    @Override
+    public void saveAdditional(final CompoundTag data) {
+        super.saveAdditional(data);
+        this.upgrades.writeToNBT(data, "upgrades");
+    }
+
+    @Override
+    public void loadTag(final CompoundTag data) {
+        super.loadTag(data);
+        this.upgrades.readFromNBT(data, "upgrades");
+    }
+
+    @Override
+    public void addAdditionalDrops(final Level level, final BlockPos pos, final List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        upgrades.forEach(drops::add);
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public void saveChanges() {
+        super.saveChanges();
+        this.recalculateDisintegrationDelay();
     }
 }

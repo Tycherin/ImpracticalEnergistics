@@ -1,6 +1,6 @@
 package com.tycherin.impen.client.gui;
 
-import appeng.client.gui.AEBaseScreen;
+import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
 import appeng.client.gui.widgets.ProgressBar.Direction;
@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 
-public class SpatialCrystallizerScreen extends AEBaseScreen<SpatialCrystallizerMenu> {
+public class SpatialCrystallizerScreen extends UpgradeableScreen<SpatialCrystallizerMenu> {
 
     private final ProgressBar prog;
 
