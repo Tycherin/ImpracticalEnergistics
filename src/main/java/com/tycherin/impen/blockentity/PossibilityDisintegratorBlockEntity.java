@@ -31,10 +31,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -45,19 +47,31 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.Lazy;
 
 public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         implements IGridTickable, IUpgradeableObject {
 
+    // TODO Use real items instead of placeholders
+    public static final Item CONSUMABLE_LUCK = Items.EMERALD;
+    public static final Item CONSUMABLE_EGG = Items.EGG;
+    public static final Item CONSUMABLE_LOOT = Items.LAPIS_LAZULI;
+    public static final Item CONSUMABLE_PLAYER_KILL = Items.BLAZE_ROD;
+
     private static final Random RAND = new Random();
     private static final DamageSource DAMAGE_SOURCE = new DamageSource("possibility_disintegrator");
 
-    private static final double EGG_CHANCE_BASE = .4;
+    private static final double EGG_CHANCE_BASE = .5;
     private static final double LOOT_CHANCE_BASE = .1;
 
     private final Map<Mob, TargetStats> targets = new HashMap<>();
     private final IUpgradeInventory upgrades;
     private final int baseTicksPerOperation;
+    // Lazy load these two since the level isn't available during instantiation
+    private final Lazy<Player> fakePlayer = Lazy.of(() -> FakePlayerFactory.getMinecraft((ServerLevel) this.level));
+    private final Lazy<DamageSource> playerDamageSource = Lazy
+            .of(() -> new EntityDamageSource("possibility_disintegrator", fakePlayer.get()));
 
     private int disintegrationDelay;
 
@@ -77,7 +91,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
 
         // TODO Expose upgrade inventory in UI
-        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2,
+        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.POSSIBILITY_DISINTEGRATOR_ITEM.get(), 4,
                 this::saveChanges);
         this.baseTicksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
         this.disintegrationDelay = this.baseTicksPerOperation;
@@ -94,8 +108,16 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 // hardcoding vanilla mob classes
                 return;
             }
-            this.lockTarget(mob);
-            targets.put(mob, new TargetStats());
+            else if (mob.isPassenger()) {
+                return;
+            }
+            else if (mob.getControllingPassenger() != null && mob.getControllingPassenger() instanceof Player) {
+                return;
+            }
+            else if (this.targets.size() <= this.getMaxTargets()) {
+                this.lockTarget(mob);
+                targets.put(mob, new TargetStats());
+            }
         }
     }
 
@@ -115,6 +137,8 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         else if (this.targets.isEmpty()) {
             return TickRateModulation.SLEEP;
         }
+
+        // TODO Check for Shulkers
 
         // Use an iterator here to avoid concurrent modification problems
         final Iterator<Entry<Mob, TargetStats>> iter = this.targets.entrySet().iterator();
@@ -156,6 +180,14 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         super.setRemoved();
     }
 
+    public int getMaxTargets() {
+        return switch (this.upgrades.getInstalledUpgrades(AEItems.CAPACITY_CARD)) {
+        case 1 -> 4;
+        case 2 -> 9;
+        default -> 1;
+        };
+    }
+
     private void unlockAll() {
         this.targets.keySet().forEach(this::unlockTarget);
         this.targets.clear();
@@ -165,8 +197,6 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         if (!target.isAlive()) {
             return;
         }
-
-        // TODO This breaks Magma Cubes spawning cubelets
 
         target.setNoAi(true);
         target.moveTo(this.getBlockPos().above(), target.getYRot(), target.getXRot());
@@ -191,47 +221,91 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     }
 
     private void disintegrate(final Mob target, final TargetStats stats) {
-        // TODO Use real items instead of placeholders
         // TODO Power consumption as well
         // TODO Expose ingredients in UI
 
-        final boolean isLucky = this.consumeIngredient(Items.ACACIA_BUTTON);
+        final ConsumableSnapshot precheck = this.getAvailableConsumables();
 
-        if (!this.consumeIngredient(Items.BREAD)) {
-            // Scale damage based on how long the mob has been trapped. This is geometric scaling, so it will kill large
-            // mobs in a reasonable amount of time without insta-gibbing small mobs.
-            // If you don't want the mob to die, use the relevant ingredient to avoid doing damage.
-            // Math.min() to avoid unbounded damage scaling shenanigans.
-            target.hurt(DAMAGE_SOURCE, Math.min(20, stats.timesHurt + 1));
-            stats.timesHurt++;
+        // Edge case: if the target is a slime (or something similar), it will spawn children on death, and those
+        // children will inherit a bunch of flags, including the noAi one. So here, we need to undo that flag, then
+        // reset it if the entity didn't die.
+        target.setNoAi(false);
 
-            if (!target.isAlive()) {
-                final var spawnEgg = ForgeSpawnEggItem.fromEntityType(target.getType());
-                if (spawnEgg != null && this.rollRandom(EGG_CHANCE_BASE * (isLucky ? 1 : 2))
-                        && this.consumeIngredient(Items.EGG)) {
-                    target.spawnAtLocation(spawnEgg);
-                }
+        // Scale damage based on how long the mob has been trapped. This is geometric scaling, so it will kill large
+        // mobs in a reasonable amount of time without insta-gibbing small mobs.
+        // Math.min() to avoid unbounded damage scaling shenanigans.
+        final float damageToDeal = Math.min(20, stats.timesHurt + 2);
+        if (precheck.hasPlayerKill()) {
+            target.hurt(playerDamageSource.get(), damageToDeal);
+        }
+        else {
+            target.hurt(DAMAGE_SOURCE, damageToDeal);
+        }
+        stats.timesHurt++;
 
-                return;
+        if (!target.isAlive()) {
+            if (precheck.hasPlayerKill()) {
+                // We did kill the target, so an ingredient should be consumed
+                this.consumeIngredient(CONSUMABLE_PLAYER_KILL);
             }
+
+            if (precheck.hasEgg()) {
+                final var spawnEgg = ForgeSpawnEggItem.fromEntityType(target.getType());
+                if (spawnEgg != null) {
+                    final boolean doSpawnEgg;
+                    if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK)) {
+                        doSpawnEgg = this.rollRandom(EGG_CHANCE_BASE * 2);
+                    }
+                    else {
+                        doSpawnEgg = this.rollRandom(EGG_CHANCE_BASE);
+                    }
+
+                    if (doSpawnEgg) {
+                        this.consumeIngredient(CONSUMABLE_EGG);
+                        target.spawnAtLocation(spawnEgg);
+                    }
+                }
+            }
+            return;
+        }
+        else {
+            // Target is still alive, so re-lock it
+            target.setNoAi(true);
         }
 
-        if (this.rollRandom(LOOT_CHANCE_BASE * (isLucky ? 1 : 3)) && this.consumeIngredient(Items.LAPIS_LAZULI)) {
-            // This code is mostly adapted from LivingEntity code that isn't directly accessible
-            //
-            // Worth noting that this will only spawn items from the normal loot table, i.e. no special drops (like
-            // blocks held by Enderman - no dupe glitches for you)
-            // TODO I should probably test that
-            // TODO Add ingredient for allowing player kill only drops
-            final ResourceLocation resourcelocation = target.getLootTable();
-            final LootTable loottable = this.level.getServer().getLootTables().get(resourcelocation);
-            final LootContext ctx = new LootContext.Builder((ServerLevel) this.level)
-                    .withRandom(RAND)
-                    .withParameter(LootContextParams.THIS_ENTITY, target)
-                    .withParameter(LootContextParams.ORIGIN, target.position())
-                    .withParameter(LootContextParams.DAMAGE_SOURCE, DAMAGE_SOURCE)
-                    .create(LootContextParamSets.ENTITY);
-            loottable.getRandomItems(ctx).forEach(target::spawnAtLocation);
+        if (precheck.hasLoot()) {
+            final boolean doSpawnLoot;
+            if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK)) {
+                doSpawnLoot = this.rollRandom(LOOT_CHANCE_BASE * 3);
+            }
+            else {
+                doSpawnLoot = this.rollRandom(LOOT_CHANCE_BASE);
+            }
+
+            if (doSpawnLoot) {
+                this.consumeIngredient(CONSUMABLE_LOOT);
+
+                // This code is mostly adapted from LivingEntity code that isn't easily accessible
+                //
+                // Worth noting that this will only spawn items from the normal loot table, i.e. no special drops (like
+                // blocks held by Enderman - no dupe glitches for you)
+                final ResourceLocation resourcelocation = target.getLootTable();
+                final LootTable loottable = this.level.getServer().getLootTables().get(resourcelocation);
+                final var ctxBuilder = new LootContext.Builder((ServerLevel) this.level)
+                        .withRandom(RAND)
+                        .withParameter(LootContextParams.THIS_ENTITY, target)
+                        .withParameter(LootContextParams.ORIGIN, target.position())
+                        .withParameter(LootContextParams.DAMAGE_SOURCE, DAMAGE_SOURCE);
+
+                if (precheck.hasPlayerKill() && this.consumeIngredient(CONSUMABLE_PLAYER_KILL)) {
+                    ctxBuilder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, fakePlayer.get())
+                            .withParameter(LootContextParams.KILLER_ENTITY, fakePlayer.get())
+                            .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, fakePlayer.get());
+                }
+
+                final LootContext ctx = ctxBuilder.create(LootContextParamSets.ENTITY);
+                loottable.getRandomItems(ctx).forEach(target::spawnAtLocation);
+            }
         }
     }
 
@@ -240,8 +314,16 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     }
 
     private boolean consumeIngredient(final Item ingredient) {
+        return this.touchIngredient(ingredient, Actionable.MODULATE);
+    }
+
+    private boolean hasIngredient(final Item ingredient) {
+        return this.touchIngredient(ingredient, Actionable.SIMULATE);
+    }
+
+    private boolean touchIngredient(final Item ingredient, final Actionable action) {
         final MEStorage storage = this.getGridNode().getGrid().getStorageService().getInventory();
-        return storage.extract(AEItemKey.of(ingredient), 1, Actionable.MODULATE, new MachineSource(this)) == 1;
+        return storage.extract(AEItemKey.of(ingredient), 1, action, new MachineSource(this)) == 1;
     }
 
     @Override
@@ -271,5 +353,16 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     public void saveChanges() {
         super.saveChanges();
         this.recalculateDisintegrationDelay();
+    }
+
+    public ConsumableSnapshot getAvailableConsumables() {
+        return new ConsumableSnapshot(
+                this.hasIngredient(CONSUMABLE_LUCK),
+                this.hasIngredient(CONSUMABLE_EGG),
+                this.hasIngredient(CONSUMABLE_LOOT),
+                this.hasIngredient(CONSUMABLE_PLAYER_KILL));
+    }
+
+    public static record ConsumableSnapshot(boolean hasLuck, boolean hasEgg, boolean hasLoot, boolean hasPlayerKill) {
     }
 }
