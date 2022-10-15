@@ -8,6 +8,7 @@ import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeManager;
+import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
@@ -17,7 +18,7 @@ import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
-import appeng.blockentity.grid.AENetworkInvBlockEntity;
+import appeng.blockentity.grid.AENetworkPowerBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
@@ -26,17 +27,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
+public class SpatialCrystallizerBlockEntity extends AENetworkPowerBlockEntity
         implements IGridTickable, IUpgradeableObject {
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 1);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
     private final IUpgradeInventory upgrades;
     private final int baseProgressTicks;
+    private final double basePowerDraw;
 
     private int progress = 0;
 
@@ -44,24 +47,30 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
         super(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_BE.get(), pos, blockState);
 
         this.getMainNode()
-                .setIdlePowerUsage(ImpenConfig.POWER.spaceCrystallizerCost())
                 .addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get(), 3,
                 this::saveChanges);
         // TODO Tick time should be pulled from the recipe, and config should dictate the speed
         this.baseProgressTicks = ImpenConfig.SETTINGS.spatialCrystallizerWorkRate();
+        this.basePowerDraw = ImpenConfig.POWER.spaceCrystallizerCost();
     }
 
     @Override
     public void onReady() {
         super.onReady();
-        this.getMainNode().setExposedOnSides(EnumSet.of(this.getForward().getOpposite()));
+        this.setOrientationFromState();
     }
 
     @Override
     public void setOrientation(final Direction inForward, final Direction inUp) {
         super.setOrientation(inForward, inUp);
-        this.getMainNode().setExposedOnSides(EnumSet.of(inForward.getOpposite()));
+        this.setOrientationFromState();
+    }
+
+    private void setOrientationFromState() {
+        final var exposedSides = EnumSet.of(this.getForward().getOpposite());
+        this.getMainNode().setExposedOnSides(exposedSides);
+        this.setPowerSides(exposedSides);
     }
 
     @Override
@@ -77,7 +86,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
     @Override
     public void onChangeInventory(InternalInventory inv, int slot) {
         this.markForUpdate();
-        getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
     }
 
     @Override
@@ -91,7 +100,12 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
             return TickRateModulation.SLEEP;
         }
 
-        this.progress += ticksSinceLastCall * this.getWorkRate();
+        // Attempt to extract power
+        final var workTicks = ticksSinceLastCall * this.getWorkRate();
+        final var powerDesired = this.basePowerDraw * workTicks;
+        if (AEPowerUtil.drawPower(this, powerDesired)) {
+            this.progress += workTicks;
+        }
 
         if (this.progress > this.baseProgressTicks) {
             final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResultItem());
@@ -174,6 +188,11 @@ public class SpatialCrystallizerBlockEntity extends AENetworkInvBlockEntity
     @Override
     public IUpgradeInventory getUpgrades() {
         return upgrades;
+    }
+
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get();
     }
 
     private class InventoryItemFilter implements IAEItemFilter {

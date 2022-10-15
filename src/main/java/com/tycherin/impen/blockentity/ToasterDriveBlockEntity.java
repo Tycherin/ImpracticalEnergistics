@@ -8,6 +8,7 @@ import appeng.api.storage.cells.CellState;
 import appeng.blockentity.storage.ChestBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,9 +21,6 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
     public ToasterDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.TOASTER_DRIVE_BE.get(), pos, blockState);
-
-        this.getMainNode()
-                .setIdlePowerUsage(10.0);
     }
 
     @Override
@@ -76,4 +74,8 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
         this.setCell(ItemStack.EMPTY);
     }
 
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.TOASTER_DRIVE_ITEM.get();
+    }
 }

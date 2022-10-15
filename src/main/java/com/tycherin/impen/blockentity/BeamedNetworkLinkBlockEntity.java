@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
+import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.exceptions.ExistingConnectionException;
 import appeng.api.exceptions.FailedConnectionException;
@@ -27,6 +28,7 @@ import appeng.me.helpers.BlockEntityNodeListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -38,9 +40,13 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     private static final int CHECK_INTERVAL = 20;
 
     private final int maxRange;
+    private final double basePower;
+    
     private boolean dirtyBit = false;
     private int ticksUntilNextCheck = 0;
+    private int ticksForceSleep = 0;
     private boolean hasPower = false;
+    private boolean receivedPowerLastCycle = false;
     private int lengthOfBeam = -1;
 
     private int beamColor = AEColor.WHITE.mediumVariant;
@@ -49,8 +55,9 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     /** Note that this will always be empty on the client side. */
     private Optional<BnlConnection> bnlConnection = Optional.empty();
 
-    record BnlPair(/** BNL on the other side of the pair */
-    BeamedNetworkLinkBlockEntity otherBnl,
+    record BnlPair(
+            /** BNL on the other side of the pair */
+            BeamedNetworkLinkBlockEntity otherBnl,
             /** Distance between the two BNLs, including the other end */
             int distanceBetween) {
     }
@@ -78,11 +85,10 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
 
         this.getMainNode()
                 .setExposedOnSides(EnumSet.noneOf(Direction.class))
-                // TODO This should only be drained if the BNL is active
-                .setIdlePowerUsage(ImpenConfig.POWER.beamedNetworkLinkCost())
                 .setFlags(); // force to not require a channel
-        
+
         this.maxRange = ImpenConfig.SETTINGS.beamedNetworkLinkRange();
+        this.basePower = ImpenConfig.POWER.beamedNetworkLinkCost();
     }
 
     // ***
@@ -95,7 +101,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             return this.hasPower;
         }
         else {
-            return this.getMainNode().isPowered();
+            return this.getMainNode().isPowered() && this.receivedPowerLastCycle;
         }
     }
 
@@ -121,6 +127,11 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     public void forceUpdate() {
         this.setDirtyBit();
         this.ticksUntilNextCheck = 0;
+    }
+
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_ITEM.get();
     }
 
     // ***
@@ -205,23 +216,46 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
 
     // TODO It would be nice to get updates instantly, but without running the full updateTarget() search every time.
     // Caching opportunities?
-    // TODO Check power status here
     @Override
     public void serverTick() {
         if (this.isRemoved()) {
             return;
         }
-
-        this.ticksUntilNextCheck--;
-        if (ticksUntilNextCheck <= 0) {
-            ticksUntilNextCheck = CHECK_INTERVAL;
-            this.updateTarget();
+        
+        if (this.ticksForceSleep > 0) {
+            this.ticksForceSleep--;
+        }
+        else {
+            final var prevPowerState = this.receivedPowerLastCycle;
+            this.receivedPowerLastCycle = AEPowerUtil.drawPower(this, this.getPowerDraw());
+            if (prevPowerState && !this.receivedPowerLastCycle) {
+                // We just lost power. To prevent weird flickering behavior, sleep the machine for a while.
+                this.ticksForceSleep += 20;
+            }
+            else {
+                this.ticksUntilNextCheck--;
+                if (ticksUntilNextCheck <= 0 || !this.isPowered()) {
+                    ticksUntilNextCheck = CHECK_INTERVAL;
+                    this.updateTarget();
+                }
+            }
+            
         }
 
+        // We want to update state if needed no matter what
         if (this.dirtyBit) {
             this.updateVisualState();
             this.markForUpdate();
             this.dirtyBit = false;
+        }
+    }
+    
+    public double getPowerDraw() {
+        if (this.bnlConnection.isPresent()) {
+            return this.basePower * this.lengthOfBeam;
+        }
+        else {
+            return 0;
         }
     }
 
@@ -257,7 +291,14 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             // TODO The second clause here might mess things up on loading?
             return;
         }
-
+        
+        if (!this.isPowered()) {
+            // The BNL doesn't have power for whatever reason, so it shouldn't stay linked, and it shouldn't attempt to
+            // form a new link
+            this.removeConnectionIfPresent();
+            return;
+        }
+        
         final Optional<BnlPair> latestBnlPair = this.findMatchingBnl();
         if ((latestBnlPair.isEmpty() && this.bnlConnection.isEmpty())
                 || (latestBnlPair.isPresent() && this.bnlConnection.isPresent()
@@ -266,10 +307,8 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             return;
         }
         else {
-            if (this.bnlConnection.isPresent()) {
-                this.removeConnectionIfPresent();
-            }
-
+            this.removeConnectionIfPresent();
+            
             if (latestBnlPair.isPresent() && latestBnlPair.get().otherBnl.getGridNode() != null) {
                 // We need to determine which side of the connection is primary and which is secondary. The BNL calling
                 // createConnection isn't necessarily the one on the active side.
@@ -296,9 +335,16 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
                 // Only create a connection if this is primary. This is to avoid weird situations where both BNLs
                 // attempt to create a connection at the same time and we wind up with duplicate connections.
                 if (thisPrimary) {
-                    this.createConnection(latestBnlPair.get());
-                    this.setDirtyBit();
-                    latestBnlPair.get().otherBnl.forceUpdate();
+                    // Now that we have a new connection, we need to see if we can power it
+                    this.receivedPowerLastCycle = AEPowerUtil.drawPower(this, this.getPowerDraw());
+                    if (this.receivedPowerLastCycle) {
+                        // Power is good; create the connection
+                        this.createConnection(latestBnlPair.get());
+                    }
+                    else {
+                        // Not enough power for this connection; sleep the node and try again later
+                        this.ticksForceSleep += 20;
+                    }
                 }
                 else {
                     // Kinda hacky, but we want to force the update ASAP to avoid an awkward pause while we wait for the
@@ -306,6 +352,9 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
                     latestBnlPair.get().otherBnl.forceUpdate();
                 }
             }
+
+            this.setDirtyBit();
+            latestBnlPair.get().otherBnl.forceUpdate();
         }
     }
 
@@ -317,30 +366,14 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
         BeamedNetworkLinkBlockEntity targetBnl = null;
 
         for (; checkDistance < this.maxRange; checkDistance++) {
-            checkPos = switch (this.getForward()) {
-            case UP -> checkPos.above();
-            case DOWN -> checkPos.below();
-            case NORTH -> checkPos.north();
-            case SOUTH -> checkPos.south();
-            case WEST -> checkPos.west();
-            case EAST -> checkPos.east();
-            };
+            checkPos = checkPos.relative(this.getForward());
 
             final BlockState bs = this.level.getBlockState(checkPos);
             if (bs.getBlock().equals(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BLOCK.get())) {
                 final BlockEntity be = this.level.getBlockEntity(checkPos);
                 if (be != null && be instanceof BeamedNetworkLinkBlockEntity) {
                     targetBnl = (BeamedNetworkLinkBlockEntity) be;
-                    boolean facingMatches = switch (this.getForward()) {
-                    case UP -> targetBnl.getForward().equals(Direction.DOWN);
-                    case DOWN -> targetBnl.getForward().equals(Direction.UP);
-                    case NORTH -> targetBnl.getForward().equals(Direction.SOUTH);
-                    case SOUTH -> targetBnl.getForward().equals(Direction.NORTH);
-                    case EAST -> targetBnl.getForward().equals(Direction.WEST);
-                    case WEST -> targetBnl.getForward().equals(Direction.EAST);
-                    };
-
-                    if (facingMatches) {
+                    if (this.getForward().getOpposite().equals(targetBnl.getForward())) {
                         // Found a match, so we can stop searching
                         break;
                     }
@@ -352,7 +385,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
                     }
                 }
                 else {
-                    LOGGER.info("Encountered BNL block without associated BlockEntity at {}", checkPos.toShortString());
+                    LOGGER.warn("Encountered BNL block without associated BlockEntity at {}", checkPos.toShortString());
                     checkDistance = -1;
                     break;
                 }

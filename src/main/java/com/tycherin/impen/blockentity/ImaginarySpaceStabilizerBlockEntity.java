@@ -116,4 +116,9 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         }
         // TODO What if the catalyst is something in a container, e.g. a bucket of water?
     }
+
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_ITEM.get();
+    }
 }

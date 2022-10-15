@@ -10,6 +10,7 @@ import java.util.Random;
 
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
+import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
@@ -68,6 +69,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     private final Map<Mob, TargetStats> targets = new HashMap<>();
     private final IUpgradeInventory upgrades;
     private final int baseTicksPerOperation;
+    private final double basePowerPerOperation;
     // Lazy load these two since the level isn't available during instantiation
     private final Lazy<Player> fakePlayer = Lazy.of(() -> FakePlayerFactory.getMinecraft((ServerLevel) this.level));
     private final Lazy<DamageSource> playerDamageSource = Lazy
@@ -90,10 +92,10 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 .setIdlePowerUsage(ImpenConfig.POWER.possibilityDisintegratorCostTick())
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
 
-        // TODO Expose upgrade inventory in UI
         this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.POSSIBILITY_DISINTEGRATOR_ITEM.get(), 4,
                 this::saveChanges);
         this.baseTicksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
+        this.basePowerPerOperation = ImpenConfig.POWER.possibilityDisintegratorCostOperation();
         this.disintegrationDelay = this.baseTicksPerOperation;
     }
 
@@ -155,12 +157,14 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 final var stats = entry.getValue();
                 stats.disintegrationDelay += ticksSinceLastCall;
                 if (stats.disintegrationDelay >= this.disintegrationDelay) {
-                    this.disintegrate(target, stats);
-                    if (target.isAlive()) {
-                        stats.disintegrationDelay = 0;
-                    }
-                    else {
-                        iter.remove();
+                    if (AEPowerUtil.drawPower(this, this.getPowerPerOperation())) {
+                        this.disintegrate(target, stats);
+                        if (target.isAlive()) {
+                            stats.disintegrationDelay = 0;
+                        }
+                        else {
+                            iter.remove();
+                        }
                     }
                 }
             }
@@ -221,9 +225,6 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     }
 
     private void disintegrate(final Mob target, final TargetStats stats) {
-        // TODO Power consumption as well
-        // TODO Expose ingredients in UI
-
         final ConsumableSnapshot precheck = this.getAvailableConsumables();
 
         // Edge case: if the target is a slime (or something similar), it will spawn children on death, and those
@@ -353,6 +354,15 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     public void saveChanges() {
         super.saveChanges();
         this.recalculateDisintegrationDelay();
+    }
+
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.POSSIBILITY_DISINTEGRATOR_ITEM.get();
+    }
+    
+    public double getPowerPerOperation() {
+        return this.basePowerPerOperation;
     }
 
     public ConsumableSnapshot getAvailableConsumables() {
