@@ -19,6 +19,7 @@ import com.tycherin.impen.blockentity.SpatialCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.ToasterDriveBlockEntity;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.entity.FluixCatalystEntity;
@@ -276,7 +277,8 @@ public class ImpracticalEnergisticsMod {
         event.getRegistry().registerAll(
                 ImaginarySpaceManipulatorMenu.TYPE,
                 ImaginarySpaceStabilizerMenu.TYPE,
-                SpatialCrystallizerMenu.TYPE);
+                SpatialCrystallizerMenu.TYPE,
+                PossibilityDisintegratorMenu.TYPE);
     }
     
     private static RegistryObject<Item> createBlockItem(final RegistryObject<? extends Block> block) {

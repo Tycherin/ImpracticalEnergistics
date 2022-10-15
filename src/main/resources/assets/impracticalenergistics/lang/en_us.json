@@ -26,6 +26,7 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s",
     "gui.impracticalenergistics.imaginary_space_stabilizer": "Imaginary Space Stabilizer",
     "gui.impracticalenergistics.spatial_crystallizer": "Spatial Crystallizer",
+    "gui.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
     
     "gui.impracticalenergistics.imaginary_space_manipulator.status.idle": "Idle",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.ready": "Ready",

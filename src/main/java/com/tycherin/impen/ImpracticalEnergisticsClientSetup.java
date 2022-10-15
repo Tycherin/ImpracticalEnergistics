@@ -4,6 +4,8 @@ import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorScreen;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerScreen;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerScreen;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
@@ -68,10 +70,17 @@ public class ImpracticalEnergisticsClientSetup {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_crystallizer.json");
                     return new SpatialCrystallizerScreen(menu, playerInv, title, style);
                 });
+        MenuScreens.<PossibilityDisintegratorMenu, PossibilityDisintegratorScreen>register(
+                PossibilityDisintegratorMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/possibility_disintegrator.json");
+                    return new PossibilityDisintegratorScreen(menu, playerInv, title, style);
+                });
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ImpracticalEnergisticsMod.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
-        event.registerEntityRenderer(ImpracticalEnergisticsMod.SPATIAL_TOOL_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
+        event.registerEntityRenderer(ImpracticalEnergisticsMod.SPATIAL_TOOL_CATALYST_ENTITY.get(),
+                ItemEntityRenderer::new);
     }
 }

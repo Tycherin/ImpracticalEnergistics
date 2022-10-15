@@ -1,0 +1,37 @@
+{
+  "$schema": "schema.json",
+  "includes": ["common/common.json", "common/player_inventory.json"],
+  "background": {
+    "texture": "guis/imaginary_space_manipulator.png",
+    "srcRect": [0, 0, 176, 197]
+  },
+  "slots": {
+    "INSCRIBER_PLATE_BOTTOM": {
+      "left": 22,
+      "top": 48
+    },
+    "INSCRIBER_PLATE_TOP": {
+      "left": 42,
+      "top": 48
+    },
+    "BIOMETRIC_CARD": {
+      "left": 62,
+      "top": 48
+    },
+    "BLANK_PATTERN": {
+      "left": 82,
+      "top": 48
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "gui.impracticalenergistics.possibility_disintegrator"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}
