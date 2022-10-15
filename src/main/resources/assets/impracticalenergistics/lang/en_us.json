@@ -23,7 +23,7 @@
     "gui.impracticalenergistics.imaginary_space_manipulator": "Imaginary Space Manipulator",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_text": "Active effect: %s",
     "gui.impracticalenergistics.imaginary_space_manipulator.effect_missing_text": "No effect selected",
-    "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s",
+    "gui.impracticalenergistics.imaginary_space_manipulator.power_text": "Requires %s while running",
     "gui.impracticalenergistics.imaginary_space_stabilizer": "Imaginary Space Stabilizer",
     "gui.impracticalenergistics.spatial_crystallizer": "Spatial Crystallizer",
     "gui.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
@@ -35,6 +35,8 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.missing_channel": "Blocked - device missing channel",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.not_formatted": "Blocked - drive is not formatted",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.no_catalysts": "Blocked - no catalysts available",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.cell_full": "Blocked - cell is full",
+    "gui.impracticalenergistics.imaginary_space_manipulator.status.insufficient_power": "Running - not enough power",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue",
     
     "gui.impracticalenergistics.jei.ism_recipe_title": "Imaginary Space Manipulation",

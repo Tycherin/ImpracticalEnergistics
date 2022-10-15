@@ -1,7 +1,6 @@
 package com.tycherin.impen.logic.ism;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import appeng.api.networking.IGridService;
 import appeng.api.networking.IGridServiceProvider;
 import appeng.api.networking.IManagedGridNode;
 import appeng.me.helpers.IGridConnectedBlockEntity;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Grid-wide service implementing Imaginary Space Manipulator (ISM) functionality. Tracks nodes that add ISM information
@@ -27,7 +26,7 @@ import net.minecraft.world.item.Item;
 public class IsmService implements IGridService, IGridServiceProvider {
 
     public static final int MAX_CATALYSTS = 9;
-    
+
     /** This method should be called during mod initialization */
     public static void init() {
         GridServices.register(IsmService.class, IsmService.class);
@@ -54,19 +53,21 @@ public class IsmService implements IGridService, IGridServiceProvider {
     /**
      * Triggers an ISM cycle by consuming catalysts from all providers.
      * 
+     * @param desiredAmount the maximum amount to be consumed from each provider
      * @return A list of all catalysts that were consumed by this operation
      */
-    public Collection<Item> triggerOperation() {
-        final List<Item> items = new ArrayList<>();
-        
-        for (final IsmCatalystProvider provider : providers.values()) {
+    public List<ItemStack> triggerOperation(final int desiredAmount) {
+        final List<ItemStack> items = new ArrayList<>();
+
+        for (final var provider : providers.values()) {
             if (items.size() >= MAX_CATALYSTS) {
                 break;
             }
-            
-            provider.consumeCatalyst().ifPresent(catalyst -> {
+
+            final ItemStack catalyst = provider.consumeCatalyst(desiredAmount);
+            if (!catalyst.isEmpty()) {
                 items.add(catalyst);
-            });
+            }
         }
         return items;
     }

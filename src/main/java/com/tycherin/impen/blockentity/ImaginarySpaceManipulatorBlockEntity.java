@@ -1,15 +1,18 @@
 package com.tycherin.impen.blockentity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.logic.ism.IsmStatusCodes;
 import com.tycherin.impen.logic.ism.IsmWeightTracker.IsmWeightWrapper;
+import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -41,6 +44,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
 
+    private static final int BLOCKS_PER_CYCLE = 64;
+
     private static class InventorySlots {
         public static final int INPUT = 0;
         public static final int OUTPUT = 1;
@@ -49,13 +54,14 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 2);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
     private final AppEngInternalInventory catalystInv = new AppEngInternalInventory(this, IsmService.MAX_CATALYSTS);
-    private final ILevelRunnable callback = level -> startOreify();
+    private final ILevelRunnable callback = level -> startOperation();
 
     private Optional<IsmWeightWrapper> activeWeights = Optional.empty();
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
     private YesNo lastRedstoneState = YesNo.UNDECIDED;
     private int statusCode = IsmStatusCodes.IDLE;
+    private double basePowerDraw;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_BE.get(), pos, blockState);
@@ -64,10 +70,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 .addService(IGridTickable.class, this)
                 .setFlags();
 
+        this.basePowerDraw = ImpenConfig.POWER.imaginarySpaceManipulatorCost();
         this.updateStatus();
     }
-
-    // TODO Power requirements
 
     // ***
     // Ore generation methods
@@ -75,6 +80,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     public void triggerOreify() {
         if (!this.isClientSide()) {
+            if (this.isRunning()) {
+                return;
+            }
+
             final ItemStack cell = this.inv.getStackInSlot(0);
             if (this.isSpatialCell(cell)) {
                 // this needs to be cross world synced.
@@ -83,7 +92,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
     }
 
-    public void startOreify() {
+    public void startOperation() {
         if (this.level.isClientSide) {
             return;
         }
@@ -94,25 +103,28 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return;
         }
 
-        final Collection<Item> catalysts = IsmService.get(this).get().triggerOperation();
+        final SpatialStoragePlot plot = this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT)).get();
+        final int modifiableBlocks = (int) this.getModifiableBlocks(plot).count();
+        final int cycleCount = (int) Math.ceil(modifiableBlocks / (double) BLOCKS_PER_CYCLE);
+        if (cycleCount == 0) {
+            this.statusCode = IsmStatusCodes.CELL_FULL;
+            this.markForUpdate();
+            return;
+        }
+
+        final List<ItemStack> catalysts = IsmService.get(this).get().triggerOperation(cycleCount);
         if (catalysts.size() <= 0) {
             this.statusCode = IsmStatusCodes.NO_CATALYSTS;
             this.markForUpdate();
             return;
         }
 
-        catalysts.forEach(item -> {
-            this.catalystInv.addItems(new ItemStack(item, 1));
-        });
+        catalysts.forEach(this.catalystInv::addItems);
         final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
-        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems, this.level));
+        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems, cycleCount, this.level));
+        this.maxProgressTicks = (int) Math.ceil(modifiableBlocks / this.getWorkRate());
+        this.progressTicks = 0;
 
-        // TODO Implement locking so that the inputs can't change while we're in progress
-        final SpatialStoragePlot plot = this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT)).get();
-        final int totalBlocks = plot.getSize().getX() * plot.getSize().getY() * plot.getSize().getZ();
-        final int modifiableBlocks = (int) this.getModifiableBlocks(plot).count();
-        this.maxProgressTicks = (int) (totalBlocks * this.getWorkRate());
-        this.progressTicks = (int) ((totalBlocks - modifiableBlocks) * this.getWorkRate());
         this.statusCode = IsmStatusCodes.RUNNING;
 
         this.getMainNode().ifPresent((grid, node) -> {
@@ -121,7 +133,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.markForUpdate();
     }
 
-    public boolean doOreify() {
+    public boolean completeOperation() {
         if (this.level.isClientSide) {
             return false;
         }
@@ -139,8 +151,6 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return false;
         }
 
-        // TODO Limit the number of blocks that can be updated in a single operation
-
         final SpatialStoragePlot plot = this.getPlot(cell).get();
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         final Supplier<Block> blockSupplier = this.activeWeights.get().getSupplier();
@@ -154,7 +164,6 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         for (int i = 0; i < this.catalystInv.size(); i++) {
             this.catalystInv.setItemDirect(i, ItemStack.EMPTY);
         }
-        this.activeWeights = Optional.empty();
 
         return true;
     }
@@ -193,11 +202,15 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
     }
 
-    /** @return The work rate, in ticks per operation */
+    /** @return The work rate, in blocks per tick */
     private double getWorkRate() {
         // TODO Make this configurable
         // TODO Implement acceleration cards here
-        return 4.0;
+        return 0.125;
+    }
+
+    public double getPowerDraw() {
+        return this.basePowerDraw;
     }
 
     // ***
@@ -215,11 +228,17 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             return TickRateModulation.SLEEP;
         }
 
-        this.progressTicks++;
+        if (AEPowerUtil.drawPower(this, this.getPowerDraw())) {
+            this.progressTicks++;
+            this.statusCode = IsmStatusCodes.RUNNING;
+        }
+        else {
+            this.statusCode = IsmStatusCodes.INSUFFICIENT_POWER;
+        }
 
         if (this.progressTicks >= this.maxProgressTicks) {
-            if (this.doOreify()) {
-                this.resetProgress();
+            if (this.completeOperation()) {
+                this.resetOperation();
                 return TickRateModulation.SLEEP;
             }
         }
@@ -257,9 +276,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
 
         if (oldStatusCode != this.statusCode) {
-            if (oldStatusCode == IsmStatusCodes.RUNNING) {
-                // Something has gone wrong while the operation was running, so cancel it out
-                this.resetProgress();
+            if (!(this.statusCode == IsmStatusCodes.READY) &&
+                    (oldStatusCode == IsmStatusCodes.RUNNING || oldStatusCode == IsmStatusCodes.INSUFFICIENT_POWER)) {
+                // Something has gone wrong while an operation was running, so cancel it out
+                this.resetOperation();
             }
 
             this.markForUpdate();
@@ -269,9 +289,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         }
     }
 
-    private void resetProgress() {
+    private void resetOperation() {
         this.progressTicks = -1;
         this.maxProgressTicks = -1;
+        this.activeWeights = Optional.empty();
     }
 
     // ***
@@ -282,6 +303,10 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     public void saveAdditional(final CompoundTag data) {
         super.saveAdditional(data);
         data.putInt("lastRedstoneState", this.lastRedstoneState.ordinal());
+        if (this.maxProgressTicks > -1) {
+            data.putInt("maxProgressTicks", this.maxProgressTicks);
+            data.putInt("progressTicks", this.progressTicks);
+        }
     }
 
     @Override
@@ -289,6 +314,11 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         super.loadTag(data);
         if (data.contains("lastRedstoneState")) {
             this.lastRedstoneState = YesNo.values()[data.getInt("lastRedstoneState")];
+        }
+        if (data.contains("maxProgressTicks") && data.contains("progressTicks")) {
+            this.maxProgressTicks = data.getInt("maxProgressTicks");
+            this.progressTicks = data.getInt("progressTicks");
+            this.statusCode = IsmStatusCodes.RUNNING;
         }
     }
 
@@ -395,10 +425,15 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     }
 
     public boolean isRunning() {
-        return this.statusCode == IsmStatusCodes.RUNNING;
+        return this.statusCode == IsmStatusCodes.RUNNING || this.statusCode == IsmStatusCodes.INSUFFICIENT_POWER;
     }
 
     public int getStatusCode() {
         return this.statusCode;
+    }
+
+    @Override
+    protected Item getItemFromBlockEntity() {
+        return ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get();
     }
 }

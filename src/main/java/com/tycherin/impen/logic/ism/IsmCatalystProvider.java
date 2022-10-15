@@ -1,8 +1,6 @@
 package com.tycherin.impen.logic.ism;
 
-import java.util.Optional;
-
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public interface IsmCatalystProvider {
 
@@ -10,8 +8,11 @@ public interface IsmCatalystProvider {
     String getId();
 
     /** @return an Item that matches a catalyst, or empty if no catalyst is provided */
-    Optional<Item> getCatalyst();
+    ItemStack getCatalyst();
 
-    /** @return a catalyst item, if consumed, or empty if no catalyst was consumed */
-    Optional<Item> consumeCatalyst();
+    /**
+     * @param desiredAmount the maximum number of the catalyst that should be consumed
+     * @return a catalyst item, if consumed, or empty if no catalyst was consumed
+     */
+    ItemStack consumeCatalyst(int desiredAmount);
 }

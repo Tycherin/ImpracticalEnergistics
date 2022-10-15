@@ -43,7 +43,8 @@ public class IsmWeightTracker {
         }
 
         /** Creates an IsmWeightWrapper from a given collection of catalyst items */
-        public static IsmWeightWrapper fromCatalysts(final Collection<ItemStack> items, final Level level) {
+        public static IsmWeightWrapper fromCatalysts(final Collection<ItemStack> items, final int cycleCount,
+                final Level level) {
             final RecipeManager rm = level.getRecipeManager();
 
             final Map<IsmCatalystRecipe, Integer> recipeCounts = new HashMap<>();
@@ -59,14 +60,20 @@ public class IsmWeightTracker {
                 }
                 else {
                     final IsmCatalystRecipe recipe = recipeOpt.get();
-                    for (int i = 0; i < is.getCount(); i++) {
+                    for (int i = is.getCount(); i >= 0; i -= cycleCount) {
                         final int oldCount = recipeCounts.containsKey(recipe) ? recipeCounts.get(recipe) : 0;
                         recipeCounts.merge(recipe, 1, Integer::sum);
 
                         // Multiplier is (newCount - 1) ^ 0.75, which is equivalent to the below code
                         final double multiplier = Math.pow(IsmWeightTracker.DIMINISHING_RETURNS_RATE, oldCount);
+
+                        // If the amount of this stack remaining is less than what we're looking for, then the effect of
+                        // this iteration is proportionately reduced
+                        final double ratioMultiplier = (i < cycleCount)
+                                ? multiplier * ((double) i / cycleCount)
+                                : multiplier;
                         recipe.getWeights().forEach(weight -> {
-                            runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
+                            runningWeights.merge(weight.block(), weight.probability() * ratioMultiplier, Double::sum);
                         });
                     }
                     baseBlocks.add(recipe.getBaseBlock());

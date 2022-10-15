@@ -1,7 +1,5 @@
 package com.tycherin.impen.blockentity;
 
-import java.util.Optional;
-
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmCatalystProvider;
 
@@ -98,21 +96,23 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     }
 
     @Override
-    public Optional<Item> getCatalyst() {
-        final ItemStack is = this.inv.getStackInSlot(0);
-        return is.isEmpty() ? Optional.empty() : Optional.of(is.getItem());
+    public ItemStack getCatalyst() {
+        return this.inv.getStackInSlot(0);
     }
 
     @Override
-    public Optional<Item> consumeCatalyst() {
+    public ItemStack consumeCatalyst(final int desiredAmount) {
         final ItemStack is = this.inv.getStackInSlot(0);
-        if (is.isEmpty()) {
-            return Optional.empty();
+        
+        if (desiredAmount >= is.getCount()) {
+            this.inv.setItemDirect(0, ItemStack.EMPTY);
+            return is;
         }
         else {
-            final Item item = is.getItem();
-            is.setCount(is.getCount() - 1);
-            return Optional.of(item);
+            is.setCount(is.getCount() - desiredAmount);
+            final ItemStack returnedItems = is.copy();
+            returnedItems.setCount(desiredAmount);
+            return returnedItems;
         }
         // TODO What if the catalyst is something in a container, e.g. a bucket of water?
     }

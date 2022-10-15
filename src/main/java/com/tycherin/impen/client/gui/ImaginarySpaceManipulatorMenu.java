@@ -67,7 +67,7 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
                 this.setCurrentPower((long) (100.0 * eg.getStoredPower()));
                 this.setMaxPower((long) (100.0 * eg.getMaxStoredPower()));
                 
-                this.setRequiredPower((long)(100.0 * 50)); // TODO Pull this from the BE once that's implemented
+                this.setRequiredPower(Math.round(100.0 * be.getPowerDraw()));
                 
                 this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
                 this.setMaxProgress(Math.max(1, be.getMaxProgress()));
