@@ -304,6 +304,7 @@ public class ImpracticalEnergisticsMod {
         Upgrades.add(AEItems.SPEED_CARD, SPATIAL_CRYSTALLIZER_ITEM.get(), 3);
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
+        Upgrades.add(AEItems.SPEED_CARD, IMAGINARY_SPACE_MANIPULATOR_ITEM.get(), 3);
     }
     
     private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {

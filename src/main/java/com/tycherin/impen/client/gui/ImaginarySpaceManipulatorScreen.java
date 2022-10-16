@@ -7,7 +7,7 @@ import com.tycherin.impen.logic.ism.IsmStatusCodes;
 import com.tycherin.impen.util.GuiComponentFactory;
 import com.tycherin.impen.util.GuiComponentFactory.GuiComponentWrapper;
 
-import appeng.client.gui.AEBaseScreen;
+import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.CommonButtons;
 import appeng.client.gui.widgets.ProgressBar;
@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Inventory;
 
-public class ImaginarySpaceManipulatorScreen extends AEBaseScreen<ImaginarySpaceManipulatorMenu> {
+public class ImaginarySpaceManipulatorScreen extends UpgradeableScreen<ImaginarySpaceManipulatorMenu> {
     
     private static final GuiComponentWrapper EFFECT_TEXT;
     private static final GuiComponentWrapper EFFECT_MISSING_TEXT;

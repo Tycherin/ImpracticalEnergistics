@@ -62,10 +62,10 @@ public class ImpenConfig {
                     .defineInRange("global_power_modifier", 1.0, 0.0, 100.0);
 
             builder.comment("Power consumption for various machines are defined below. Units are AE.");
-            this.bnl = builder.comment("Beamed Network Link consumption per tick")
+            this.bnl = builder.comment("Beamed Network Link consumption per tick while active")
                     .defineInRange("beamed_network_link", 10, 0, Integer.MAX_VALUE);
-            this.ism = builder.comment("Imaginary Space Manipulator consumption per tick")
-                    .defineInRange("imaginary_space_manipulator", 10, 0, Integer.MAX_VALUE);
+            this.ism = builder.comment("Imaginary Space Manipulator consumption per block modified")
+                    .defineInRange("imaginary_space_manipulator", 80, 0, Integer.MAX_VALUE);
             this.psdTick = builder.comment("Possibility Disintegrator consumption per tick")
                     .defineInRange("possibility_disintegrator_tick", 10, 0, Integer.MAX_VALUE);
             this.psdOp = builder.comment("Possibility Disintegrator consumption per operation")

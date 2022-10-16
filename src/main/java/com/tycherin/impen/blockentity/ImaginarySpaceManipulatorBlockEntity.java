@@ -22,9 +22,13 @@ import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
 import appeng.blockentity.grid.AENetworkInvBlockEntity;
 import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 import appeng.hooks.ticking.TickHandler;
 import appeng.items.storage.SpatialStorageCellItem;
 import appeng.spatial.SpatialStoragePlot;
@@ -39,12 +43,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity implements IGridTickable {
+public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity
+        implements IGridTickable, IUpgradeableObject {
 
+    /** Number of blocks that can be affected by a single catalyst item */
     private static final int BLOCKS_PER_CYCLE = 64;
+    /** Base number of ticks required to process one block */
+    private static final double TICKS_PER_BLOCK = 8;
 
     private static class InventorySlots {
         public static final int INPUT = 0;
@@ -54,6 +63,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 2);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
     private final AppEngInternalInventory catalystInv = new AppEngInternalInventory(this, IsmService.MAX_CATALYSTS);
+    private final IUpgradeInventory upgrades;
     private final ILevelRunnable callback = level -> startOperation();
 
     private Optional<IsmWeightWrapper> activeWeights = Optional.empty();
@@ -70,6 +80,8 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 .addService(IGridTickable.class, this)
                 .setFlags();
 
+        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get(),
+                3, this::saveChanges);
         this.basePowerDraw = ImpenConfig.POWER.imaginarySpaceManipulatorCost();
         this.updateStatus();
     }
@@ -204,13 +216,12 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     /** @return The work rate, in blocks per tick */
     private double getWorkRate() {
-        // TODO Make this configurable
-        // TODO Implement acceleration cards here
-        return 0.125;
+        return Math.pow(2, this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) / TICKS_PER_BLOCK;
     }
 
+    /** @return The amount of power drawn per tick */
     public double getPowerDraw() {
-        return this.basePowerDraw;
+        return this.basePowerDraw * this.getWorkRate();
     }
 
     // ***
@@ -307,6 +318,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             data.putInt("maxProgressTicks", this.maxProgressTicks);
             data.putInt("progressTicks", this.progressTicks);
         }
+        this.upgrades.writeToNBT(data, "upgrades");
     }
 
     @Override
@@ -320,6 +332,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             this.progressTicks = data.getInt("progressTicks");
             this.statusCode = IsmStatusCodes.RUNNING;
         }
+        this.upgrades.readFromNBT(data, "upgrades");
     }
 
     @Override
@@ -385,6 +398,17 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             this.updateStatus();
             this.markForUpdate();
         }
+    }
+
+    @Override
+    public void addAdditionalDrops(final Level level, final BlockPos pos, final List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        upgrades.forEach(drops::add);
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades() {
+        return upgrades;
     }
 
     private boolean isSpatialCell(final ItemStack cell) {

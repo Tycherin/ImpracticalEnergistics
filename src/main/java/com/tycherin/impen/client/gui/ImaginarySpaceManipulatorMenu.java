@@ -3,36 +3,37 @@ package com.tycherin.impen.client.gui;
 import com.tycherin.impen.blockentity.ImaginarySpaceManipulatorBlockEntity;
 
 import appeng.api.config.SecurityPermissions;
-import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
+import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.OutputSlot;
 import appeng.menu.slot.RestrictedInputSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
-public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgressProvider {
+public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpaceManipulatorBlockEntity>
+        implements IProgressProvider {
     
     public static final MenuType<ImaginarySpaceManipulatorMenu> TYPE = MenuTypeBuilder
             .create(ImaginarySpaceManipulatorMenu::new, ImaginarySpaceManipulatorBlockEntity.class)
             .requirePermission(SecurityPermissions.BUILD)
             .build("imaginaryspacemanipulator");
 
-    @GuiSync(0)
+    @GuiSync(10)
     public long currentPower;
-    @GuiSync(1)
+    @GuiSync(11)
     public long maxPower;
-    @GuiSync(2)
+    @GuiSync(12)
     public long reqPower;
-    @GuiSync(4)
+    @GuiSync(14)
     public int currentProgress;
-    @GuiSync(5)
+    @GuiSync(15)
     public int maxProgress;
-    @GuiSync(6)
+    @GuiSync(16)
     public String effectName;
-    @GuiSync(7)
+    @GuiSync(17)
     public int statusCode;
     
     private int delay = 40;
@@ -45,8 +46,6 @@ public class ImaginarySpaceManipulatorMenu extends AEBaseMenu implements IProgre
                 ism.getInternalInventory(), 0), SlotSemantics.MACHINE_INPUT);
         this.addSlot(new OutputSlot(ism.getInternalInventory(), 1,
                 RestrictedInputSlot.PlacableItemType.SPATIAL_STORAGE_CELLS.icon), SlotSemantics.MACHINE_OUTPUT);
-
-        this.createPlayerInventorySlots(playerInv);
     }
 
     @Override
