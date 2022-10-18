@@ -36,7 +36,6 @@
     "gui.impracticalenergistics.imaginary_space_manipulator.status.not_formatted": "Blocked - drive is not formatted",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.no_catalysts": "Blocked - no catalysts available",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.cell_full": "Blocked - cell is full",
-    "gui.impracticalenergistics.imaginary_space_manipulator.status.insufficient_power": "Running - not enough power",
     "gui.impracticalenergistics.imaginary_space_manipulator.status.unknown": "Blocked - unknown issue",
     
     "gui.impracticalenergistics.jei.ism_recipe_title": "Imaginary Space Manipulation",

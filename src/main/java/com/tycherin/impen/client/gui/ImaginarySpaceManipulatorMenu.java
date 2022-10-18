@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.MenuType;
 
 public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpaceManipulatorBlockEntity>
         implements IProgressProvider {
-    
+
     public static final MenuType<ImaginarySpaceManipulatorMenu> TYPE = MenuTypeBuilder
             .create(ImaginarySpaceManipulatorMenu::new, ImaginarySpaceManipulatorBlockEntity.class)
             .requirePermission(SecurityPermissions.BUILD)
@@ -35,10 +35,9 @@ public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpac
     public String effectName;
     @GuiSync(17)
     public int statusCode;
-    
-    private int delay = 40;
 
-    public ImaginarySpaceManipulatorMenu(final int id, final Inventory playerInv, final ImaginarySpaceManipulatorBlockEntity ism) {
+    public ImaginarySpaceManipulatorMenu(final int id, final Inventory playerInv,
+            final ImaginarySpaceManipulatorBlockEntity ism) {
         super(TYPE, id, playerInv, ism);
 
         // TODO Better decoupling for inventory management slots & things
@@ -53,27 +52,13 @@ public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpac
         this.verifyPermissions(SecurityPermissions.BUILD, false);
 
         if (this.isServerSide()) {
-            this.delay++;
-
             var be = (ImaginarySpaceManipulatorBlockEntity) this.getBlockEntity();
-            var gridNode = be.getGridNode();
-            var grid = gridNode != null ? gridNode.getGrid() : null;
+            this.setRequiredPower(Math.round(100.0 * be.getPowerDraw()));
+            this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
+            this.setMaxProgress(Math.max(1, be.getMaxProgress()));
+            this.setEffectName("default"); // TODO Pull this from the BE once that's implemented
 
-            if (grid != null && ((this.delay > 15)) || (this.statusCode != be.getStatusCode())) {
-                this.delay = 0;
-
-                var eg = grid.getEnergyService();
-                this.setCurrentPower((long) (100.0 * eg.getStoredPower()));
-                this.setMaxPower((long) (100.0 * eg.getMaxStoredPower()));
-                
-                this.setRequiredPower(Math.round(100.0 * be.getPowerDraw()));
-                
-                this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
-                this.setMaxProgress(Math.max(1, be.getMaxProgress()));
-                this.setEffectName("default"); // TODO Pull this from the BE once that's implemented
-                
-                this.statusCode = be.getStatusCode();
-            }
+            this.statusCode = be.getStatusCode();
         }
 
         super.broadcastChanges();
@@ -83,16 +68,8 @@ public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpac
         return this.currentPower;
     }
 
-    private void setCurrentPower(long currentPower) {
-        this.currentPower = currentPower;
-    }
-
     public long getMaxPower() {
         return this.maxPower;
-    }
-
-    private void setMaxPower(long maxPower) {
-        this.maxPower = maxPower;
     }
 
     public long getRequiredPower() {
@@ -106,7 +83,7 @@ public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpac
     public double getCurrentProgressPercent() {
         return ((double) this.getCurrentProgress()) / this.getMaxProgress();
     }
-    
+
     @Override
     public int getCurrentProgress() {
         return this.currentProgress;
@@ -116,23 +93,23 @@ public class ImaginarySpaceManipulatorMenu extends UpgradeableMenu<ImaginarySpac
     public int getMaxProgress() {
         return this.maxProgress;
     }
-    
+
     private void setCurrentProgress(final int i) {
         this.currentProgress = i;
     }
-    
+
     private void setMaxProgress(final int i) {
         this.maxProgress = i;
     }
-    
+
     public String getEffectName() {
         return effectName;
     }
-    
+
     private void setEffectName(final String s) {
         this.effectName = s;
     }
-    
+
     public int getStatusCode() {
         return this.statusCode;
     }

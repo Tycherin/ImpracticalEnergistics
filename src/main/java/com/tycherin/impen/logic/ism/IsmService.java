@@ -72,6 +72,11 @@ public class IsmService implements IGridService, IGridServiceProvider {
         return items;
     }
 
+    /** @return True if any catalysts are provided to the network */
+    public boolean hasCatalysts() {
+        return this.providers.values().stream().anyMatch(provider -> !provider.getCatalyst().isEmpty());
+    }
+
     /** Gets the {@link IsmService} associated with a grid node, if one exists */
     public static Optional<IsmService> get(final IGridConnectedBlockEntity be) {
         return Optional.ofNullable(be.getMainNode())

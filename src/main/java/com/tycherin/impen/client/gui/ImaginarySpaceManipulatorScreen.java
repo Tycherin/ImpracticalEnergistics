@@ -37,7 +37,6 @@ public class ImaginarySpaceManipulatorScreen extends UpgradeableScreen<Imaginary
                 .put(IsmStatusCodes.MISSING_CHANNEL, factory.build("status.missing_channel"))
                 .put(IsmStatusCodes.NOT_FORMATTED, factory.build("status.not_formatted"))
                 .put(IsmStatusCodes.NO_CATALYSTS, factory.build("status.no_catalysts"))
-                .put(IsmStatusCodes.INSUFFICIENT_POWER, factory.build("status.insufficient_power"))
                 .put(IsmStatusCodes.CELL_FULL, factory.build("status.cell_full"))
                 .put(IsmStatusCodes.UNKNOWN, factory.build("status.unknown"))
                 .build();

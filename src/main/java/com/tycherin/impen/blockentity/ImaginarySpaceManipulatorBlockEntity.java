@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+
 import com.google.common.collect.Lists;
+import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.ism.IsmService;
@@ -50,6 +53,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntity
         implements IGridTickable, IUpgradeableObject {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     /** Number of blocks that can be affected by a single catalyst item */
     private static final int BLOCKS_PER_CYCLE = 64;
     /** Base number of ticks required to process one block */
@@ -66,11 +71,21 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     private final IUpgradeInventory upgrades;
     private final ILevelRunnable callback = level -> startOperation();
 
-    private Optional<IsmWeightWrapper> activeWeights = Optional.empty();
+    /**
+     * This field has different semantics depending on the ISM's state.
+     * 
+     * If the ISM is running:
+     * This is the operation that is currently running.
+     * 
+     * If the ISM is not running:
+     * This is the operation that would run if the ISM was activated.
+     */
+    private Optional<IsmOperation> operation = Optional.empty();
+
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
     private YesNo lastRedstoneState = YesNo.UNDECIDED;
-    private int statusCode = IsmStatusCodes.IDLE;
+    private int statusCode = IsmStatusCodes.UNKNOWN;
     private double basePowerDraw;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
@@ -83,104 +98,190 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get(),
                 3, this::saveChanges);
         this.basePowerDraw = ImpenConfig.POWER.imaginarySpaceManipulatorCost();
-        this.updateStatus();
     }
 
     // ***
-    // Ore generation methods
+    // State graph maintenance methods
     // ***
 
-    public void triggerOreify() {
-        if (!this.isClientSide()) {
-            if (this.isRunning()) {
-                return;
-            }
+    public int computeStatus() {
+        final int newStatusCode;
+        if (!this.getMainNode().isActive()) {
+            newStatusCode = IsmStatusCodes.MISSING_CHANNEL;
+        }
+        else if (this.inv.getStackInSlot(0).isEmpty()) {
+            newStatusCode = IsmStatusCodes.IDLE;
+        }
+        else if (!this.inv.getStackInSlot(1).isEmpty()) {
+            newStatusCode = IsmStatusCodes.OUTPUT_FULL;
+        }
+        else if (this.isRunning()) {
+            newStatusCode = IsmStatusCodes.RUNNING;
+        }
+        else if (this.operation.isEmpty()) {
+            newStatusCode = IsmStatusCodes.UNKNOWN;
+        }
+        else if (this.operation.get().plot.isEmpty()) {
+            newStatusCode = IsmStatusCodes.NOT_FORMATTED;
+        }
+        else if (this.operation.get().blocksToUpdate == 0) {
+            newStatusCode = IsmStatusCodes.CELL_FULL;
+        }
+        else if (!this.operation.get().hasCatalysts) {
+            newStatusCode = IsmStatusCodes.NO_CATALYSTS;
+        }
+        else {
+            newStatusCode = IsmStatusCodes.READY;
+        }
+        return newStatusCode;
+    }
 
-            final ItemStack cell = this.inv.getStackInSlot(0);
-            if (this.isSpatialCell(cell)) {
-                // this needs to be cross world synced.
-                TickHandler.instance().addCallable(null, callback);
-            }
+    @Override
+    public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
+        if (reason != IGridNodeListener.State.GRID_BOOT) {
+            this.getMainNode().ifPresent((grid, node) -> {
+                grid.getTickManager().alertDevice(node);
+            });
         }
     }
 
+    @Override
+    public void onChangeInventory(final InternalInventory inv, final int slot) {
+        if (this.isClientSide()) {
+            return;
+        }
+
+        this.getMainNode().ifPresent((grid, node) -> {
+            grid.getTickManager().alertDevice(node);
+        });
+    }
+
+    // ***
+    // Oreify operation methods
+    // ***
+
+    /**
+     * Begins a new operation by collecting catalysts from the {@link IsmService}, storing them in the catalyst
+     * inventory, and flagging this object's state accordingly.
+     */
     public void startOperation() {
-        if (this.level.isClientSide) {
+        if (this.isClientSide() || this.isRemoved()) {
             return;
         }
 
-        this.updateStatus();
-
-        if (this.statusCode != IsmStatusCodes.READY) {
+        this.updateOperation();
+        if (this.operation.isEmpty() || !this.operation.get().isValid()) {
             return;
         }
 
-        final SpatialStoragePlot plot = this.getPlot(this.inv.getStackInSlot(InventorySlots.INPUT)).get();
-        final int modifiableBlocks = (int) this.getModifiableBlocks(plot).count();
-        final int cycleCount = (int) Math.ceil(modifiableBlocks / (double) BLOCKS_PER_CYCLE);
-        if (cycleCount == 0) {
-            this.statusCode = IsmStatusCodes.CELL_FULL;
-            this.markForUpdate();
-            return;
-        }
-
+        final int cycleCount = this.getCycleCount(operation.get().plot().get());
         final List<ItemStack> catalysts = IsmService.get(this).get().triggerOperation(cycleCount);
-        if (catalysts.size() <= 0) {
-            this.statusCode = IsmStatusCodes.NO_CATALYSTS;
-            this.markForUpdate();
-            return;
-        }
-
         catalysts.forEach(this.catalystInv::addItems);
-        final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
-        this.activeWeights = Optional.of(IsmWeightWrapper.fromCatalysts(catalystItems, cycleCount, this.level));
-        this.maxProgressTicks = (int) Math.ceil(modifiableBlocks / this.getWorkRate());
+        this.maxProgressTicks = (int) Math.ceil(cycleCount * BLOCKS_PER_CYCLE / this.getWorkRate());
         this.progressTicks = 0;
-
         this.statusCode = IsmStatusCodes.RUNNING;
 
         this.getMainNode().ifPresent((grid, node) -> {
-            grid.getTickManager().wakeDevice(node);
+            grid.getTickManager().alertDevice(node);
         });
         this.markForUpdate();
     }
 
+    /** @return True if the operation was completed successfully; false otherwise */
     public boolean completeOperation() {
-        if (this.level.isClientSide) {
-            return false;
-        }
-        else if (IsmService.get(this).isEmpty()) {
+        if (this.level.isClientSide() || this.isRemoved()) {
             return false;
         }
 
-        final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
-        if (this.statusCode != IsmStatusCodes.RUNNING
-                || !this.isSpatialCell(cell)
-                || !this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()
-                || !this.getMainNode().isActive()) {
-            // Something weird happened - call for an update and hope that displays an appropriate error
-            this.updateStatus();
+        if (this.operation.isEmpty()) {
+            LOGGER.warn("Attempted to complete operation, but operation was missing");
+            return false;
+        }
+        else if (!this.operation.get().isValid()) {
+            LOGGER.warn("Attempted to complete operation, but operation was invalid");
             return false;
         }
 
-        final SpatialStoragePlot plot = this.getPlot(cell).get();
+        final SpatialStoragePlot plot = this.operation.get().plot().get();
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-        final Supplier<Block> blockSupplier = this.activeWeights.get().getSupplier();
-        this.getModifiableBlocks(plot).forEach(blockPos -> {
+        final int cycleCount = this.getCycleCount(plot);
+        final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
+        final var weights = IsmWeightWrapper.fromCatalysts(catalystItems, cycleCount, this.level);
+
+        // Go through the target zone and update each block based on the supplier results
+        final Supplier<Block> blockSupplier = weights.getSupplier();
+        this.getReplaceableBlocks(plot).forEach(blockPos -> {
             spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
         });
 
         // Operation completed, so move the input to the output
         this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
-        this.inv.setItemDirect(InventorySlots.OUTPUT, cell);
+        this.inv.setItemDirect(InventorySlots.OUTPUT, this.operation.get().cell.get());
+        this.resetOperation();
+        return true;
+    }
+    
+    private void updateOperation() {
+        if (this.operation.isPresent() && this.isRunning()) {
+            // Do nothing
+            // The operation can't change while the input item is constant, so there's no need to recompute it here
+            // If the input item changes, resetOperation() will clear catalysts and isRunning() will be false
+        }
+        else {
+            this.operation = this.buildOperation();
+        }
+    }
+
+    /** @return An operation object based on the current input cell, or empty if there isn't a valid input cell */
+    private Optional<IsmOperation> buildOperation() {
+        final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
+        if (cell.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (!ImaginarySpaceManipulatorBlockEntity.isSpatialCell(cell)) {
+            // This should be blocked by the inventory filter
+            throw new IllegalArgumentException(String.format("ItemStack %s is not a valid input", cell));
+        }
+
+        final Optional<SpatialStoragePlot> plot = this.getPlot(cell);
+        if (plot.isEmpty()) {
+            return Optional.of(new IsmOperation(Optional.of(cell), plot, 0L, false));
+        }
+
+        final long blocksToUpdate = this.getReplaceableBlocks(plot.get()).count();
+        if (blocksToUpdate == 0) {
+            return Optional.of(new IsmOperation(Optional.of(cell), plot, blocksToUpdate, false));
+        }
+
+        final boolean hasCatalysts;
+        if (this.isRunning()) {
+            hasCatalysts = true;
+        }
+        else {
+            hasCatalysts = IsmService.get(this).get().hasCatalysts();
+        }
+        return Optional.of(new IsmOperation(Optional.of(cell), plot, blocksToUpdate, hasCatalysts));
+    }
+
+    private void resetOperation() {
+        this.progressTicks = -1;
+        this.maxProgressTicks = -1;
         for (int i = 0; i < this.catalystInv.size(); i++) {
             this.catalystInv.setItemDirect(i, ItemStack.EMPTY);
         }
-
-        return true;
+        this.updateOperation();
     }
 
-    private Stream<BlockPos> getModifiableBlocks(final SpatialStoragePlot plot) {
+    // ***
+    // Misc getters & utility methods
+    // ***
+
+    /**
+     * @param plot Input plot to evaluate
+     * @return A stream of all the blocks in the target plot that can be replaced
+     */
+    private Stream<BlockPos> getReplaceableBlocks(final SpatialStoragePlot plot) {
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         final BlockPos startPos = plot.getOrigin();
         final BlockPos endPos = new BlockPos(
@@ -196,22 +297,21 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
                 });
     }
 
+    /** @return The spatial storage plot for the given cell, or empty if ther isn't one allocated */
     private Optional<SpatialStoragePlot> getPlot(final ItemStack cell) {
+        if (cell.isEmpty()) {
+            return Optional.empty();
+        }
         final var plotManager = SpatialStoragePlotManager.INSTANCE;
         final var spatialCell = (SpatialStorageCellItem) cell.getItem();
         return Optional.ofNullable(plotManager.getPlot(spatialCell.getAllocatedPlotId(cell)));
     }
 
-    private class InventoryItemFilter implements IAEItemFilter {
-        @Override
-        public boolean allowExtract(final InternalInventory inv, final int slot, final int amount) {
-            return slot == InventorySlots.OUTPUT;
-        }
-
-        @Override
-        public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == InventorySlots.INPUT && ImaginarySpaceManipulatorBlockEntity.this.isSpatialCell(stack);
-        }
+    /** @return The number of cycles required to process this plot */
+    private int getCycleCount(final SpatialStoragePlot plot) {
+        final int modifiableBlocks = (int) this.getReplaceableBlocks(plot).count();
+        final int cycleCount = (int) Math.ceil(modifiableBlocks / (double) BLOCKS_PER_CYCLE);
+        return cycleCount;
     }
 
     /** @return The work rate, in blocks per tick */
@@ -224,90 +324,93 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         return this.basePowerDraw * this.getWorkRate();
     }
 
+    public void updateRedstoneState() {
+        final YesNo currentState = this.level.getBestNeighborSignal(this.worldPosition) != 0 ? YesNo.YES : YesNo.NO;
+        if (this.lastRedstoneState != currentState) {
+            this.lastRedstoneState = currentState;
+
+            if (!this.isClientSide() && this.lastRedstoneState == YesNo.YES) {
+                TickHandler.instance().addCallable(null, callback);
+            }
+        }
+    }
+
+    /** @return True if there is currently an operation running; false otherwise */
+    private boolean isRunning() {
+        if (this.isClientSide()) {
+            return this.statusCode == IsmStatusCodes.RUNNING;
+        }
+        else {
+            // If any catalysts are present, then there is an operation running
+            for (var stack : this.catalystInv) {
+                if (!stack.isEmpty()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     // ***
     // Ticking methods
     // ***
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
-        return new TickingRequest(1, 1, !this.isRunning(), false);
+        return new TickingRequest(1, 20, !this.isRunning(), true);
     }
 
     @Override
     public TickRateModulation tickingRequest(final IGridNode node, final int ticksSinceLastCall) {
-        if (!this.isRunning()) {
-            return TickRateModulation.SLEEP;
+        if (this.isRemoved()) {
+            return TickRateModulation.SAME;
         }
 
-        if (AEPowerUtil.drawPower(this, this.getPowerDraw())) {
-            this.progressTicks++;
-            this.statusCode = IsmStatusCodes.RUNNING;
-        }
-        else {
-            this.statusCode = IsmStatusCodes.INSUFFICIENT_POWER;
-        }
+        // First, update the current status
+        this.updateOperation();
+        final int oldStatus = this.statusCode;
+        final int newStatus = this.computeStatus();
+        this.statusCode = newStatus;
 
-        if (this.progressTicks >= this.maxProgressTicks) {
-            if (this.completeOperation()) {
+        final TickRateModulation rate;
+        if (this.statusCode != IsmStatusCodes.RUNNING) {
+            // If the input got removed, cancel the current operation
+            if (this.statusCode == IsmStatusCodes.IDLE && this.isRunning()) {
                 this.resetOperation();
-                return TickRateModulation.SLEEP;
             }
-        }
 
-        return TickRateModulation.SAME;
-    }
-
-    public void updateStatus() {
-        if (this.isClientSide()) {
-            return;
-        }
-
-        final int oldStatusCode = this.statusCode;
-        if (!this.getMainNode().isActive()) {
-            this.statusCode = IsmStatusCodes.MISSING_CHANNEL;
-        }
-        else if (IsmService.get(this) == null) {
-            this.statusCode = IsmStatusCodes.UNKNOWN;
-        }
-        else if (this.inv.getStackInSlot(InventorySlots.INPUT).isEmpty()) {
-            this.statusCode = IsmStatusCodes.IDLE;
-        }
-        else if (!this.inv.getStackInSlot(InventorySlots.OUTPUT).isEmpty()) {
-            this.statusCode = IsmStatusCodes.OUTPUT_FULL;
+            // If we're not running an operation, the device can go idle. It will get alerted if the inventory changes
+            // or an operation is triggered.
+            rate = TickRateModulation.IDLE;
         }
         else {
-            final ItemStack is = this.inv.getStackInSlot(InventorySlots.INPUT);
-            final Optional<SpatialStoragePlot> plotOpt = this.getPlot(is);
-            if (plotOpt.isEmpty()) {
-                this.statusCode = IsmStatusCodes.NOT_FORMATTED;
+            if (AEPowerUtil.drawPower(this, this.getPowerDraw() * ticksSinceLastCall)) {
+                this.progressTicks += Math.floor(this.getWorkRate() * ticksSinceLastCall);
+            }
+
+            if (this.progressTicks >= this.maxProgressTicks) {
+                if (this.completeOperation()) {
+                    this.resetOperation();
+                    rate = TickRateModulation.IDLE;
+                }
+                else {
+                    rate = TickRateModulation.SAME;
+                }
             }
             else {
-                this.statusCode = IsmStatusCodes.READY;
+                rate = TickRateModulation.FASTER;
             }
         }
 
-        if (oldStatusCode != this.statusCode) {
-            if (!(this.statusCode == IsmStatusCodes.READY) &&
-                    (oldStatusCode == IsmStatusCodes.RUNNING || oldStatusCode == IsmStatusCodes.INSUFFICIENT_POWER)) {
-                // Something has gone wrong while an operation was running, so cancel it out
-                this.resetOperation();
-            }
-
+        // We delay doing this update until the end to avoid triggering it multiple times if there are multiple updates
+        if (oldStatus != newStatus) {
             this.markForUpdate();
-            this.getMainNode().ifPresent((grid, node) -> {
-                grid.getTickManager().wakeDevice(node);
-            });
         }
-    }
-
-    private void resetOperation() {
-        this.progressTicks = -1;
-        this.maxProgressTicks = -1;
-        this.activeWeights = Optional.empty();
+        return rate;
     }
 
     // ***
-    // Boilerplate stuff
+    // Data serialization stuff
     // ***
 
     @Override
@@ -319,6 +422,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
             data.putInt("progressTicks", this.progressTicks);
         }
         this.upgrades.writeToNBT(data, "upgrades");
+        this.catalystInv.writeToNBT(data, "catalysts");
     }
 
     @Override
@@ -330,9 +434,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         if (data.contains("maxProgressTicks") && data.contains("progressTicks")) {
             this.maxProgressTicks = data.getInt("maxProgressTicks");
             this.progressTicks = data.getInt("progressTicks");
-            this.statusCode = IsmStatusCodes.RUNNING;
         }
         this.upgrades.readFromNBT(data, "upgrades");
+        this.catalystInv.readFromNBT(data, "catalysts");
     }
 
     @Override
@@ -367,6 +471,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         for (int i = 0; i < this.inv.size(); i++) {
             this.inv.setItemDirect(i, data.readItem());
         }
+
         for (int i = 0; i < this.catalystInv.size(); i++) {
             this.catalystInv.setItemDirect(i, data.readItem());
         }
@@ -374,31 +479,9 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         return ret;
     }
 
-    public boolean getRedstoneState() {
-        if (this.lastRedstoneState == YesNo.UNDECIDED) {
-            this.updateRedstoneState();
-        }
-
-        return this.lastRedstoneState == YesNo.YES;
-    }
-
-    public void updateRedstoneState() {
-        final YesNo currentState = this.level.getBestNeighborSignal(this.worldPosition) != 0 ? YesNo.YES : YesNo.NO;
-        if (this.lastRedstoneState != currentState) {
-            this.lastRedstoneState = currentState;
-            if (this.lastRedstoneState == YesNo.YES) {
-                this.triggerOreify();
-            }
-        }
-    }
-
-    @Override
-    public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
-        if (reason != IGridNodeListener.State.GRID_BOOT) {
-            this.updateStatus();
-            this.markForUpdate();
-        }
-    }
+    // ***
+    // Boilerplate stuff
+    // ***
 
     @Override
     public void addAdditionalDrops(final Level level, final BlockPos pos, final List<ItemStack> drops) {
@@ -409,15 +492,6 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     @Override
     public IUpgradeInventory getUpgrades() {
         return upgrades;
-    }
-
-    private boolean isSpatialCell(final ItemStack cell) {
-        if (!cell.isEmpty() && cell.getItem() instanceof ISpatialStorageCell spatialCell) {
-            return spatialCell.isSpatialStorage(cell);
-        }
-        else {
-            return false;
-        }
     }
 
     @Override
@@ -435,21 +509,12 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
         return this.inv;
     }
 
-    @Override
-    public void onChangeInventory(final InternalInventory inv, final int slot) {
-        this.updateStatus();
-    }
-
     public int getCurrentProgress() {
         return this.progressTicks;
     }
 
     public int getMaxProgress() {
         return this.maxProgressTicks;
-    }
-
-    public boolean isRunning() {
-        return this.statusCode == IsmStatusCodes.RUNNING || this.statusCode == IsmStatusCodes.INSUFFICIENT_POWER;
     }
 
     public int getStatusCode() {
@@ -459,5 +524,37 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     @Override
     protected Item getItemFromBlockEntity() {
         return ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get();
+    }
+
+    // ***
+    // Inner classes
+    // ***
+
+    private static record IsmOperation(Optional<ItemStack> cell, Optional<SpatialStoragePlot> plot,
+            Long blocksToUpdate, boolean hasCatalysts) {
+        public boolean isValid() {
+            return this.plot.isPresent() && blocksToUpdate > 0 && hasCatalysts;
+        }
+    }
+
+    private class InventoryItemFilter implements IAEItemFilter {
+        @Override
+        public boolean allowExtract(final InternalInventory inv, final int slot, final int amount) {
+            return slot == InventorySlots.OUTPUT;
+        }
+
+        @Override
+        public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
+            return slot == InventorySlots.INPUT && ImaginarySpaceManipulatorBlockEntity.isSpatialCell(stack);
+        }
+    }
+
+    public static boolean isSpatialCell(final ItemStack cell) {
+        if (!cell.isEmpty() && cell.getItem() instanceof ISpatialStorageCell spatialCell) {
+            return spatialCell.isSpatialStorage(cell);
+        }
+        else {
+            return false;
+        }
     }
 }

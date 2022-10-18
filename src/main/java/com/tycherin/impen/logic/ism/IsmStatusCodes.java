@@ -10,7 +10,6 @@ public class IsmStatusCodes {
     public static final int MISSING_CHANNEL = 101;
     public static final int NOT_FORMATTED = 102;
     public static final int NO_CATALYSTS = 103;
-    public static final int INSUFFICIENT_POWER = 104;
     public static final int CELL_FULL = 105;
 
     public static final int UNKNOWN = 9999;
