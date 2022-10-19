@@ -22,6 +22,7 @@ import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
+import com.tycherin.impen.datagen.ImpenRecipeProvider;
 import com.tycherin.impen.entity.FluixCatalystEntity;
 import com.tycherin.impen.entity.SpatialToolCatalystEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -46,6 +47,8 @@ import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import net.minecraft.core.Registry;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -70,6 +73,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -265,6 +269,7 @@ public class ImpracticalEnergisticsMod {
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addGenericListener(MenuType.class, this::registerMenus);
+        modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addListener(CapturePlanePart::handleProjectileEvent);
 
@@ -305,6 +310,11 @@ public class ImpracticalEnergisticsMod {
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
         Upgrades.add(AEItems.SPEED_CARD, IMAGINARY_SPACE_MANIPULATOR_ITEM.get(), 3);
+    }
+
+    public void gatherData(final GatherDataEvent event) {
+        final DataGenerator gen = event.getGenerator();
+        gen.addProvider(new ImpenRecipeProvider(gen));
     }
     
     private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {
