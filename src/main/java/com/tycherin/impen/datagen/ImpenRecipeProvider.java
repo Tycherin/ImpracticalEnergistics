@@ -20,11 +20,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildCraftingRecipes(final Consumer<FinishedRecipe> consumer) {
-        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_CERTUS_SEEDS_ITEM.get())
+        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_CERTUS.item())
                 .requires(AEItems.CERTUS_CRYSTAL_SEED)
                 .unlockedBy("has_certus_seed", has(AEItems.CERTUS_CRYSTAL_SEED))
                 .save(consumer, makeId("plantable_certus_seeds"));
-        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_FLUIX_SEEDS_ITEM.get())
+        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_FLUIX.item())
                 .requires(AEItems.FLUIX_CRYSTAL_SEED)
                 .unlockedBy("has_fluix_seed", has(AEItems.FLUIX_CRYSTAL_SEED))
                 .save(consumer, makeId("plantable_fluix_seeds"));

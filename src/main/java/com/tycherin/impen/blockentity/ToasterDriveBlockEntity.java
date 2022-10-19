@@ -20,7 +20,7 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
     private static final Random RAND = new Random();
 
     public ToasterDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpenRegistry.TOASTER_DRIVE_BE.get(), pos, blockState);
+        super(ImpenRegistry.TOASTER_DRIVE.blockEntity(), pos, blockState);
     }
 
     @Override
@@ -76,6 +76,6 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.TOASTER_DRIVE_ITEM.get();
+        return ImpenRegistry.TOASTER_DRIVE.item();
     }
 }

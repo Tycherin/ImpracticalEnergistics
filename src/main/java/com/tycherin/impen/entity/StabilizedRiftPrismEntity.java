@@ -43,7 +43,7 @@ public class StabilizedRiftPrismEntity extends ItemEntity {
     
     public StabilizedRiftPrismEntity(final Level level, final double x, final double y, final double z,
             final ItemStack stack) {
-        this(ImpenRegistry.STABILIZED_RIFT_PRISM_ENTITY.get(), level);
+        this(ImpenRegistry.STABILIZED_RIFT_PRISM.entity(), level);
         this.setPos(x, y, z);
         this.setYRot(this.random.nextFloat() * 360f);
         this.setDeltaMovement((this.random.nextDouble() * 0.2) - 0.1, 0.2, (this.random.nextDouble() * 0.2) - 0.1);

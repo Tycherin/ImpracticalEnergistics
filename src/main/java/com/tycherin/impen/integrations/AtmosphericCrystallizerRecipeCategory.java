@@ -32,7 +32,7 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
                 "textures/gui/spatial_rift_manipulator.png"); // TODO Replace placeholder value
         this.background = guiHelper.createDrawable(location, 51, 44, 83, 25);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get().getDefaultInstance());
+                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item().getDefaultInstance());
     }
 
     @Override

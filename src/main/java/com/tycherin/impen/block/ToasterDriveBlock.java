@@ -17,7 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class ToasterDriveBlock extends AEBaseEntityBlock<ToasterDriveBlockEntity> {
 
-    public ToasterDriveBlock() {
+    public ToasterDriveBlock(final BlockBehaviour.Properties ignored) {
         super(BlockBehaviour.Properties.copy(AEBlocks.CHEST.block()));
         this.registerDefaultState(this.defaultBlockState());
     }

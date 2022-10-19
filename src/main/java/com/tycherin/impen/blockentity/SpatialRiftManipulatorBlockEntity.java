@@ -89,13 +89,13 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
     private double basePowerDraw;
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BE.get(), pos, blockState);
+        super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.blockEntity(), pos, blockState);
 
         this.getMainNode()
                 .addService(IGridTickable.class, this)
                 .setFlags();
 
-        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_ITEM.get(),
+        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item(),
                 3, this::saveChanges);
         this.basePowerDraw = ImpenConfig.POWER.spatialRiftManipulatorCost();
     }
@@ -523,7 +523,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_ITEM.get();
+        return ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item();
     }
 
     // ***

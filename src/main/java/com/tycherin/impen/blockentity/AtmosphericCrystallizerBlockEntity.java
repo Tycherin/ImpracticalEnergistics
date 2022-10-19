@@ -44,11 +44,11 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
     private int progress = 0;
 
     public AtmosphericCrystallizerBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_BE.get(), pos, blockState);
+        super(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.blockEntity(), pos, blockState);
 
         this.getMainNode()
                 .addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get(), 3,
+        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item(), 3,
                 this::saveChanges);
         // TODO Tick time should be pulled from the recipe, and config should dictate the speed
         this.baseProgressTicks = ImpenConfig.SETTINGS.atmosphericCrystallizerWorkRate();
@@ -192,7 +192,7 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get();
+        return ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item();
     }
 
     private class InventoryItemFilter implements IAEItemFilter {

@@ -39,7 +39,7 @@ public class RiftToolTier implements Tier {
     @Override
     public Ingredient getRepairIngredient() {
         // TODO Replace with the appropriate material
-        return Ingredient.of(ImpenRegistry.RIFT_PRISM_ITEM.get());
+        return Ingredient.of(ImpenRegistry.RIFT_PRISM.item());
     }
 
     @Override

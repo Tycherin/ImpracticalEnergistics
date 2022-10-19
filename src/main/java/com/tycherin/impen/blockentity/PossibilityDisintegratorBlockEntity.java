@@ -84,7 +84,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
 
     public PossibilityDisintegratorBlockEntity(final BlockPos pos,
             final BlockState blockState) {
-        super(ImpenRegistry.POSSIBILITY_DISINTEGRATOR_BE.get(), pos, blockState);
+        super(ImpenRegistry.POSSIBILITY_DISINTEGRATOR.blockEntity(), pos, blockState);
 
         this.getMainNode()
                 .setExposedOnSides(EnumSet.complementOf(EnumSet.of(Direction.UP)))
@@ -92,7 +92,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 .setIdlePowerUsage(ImpenConfig.POWER.possibilityDisintegratorCostTick())
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
 
-        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.POSSIBILITY_DISINTEGRATOR_ITEM.get(), 4,
+        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.POSSIBILITY_DISINTEGRATOR.item(), 4,
                 this::saveChanges);
         this.baseTicksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
         this.basePowerPerOperation = ImpenConfig.POWER.possibilityDisintegratorCostOperation();
@@ -358,7 +358,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.POSSIBILITY_DISINTEGRATOR_ITEM.get();
+        return ImpenRegistry.POSSIBILITY_DISINTEGRATOR.item();
     }
     
     public double getPowerPerOperation() {

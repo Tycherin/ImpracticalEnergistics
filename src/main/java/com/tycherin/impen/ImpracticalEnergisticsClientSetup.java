@@ -35,7 +35,7 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
-        BlockEntityRenderers.register(ImpenRegistry.BEAMED_NETWORK_LINK_BE.get(),
+        BlockEntityRenderers.register(ImpenRegistry.BEAMED_NETWORK_LINK.blockEntity(),
                 BeamedNetworkLinkRenderer::new);
     }
 
@@ -43,9 +43,9 @@ public class ImpracticalEnergisticsClientSetup {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
 
-            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_CERTUS_BLOCK.get(),
+            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_CERTUS.block(),
                     RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_FLUIX_BLOCK.get(),
+            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_FLUIX.block(),
                     RenderType.cutout());
         });
     }
@@ -78,8 +78,8 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ImpenRegistry.RIFT_PRISM_ENTITY.get(), ItemEntityRenderer::new);
-        event.registerEntityRenderer(ImpenRegistry.STABILIZED_RIFT_PRISM_ENTITY.get(),
+        event.registerEntityRenderer(ImpenRegistry.RIFT_PRISM.entity(), ItemEntityRenderer::new);
+        event.registerEntityRenderer(ImpenRegistry.STABILIZED_RIFT_PRISM.entity(),
                 ItemEntityRenderer::new);
     }
 }

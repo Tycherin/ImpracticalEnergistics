@@ -24,7 +24,7 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
     private String id; // See getId() for an explanation of why we lazy load this
     
     public SpatialRiftStabilizerBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpenRegistry.SPATIAL_RIFT_STABILIZER_BE.get(), pos, blockState);
+        super(ImpenRegistry.SPATIAL_RIFT_STABILIZER.blockEntity(), pos, blockState);
 
         this.getMainNode()
                 .setFlags();
@@ -119,6 +119,6 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.SPATIAL_RIFT_STABILIZER_ITEM.get();
+        return ImpenRegistry.SPATIAL_RIFT_STABILIZER.item();
     }
 }

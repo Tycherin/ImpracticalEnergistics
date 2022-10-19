@@ -13,6 +13,6 @@ public class PlantableFluixBlock extends BeetrootBlock {
     
     @Override
     protected ItemLike getBaseSeedId() {
-        return ImpenRegistry.PLANTABLE_FLUIX_SEEDS_ITEM.get();
+        return ImpenRegistry.PLANTABLE_FLUIX.item();
      }
 }

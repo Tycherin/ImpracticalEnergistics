@@ -39,7 +39,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
     
     private static final List<Item> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
-            ImpenRegistry.BEAMED_NETWORK_LINK_ITEM.get());
+            ImpenRegistry.BEAMED_NETWORK_LINK.item());
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -70,7 +70,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                     List.of(
                             Ingredient.of(Items.REDSTONE),
                             Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
-                            Ingredient.of(ImpenRegistry.RIFT_PRISM_ITEM.get())),
+                            Ingredient.of(ImpenRegistry.RIFT_PRISM.item())),
                     AEItems.FLUIX_DUST.stack(4),
                     false));
         }
@@ -88,13 +88,13 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(final IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item().getDefaultInstance(),
                 RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_RIFT_STABILIZER_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.SPATIAL_RIFT_STABILIZER.item().getDefaultInstance(),
                 RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item().getDefaultInstance(),
                 ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);
     }
 
