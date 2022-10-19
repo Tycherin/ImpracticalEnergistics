@@ -1,0 +1,26 @@
+
+{
+  "$schema": "schema.json",
+  "includes": ["common/common.json", "common/player_inventory.json"],
+  "background": {
+    "texture": "guis/bus.png",
+    "srcRect": [0, 0, 176, 184]
+  },
+  "slots": {
+    "PROCESSING_INPUTS": {
+      "left": 80,
+      "top": 40
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "gui.impracticalenergistics.spatial_rift_stabilizer"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}

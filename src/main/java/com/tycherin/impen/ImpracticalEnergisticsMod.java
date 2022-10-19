@@ -1,12 +1,12 @@
 package com.tycherin.impen;
 
-import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
-import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
+import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
+import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
-import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
+import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.datagen.ImpenRecipeProvider;
-import com.tycherin.impen.logic.ism.IsmService;
+import com.tycherin.impen.logic.rift.RiftService;
 import com.tycherin.impen.part.CapturePlanePart;
 
 import appeng.api.parts.PartModels;
@@ -35,7 +35,7 @@ public class ImpracticalEnergisticsMod {
 
         ImpenRegistry.register(modEventBus);
         
-        IsmService.init();
+        RiftService.init();
 
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
@@ -52,9 +52,9 @@ public class ImpracticalEnergisticsMod {
 
     public void registerMenus(final RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
-                ImaginarySpaceManipulatorMenu.TYPE,
-                ImaginarySpaceStabilizerMenu.TYPE,
-                SpatialCrystallizerMenu.TYPE,
+                SpatialRiftManipulatorMenu.TYPE,
+                SpatialRiftStabilizerMenu.TYPE,
+                AtmosphericCrystallizerMenu.TYPE,
                 PossibilityDisintegratorMenu.TYPE);
     }
     

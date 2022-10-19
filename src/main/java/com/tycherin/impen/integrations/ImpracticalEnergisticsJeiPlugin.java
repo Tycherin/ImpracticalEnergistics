@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.recipe.IsmCatalystRecipe;
-import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
+import com.tycherin.impen.recipe.RiftCatalystRecipe;
+import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 
 import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
@@ -33,10 +33,10 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
     private static final ResourceLocation PLUGIN_ID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "core");
 
-    private static final RecipeType<IsmCatalystRecipe> ISM_CATALYST_RECIPE_TYPE = RecipeType
-            .create(ImpracticalEnergisticsMod.MOD_ID, "ism_catalyst", IsmCatalystRecipe.class);
-    private static final RecipeType<SpatialCrystallizerRecipe> SPATIAL_CRYSTALLIZER_RECIPE_TYPE = RecipeType
-            .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_crystallizer", SpatialCrystallizerRecipe.class);
+    private static final RecipeType<RiftCatalystRecipe> RIFT_CATALYST_RECIPE_TYPE = RecipeType
+            .create(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst", RiftCatalystRecipe.class);
+    private static final RecipeType<AtmosphericCrystallizerRecipe> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = RecipeType
+            .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
     
     private static final List<Item> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
             ImpenRegistry.BEAMED_NETWORK_LINK_ITEM.get());
@@ -50,8 +50,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     public void registerCategories(final IRecipeCategoryRegistration registry) {
         final var guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(
-                new IsmCatalystRecipeCategory(guiHelper),
-                new SpatialCrystallizerRecipeCategory(guiHelper));
+                new RiftCatalystRecipeCategory(guiHelper),
+                new AtmosphericCrystallizerRecipeCategory(guiHelper));
     }
 
     @Override
@@ -59,10 +59,10 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         @SuppressWarnings("resource")
         final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        registry.addRecipes(ISM_CATALYST_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpenRegistry.ISM_CATALYST_RECIPE_TYPE.get()));
-        registry.addRecipes(SPATIAL_CRYSTALLIZER_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()));
+        registry.addRecipes(RIFT_CATALYST_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get()));
+        registry.addRecipes(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get()));
 
         final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
         if (AEConfig.instance().isInWorldFluixEnabled()) {
@@ -70,7 +70,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                     List.of(
                             Ingredient.of(Items.REDSTONE),
                             Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
-                            Ingredient.of(ImpenRegistry.FLUIX_CATALYST_ITEM.get())),
+                            Ingredient.of(ImpenRegistry.RIFT_PRISM_ITEM.get())),
                     AEItems.FLUIX_DUST.stack(4),
                     false));
         }
@@ -88,14 +88,14 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(final IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(
-                ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_ITEM.get().getDefaultInstance(),
-                ISM_CATALYST_RECIPE_TYPE);
+                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_ITEM.get().getDefaultInstance(),
+                RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpenRegistry.IMAGINARY_SPACE_STABILIZER_ITEM.get().getDefaultInstance(),
-                ISM_CATALYST_RECIPE_TYPE);
+                ImpenRegistry.SPATIAL_RIFT_STABILIZER_ITEM.get().getDefaultInstance(),
+                RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
                 ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
-                SPATIAL_CRYSTALLIZER_RECIPE_TYPE);
+                ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);
     }
 
 }

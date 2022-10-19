@@ -1,5 +1,5 @@
 {
-    "type": "impracticalenergistics:spatial_crystallizer",
+    "type": "impracticalenergistics:atmospheric_crystallizer",
     "dimension": "minecraft:overworld",
     "result": {"item": "minecraft:apple"}
 }

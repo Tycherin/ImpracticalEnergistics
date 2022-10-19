@@ -1,13 +1,13 @@
 package com.tycherin.impen;
 
-import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorMenu;
-import com.tycherin.impen.client.gui.ImaginarySpaceManipulatorScreen;
-import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerMenu;
-import com.tycherin.impen.client.gui.ImaginarySpaceStabilizerScreen;
+import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
+import com.tycherin.impen.client.gui.SpatialRiftManipulatorScreen;
+import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
+import com.tycherin.impen.client.gui.SpatialRiftStabilizerScreen;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
-import com.tycherin.impen.client.gui.SpatialCrystallizerMenu;
-import com.tycherin.impen.client.gui.SpatialCrystallizerScreen;
+import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
+import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
 import appeng.client.gui.style.ScreenStyle;
@@ -51,23 +51,23 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void setupScreens() {
-        MenuScreens.<ImaginarySpaceManipulatorMenu, ImaginarySpaceManipulatorScreen>register(
-                ImaginarySpaceManipulatorMenu.TYPE,
+        MenuScreens.<SpatialRiftManipulatorMenu, SpatialRiftManipulatorScreen>register(
+                SpatialRiftManipulatorMenu.TYPE,
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_manipulator.json");
-                    return new ImaginarySpaceManipulatorScreen(menu, playerInv, title, style);
+                    return new SpatialRiftManipulatorScreen(menu, playerInv, title, style);
                 });
-        MenuScreens.<ImaginarySpaceStabilizerMenu, ImaginarySpaceStabilizerScreen>register(
-                ImaginarySpaceStabilizerMenu.TYPE,
+        MenuScreens.<SpatialRiftStabilizerMenu, SpatialRiftStabilizerScreen>register(
+                SpatialRiftStabilizerMenu.TYPE,
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_stabilizer.json");
-                    return new ImaginarySpaceStabilizerScreen(menu, playerInv, title, style);
+                    return new SpatialRiftStabilizerScreen(menu, playerInv, title, style);
                 });
-        MenuScreens.<SpatialCrystallizerMenu, SpatialCrystallizerScreen>register(
-                SpatialCrystallizerMenu.TYPE,
+        MenuScreens.<AtmosphericCrystallizerMenu, AtmosphericCrystallizerScreen>register(
+                AtmosphericCrystallizerMenu.TYPE,
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_crystallizer.json");
-                    return new SpatialCrystallizerScreen(menu, playerInv, title, style);
+                    return new AtmosphericCrystallizerScreen(menu, playerInv, title, style);
                 });
         MenuScreens.<PossibilityDisintegratorMenu, PossibilityDisintegratorScreen>register(
                 PossibilityDisintegratorMenu.TYPE,
@@ -78,8 +78,8 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ImpenRegistry.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
-        event.registerEntityRenderer(ImpenRegistry.SPATIAL_TOOL_CATALYST_ENTITY.get(),
+        event.registerEntityRenderer(ImpenRegistry.RIFT_PRISM_ENTITY.get(), ItemEntityRenderer::new);
+        event.registerEntityRenderer(ImpenRegistry.STABILIZED_RIFT_PRISM_ENTITY.get(),
                 ItemEntityRenderer::new);
     }
 }

@@ -1,5 +1,5 @@
 {
-    "type": "impracticalenergistics:ism_catalyst",
+    "type": "impracticalenergistics:rift_catalyst",
     "catalyst_item": {"item": "minecraft:iron_ingot"},
     "base_block": {"block": "minecraft:stone"},
     "block_weights": [
