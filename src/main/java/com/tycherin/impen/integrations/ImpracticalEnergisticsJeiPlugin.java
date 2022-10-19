@@ -94,7 +94,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 ImpenRegistry.SPATIAL_RIFT_STABILIZER_ITEM.get().getDefaultInstance(),
                 RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
                 ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);
     }
 

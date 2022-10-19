@@ -15,7 +15,7 @@ import appeng.me.helpers.IGridConnectedBlockEntity;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Grid-wide service implementing Imaginary Space Manipulator (ISM) functionality. Tracks nodes that add ISM information
+ * Grid-wide service implementing Spatial Rift Manipulator (SRM) functionality. Tracks nodes that add SRM information
  * and makes the aggregate results available to consumers.
  * 
  * There are probably other ways I could have implemented this, but using an {@link IGridService} seemed cool.

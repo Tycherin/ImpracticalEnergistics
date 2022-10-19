@@ -19,7 +19,7 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
     public static final MenuType<SpatialRiftManipulatorMenu> TYPE = MenuTypeBuilder
             .create(SpatialRiftManipulatorMenu::new, SpatialRiftManipulatorBlockEntity.class)
             .requirePermission(SecurityPermissions.BUILD)
-            .build("imaginaryspacemanipulator");
+            .build("spatial_rift_manipulator");
 
     @GuiSync(10)
     public long currentPower;

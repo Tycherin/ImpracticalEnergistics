@@ -24,7 +24,7 @@ public class SpatialRiftManipulatorScreen extends UpgradeableScreen<SpatialRiftM
     private static final GuiComponentWrapper POWER_TEXT;
     private static final Map<Integer, GuiComponentWrapper> STATUS_CODE_TO_TEXT_KEY;
     static {
-        final var factory = new GuiComponentFactory("imaginary_space_manipulator");
+        final var factory = new GuiComponentFactory("spatial_rift_manipulator");
         EFFECT_TEXT = factory.build("effect_text");
         EFFECT_MISSING_TEXT = factory.build("effect_missing_text");
         POWER_TEXT = factory.build("power_text");

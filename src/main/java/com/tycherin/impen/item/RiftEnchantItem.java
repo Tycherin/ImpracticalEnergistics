@@ -14,7 +14,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 /**
- * Common interface for adding enchantments to Spatial tools via the AE2 IntrinsicEnchantItem mixin
+ * Common interface for adding enchantments to Rift tools via the AE2 IntrinsicEnchantItem mixin
  * 
  * @author Tycherin
  *

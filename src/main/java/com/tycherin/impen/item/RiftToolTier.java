@@ -44,6 +44,6 @@ public class RiftToolTier implements Tier {
 
     @Override
     public String toString() {
-        return ImpracticalEnergisticsMod.MOD_ID + ":spatial";
+        return ImpracticalEnergisticsMod.MOD_ID + ":rift";
     }
 }

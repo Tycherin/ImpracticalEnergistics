@@ -132,7 +132,7 @@ public class ImpenRegistry {
                 return BlockEntityType.Builder.of(AtmosphericCrystallizerBlockEntity::new, ATMOSPHERIC_CRYSTALLIZER_BLOCK.get())
                         .build(null);
             });
-    public static final RegistryObject<Item> SPATIAL_CRYSTALLIZER_ITEM = ITEMS.register(
+    public static final RegistryObject<Item> ATMOSPHERIC_CRYSTALLIZER_ITEM = ITEMS.register(
             ATMOSPHERIC_CRYSTALLIZER_BLOCK.getId().getPath(),
             () -> new AEBaseBlockItem(ATMOSPHERIC_CRYSTALLIZER_BLOCK.get(),
                     new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
@@ -248,7 +248,7 @@ public class ImpenRegistry {
                 (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
 
         // AE2 upgrades need to be registered after normal registry events
-        Upgrades.add(AEItems.SPEED_CARD, SPATIAL_CRYSTALLIZER_ITEM.get(), 3);
+        Upgrades.add(AEItems.SPEED_CARD, ATMOSPHERIC_CRYSTALLIZER_ITEM.get(), 3);
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR_ITEM.get(), 2);
         Upgrades.add(AEItems.SPEED_CARD, SPATIAL_RIFT_MANIPULATOR_ITEM.get(), 3);

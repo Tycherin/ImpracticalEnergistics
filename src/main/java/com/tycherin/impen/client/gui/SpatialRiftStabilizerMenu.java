@@ -20,7 +20,7 @@ public class SpatialRiftStabilizerMenu extends AEBaseMenu {
     public static final MenuType<SpatialRiftStabilizerMenu> TYPE = MenuTypeBuilder
             .create(SpatialRiftStabilizerMenu::new, SpatialRiftStabilizerBlockEntity.class)
             .requirePermission(SecurityPermissions.BUILD)
-            .build("imaginaryspacestabilizer");
+            .build("spatial_rift_stabilizer");
 
     // TODO Add fields needed to display weight impacts
 //    @GuiSync(0)

@@ -54,19 +54,19 @@ public class ImpracticalEnergisticsClientSetup {
         MenuScreens.<SpatialRiftManipulatorMenu, SpatialRiftManipulatorScreen>register(
                 SpatialRiftManipulatorMenu.TYPE,
                 (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_manipulator.json");
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_manipulator.json");
                     return new SpatialRiftManipulatorScreen(menu, playerInv, title, style);
                 });
         MenuScreens.<SpatialRiftStabilizerMenu, SpatialRiftStabilizerScreen>register(
                 SpatialRiftStabilizerMenu.TYPE,
                 (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_stabilizer.json");
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_stabilizer.json");
                     return new SpatialRiftStabilizerScreen(menu, playerInv, title, style);
                 });
         MenuScreens.<AtmosphericCrystallizerMenu, AtmosphericCrystallizerScreen>register(
                 AtmosphericCrystallizerMenu.TYPE,
                 (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_crystallizer.json");
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/atmospheric_crystallizer.json");
                     return new AtmosphericCrystallizerScreen(menu, playerInv, title, style);
                 });
         MenuScreens.<PossibilityDisintegratorMenu, PossibilityDisintegratorScreen>register(

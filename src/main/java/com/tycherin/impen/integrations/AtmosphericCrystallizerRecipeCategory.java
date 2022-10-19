@@ -29,10 +29,10 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
 
     public AtmosphericCrystallizerRecipeCategory(final IGuiHelper guiHelper) {
         final ResourceLocation location = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID,
-                "textures/gui/spatial_rift_manipulator.png");
+                "textures/gui/spatial_rift_manipulator.png"); // TODO Replace placeholder value
         this.background = guiHelper.createDrawable(location, 51, 44, 83, 25);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance());
+                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_ITEM.get().getDefaultInstance());
     }
 
     @Override

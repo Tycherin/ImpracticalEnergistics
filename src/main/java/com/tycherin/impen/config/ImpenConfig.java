@@ -52,10 +52,10 @@ public class ImpenConfig {
     public static class PowerValues {
         private final DoubleValue globalModifier;
         private final IntValue bnl;
-        private final IntValue ism;
+        private final IntValue srm;
         private final IntValue psdTick;
         private final IntValue psdOp;
-        private final IntValue spc;
+        private final IntValue atm;
 
         public PowerValues(final Builder builder) {
             this.globalModifier = builder.comment("Global power consumption modifier for all machines")
@@ -64,22 +64,22 @@ public class ImpenConfig {
             builder.comment("Power consumption for various machines are defined below. Units are AE.");
             this.bnl = builder.comment("Beamed Network Link consumption per tick while active")
                     .defineInRange("beamed_network_link", 10, 0, Integer.MAX_VALUE);
-            this.ism = builder.comment("Imaginary Space Manipulator consumption per block modified")
-                    .defineInRange("imaginary_space_manipulator", 80, 0, Integer.MAX_VALUE);
+            this.srm = builder.comment("Spatial Rift Manipulator consumption per block modified")
+                    .defineInRange("spatial_rift_manipulator", 80, 0, Integer.MAX_VALUE);
             this.psdTick = builder.comment("Possibility Disintegrator consumption per tick")
                     .defineInRange("possibility_disintegrator_tick", 10, 0, Integer.MAX_VALUE);
             this.psdOp = builder.comment("Possibility Disintegrator consumption per operation")
                     .defineInRange("possibility_disintegrator_operation", 100, 0, Integer.MAX_VALUE);
-            this.spc = builder.comment("Spatial Crystallizer consumption per tick")
-                    .defineInRange("spatial_crystallizer_operation", 10, 0, Integer.MAX_VALUE);
+            this.atm = builder.comment("Atmospheric Crystallizer consumption per tick")
+                    .defineInRange("atmospheric_crystallizer_operation", 10, 0, Integer.MAX_VALUE);
         }
 
         public double beamedNetworkLinkCost() {
             return bnl.get() * globalModifier.get();
         }
 
-        public double imaginarySpaceManipulatorCost() {
-            return ism.get() * globalModifier.get();
+        public double spatialRiftManipulatorCost() {
+            return srm.get() * globalModifier.get();
         }
 
         public double possibilityDisintegratorCostTick() {
@@ -90,21 +90,21 @@ public class ImpenConfig {
             return psdOp.get() * globalModifier.get();
         }
 
-        public double spaceCrystallizerCost() {
-            return spc.get() * globalModifier.get();
+        public double atmosphericCrystallizerCost() {
+            return atm.get() * globalModifier.get();
         }
     }
 
     public static class MachineSettings {
         private final IntValue bnlRange;
-        private final IntValue spcWorkRate;
+        private final IntValue atmWorkRate;
         private final IntValue psdWorkRate;
 
         public MachineSettings(final Builder builder) {
             this.bnlRange = builder.comment("Connection range for the Beamed Network Link block")
                     .defineInRange("beamed_network_link_range", 16, 2, 64);
-            this.spcWorkRate = builder.comment("Base number of ticks for each Spatial Crystallizer operation")
-                    .defineInRange("spatial_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
+            this.atmWorkRate = builder.comment("Base number of ticks for each Atmospheric Crystallizer operation")
+                    .defineInRange("atmospheric_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
             this.psdWorkRate = builder.comment("Base number of ticks for each Possibility Disintegrator operation")
                     .defineInRange("possibility_disintegrator_work_rate", 40, 1, Integer.MAX_VALUE);
         }
@@ -113,8 +113,8 @@ public class ImpenConfig {
             return bnlRange.get();
         }
 
-        public int spatialCrystallizerWorkRate() {
-            return spcWorkRate.get();
+        public int atmosphericCrystallizerWorkRate() {
+            return atmWorkRate.get();
         }
 
         public int possibilityDisintegratorWorkRate() {

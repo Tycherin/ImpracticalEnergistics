@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 /**
- * Class for tracking weights of blocks for the ISM system
+ * Class for tracking weights of blocks for the SRM system
  * 
  * @author Tycherin
  *

@@ -16,7 +16,7 @@ public class AtmosphericCrystallizerMenu extends UpgradeableMenu<AtmosphericCrys
 
     public static final MenuType<AtmosphericCrystallizerMenu> TYPE = MenuTypeBuilder
             .create(AtmosphericCrystallizerMenu::new, AtmosphericCrystallizerBlockEntity.class)
-            .build("spatial_crystallizer");
+            .build("atmospheric_crystallizer");
 
     @GuiSync(10)
     public int progress;

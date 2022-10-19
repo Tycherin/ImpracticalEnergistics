@@ -72,15 +72,15 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
     private final ILevelRunnable callback = level -> startOperation();
 
     /**
-     * This field has different semantics depending on the ISM's state.
+     * This field has different semantics depending on the SRM's state.
      * 
-     * If the ISM is running:
+     * If the SRM is running:
      * This is the operation that is currently running.
      * 
-     * If the ISM is not running:
-     * This is the operation that would run if the ISM was activated.
+     * If the SRM is not running:
+     * This is the operation that would run if the SRM was activated.
      */
-    private Optional<IsmOperation> operation = Optional.empty();
+    private Optional<SrmOperation> operation = Optional.empty();
 
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
@@ -97,7 +97,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
         this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_ITEM.get(),
                 3, this::saveChanges);
-        this.basePowerDraw = ImpenConfig.POWER.imaginarySpaceManipulatorCost();
+        this.basePowerDraw = ImpenConfig.POWER.spatialRiftManipulatorCost();
     }
 
     // ***
@@ -233,7 +233,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
     }
 
     /** @return An operation object based on the current input cell, or empty if there isn't a valid input cell */
-    private Optional<IsmOperation> buildOperation() {
+    private Optional<SrmOperation> buildOperation() {
         final ItemStack cell = this.inv.getStackInSlot(InventorySlots.INPUT);
         if (cell.isEmpty()) {
             return Optional.empty();
@@ -246,12 +246,12 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
         final Optional<SpatialStoragePlot> plot = this.getPlot(cell);
         if (plot.isEmpty()) {
-            return Optional.of(new IsmOperation(Optional.of(cell), plot, 0L, false));
+            return Optional.of(new SrmOperation(Optional.of(cell), plot, 0L, false));
         }
 
         final long blocksToUpdate = this.getReplaceableBlocks(plot.get()).count();
         if (blocksToUpdate == 0) {
-            return Optional.of(new IsmOperation(Optional.of(cell), plot, blocksToUpdate, false));
+            return Optional.of(new SrmOperation(Optional.of(cell), plot, blocksToUpdate, false));
         }
 
         final boolean hasCatalysts;
@@ -261,7 +261,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         else {
             hasCatalysts = RiftService.get(this).get().hasCatalysts();
         }
-        return Optional.of(new IsmOperation(Optional.of(cell), plot, blocksToUpdate, hasCatalysts));
+        return Optional.of(new SrmOperation(Optional.of(cell), plot, blocksToUpdate, hasCatalysts));
     }
 
     private void resetOperation() {
@@ -530,7 +530,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
     // Inner classes
     // ***
 
-    private static record IsmOperation(Optional<ItemStack> cell, Optional<SpatialStoragePlot> plot,
+    private static record SrmOperation(Optional<ItemStack> cell, Optional<SpatialStoragePlot> plot,
             Long blocksToUpdate, boolean hasCatalysts) {
         public boolean isValid() {
             return this.plot.isPresent() && blocksToUpdate > 0 && hasCatalysts;
