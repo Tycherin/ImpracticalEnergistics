@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
@@ -38,7 +39,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_crystallizer", SpatialCrystallizerRecipe.class);
     
     private static final List<Item> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
-            ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_ITEM.get());
+            ImpenRegistry.BEAMED_NETWORK_LINK_ITEM.get());
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -59,9 +60,9 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
         registry.addRecipes(ISM_CATALYST_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get()));
+                recipeManager.getAllRecipesFor(ImpenRegistry.ISM_CATALYST_RECIPE_TYPE.get()));
         registry.addRecipes(SPATIAL_CRYSTALLIZER_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()));
+                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()));
 
         final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
         if (AEConfig.instance().isInWorldFluixEnabled()) {
@@ -69,7 +70,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                     List.of(
                             Ingredient.of(Items.REDSTONE),
                             Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
-                            Ingredient.of(ImpracticalEnergisticsMod.FLUIX_CATALYST_ITEM.get())),
+                            Ingredient.of(ImpenRegistry.FLUIX_CATALYST_ITEM.get())),
                     AEItems.FLUIX_DUST.stack(4),
                     false));
         }
@@ -87,13 +88,13 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(final IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(
-                ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_ITEM.get().getDefaultInstance(),
                 ISM_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.IMAGINARY_SPACE_STABILIZER_ITEM.get().getDefaultInstance(),
                 ISM_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
-                ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
+                ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance(),
                 SPATIAL_CRYSTALLIZER_RECIPE_TYPE);
     }
 

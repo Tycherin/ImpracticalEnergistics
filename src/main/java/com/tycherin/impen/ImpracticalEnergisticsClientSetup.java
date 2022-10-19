@@ -35,7 +35,7 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
-        BlockEntityRenderers.register(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BE.get(),
+        BlockEntityRenderers.register(ImpenRegistry.BEAMED_NETWORK_LINK_BE.get(),
                 BeamedNetworkLinkRenderer::new);
     }
 
@@ -43,9 +43,9 @@ public class ImpracticalEnergisticsClientSetup {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
 
-            ItemBlockRenderTypes.setRenderLayer(ImpracticalEnergisticsMod.PLANTABLE_CERTUS_BLOCK.get(),
+            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_CERTUS_BLOCK.get(),
                     RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(ImpracticalEnergisticsMod.PLANTABLE_FLUIX_BLOCK.get(),
+            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_FLUIX_BLOCK.get(),
                     RenderType.cutout());
         });
     }
@@ -57,7 +57,6 @@ public class ImpracticalEnergisticsClientSetup {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/imaginary_space_manipulator.json");
                     return new ImaginarySpaceManipulatorScreen(menu, playerInv, title, style);
                 });
-
         MenuScreens.<ImaginarySpaceStabilizerMenu, ImaginarySpaceStabilizerScreen>register(
                 ImaginarySpaceStabilizerMenu.TYPE,
                 (menu, playerInv, title) -> {
@@ -79,8 +78,8 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ImpracticalEnergisticsMod.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
-        event.registerEntityRenderer(ImpracticalEnergisticsMod.SPATIAL_TOOL_CATALYST_ENTITY.get(),
+        event.registerEntityRenderer(ImpenRegistry.FLUIX_CATALYST_ENTITY.get(), ItemEntityRenderer::new);
+        event.registerEntityRenderer(ImpenRegistry.SPATIAL_TOOL_CATALYST_ENTITY.get(),
                 ItemEntityRenderer::new);
     }
 }

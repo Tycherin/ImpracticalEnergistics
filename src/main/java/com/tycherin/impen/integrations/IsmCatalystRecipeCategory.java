@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.logic.ism.IsmWeight;
 import com.tycherin.impen.recipe.IsmCatalystRecipe;
@@ -42,7 +43,7 @@ public class IsmCatalystRecipeCategory implements IRecipeCategory<IsmCatalystRec
                 "textures/gui/ism_catalyst_jei.png");
         this.background = guiHelper.createDrawable(location, 24, 16, 131, 58);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get().getDefaultInstance());
+                ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_ITEM.get().getDefaultInstance());
     }
 
     @Override

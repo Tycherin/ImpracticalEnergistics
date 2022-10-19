@@ -3,7 +3,7 @@ package com.tycherin.impen.entity;
 import java.util.List;
 import java.util.Random;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 
 import appeng.core.definitions.AEItems;
@@ -32,7 +32,7 @@ public class FluixCatalystEntity extends ItemEntity {
     }
     
     public FluixCatalystEntity(final Level level, final double x, final double y, final double z, final ItemStack stack) {
-        this(ImpracticalEnergisticsMod.FLUIX_CATALYST_ENTITY.get(), level);
+        this(ImpenRegistry.FLUIX_CATALYST_ENTITY.get(), level);
         this.setPos(x, y, z);
         this.setYRot(this.random.nextFloat() * 360f);
         this.setDeltaMovement((this.random.nextDouble() * 0.2) - 0.1, 0.2, (this.random.nextDouble() * 0.2) - 0.1);

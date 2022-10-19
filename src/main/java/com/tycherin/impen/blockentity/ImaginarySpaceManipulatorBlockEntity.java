@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.ism.IsmService;
 import com.tycherin.impen.logic.ism.IsmStatusCodes;
@@ -89,13 +89,13 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
     private double basePowerDraw;
 
     public ImaginarySpaceManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_BE.get(), pos, blockState);
+        super(ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_BE.get(), pos, blockState);
 
         this.getMainNode()
                 .addService(IGridTickable.class, this)
                 .setFlags();
 
-        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get(),
+        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_ITEM.get(),
                 3, this::saveChanges);
         this.basePowerDraw = ImpenConfig.POWER.imaginarySpaceManipulatorCost();
     }
@@ -523,7 +523,7 @@ public class ImaginarySpaceManipulatorBlockEntity extends AENetworkInvBlockEntit
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpracticalEnergisticsMod.IMAGINARY_SPACE_MANIPULATOR_ITEM.get();
+        return ImpenRegistry.IMAGINARY_SPACE_MANIPULATOR_ITEM.get();
     }
 
     // ***

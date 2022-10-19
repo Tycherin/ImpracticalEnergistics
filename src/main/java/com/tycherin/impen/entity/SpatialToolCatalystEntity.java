@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 
 import appeng.core.definitions.AEItems;
@@ -29,11 +29,11 @@ public class SpatialToolCatalystEntity extends ItemEntity {
 
     private static final Random RAND = new Random();
     private static final Map<Item, Item> CONVERSIONS = ImmutableMap.of(
-            AEItems.FLUIX_AXE.asItem(), ImpracticalEnergisticsMod.SPATIAL_AXE_ITEM.get(),
-            AEItems.FLUIX_HOE.asItem(), ImpracticalEnergisticsMod.SPATIAL_HOE_ITEM.get(),
-            AEItems.FLUIX_PICK.asItem(), ImpracticalEnergisticsMod.SPATIAL_PICKAXE_ITEM.get(),
-            AEItems.FLUIX_SHOVEL.asItem(), ImpracticalEnergisticsMod.SPATIAL_SPADE_ITEM.get(),
-            AEItems.FLUIX_SWORD.asItem(), ImpracticalEnergisticsMod.SPATIAL_SWORD_ITEM.get());
+            AEItems.FLUIX_AXE.asItem(), ImpenRegistry.SPATIAL_AXE_ITEM.get(),
+            AEItems.FLUIX_HOE.asItem(), ImpenRegistry.SPATIAL_HOE_ITEM.get(),
+            AEItems.FLUIX_PICK.asItem(), ImpenRegistry.SPATIAL_PICKAXE_ITEM.get(),
+            AEItems.FLUIX_SHOVEL.asItem(), ImpenRegistry.SPATIAL_SPADE_ITEM.get(),
+            AEItems.FLUIX_SWORD.asItem(), ImpenRegistry.SPATIAL_SWORD_ITEM.get());
     
     private int transformTime = 0;
     
@@ -43,7 +43,7 @@ public class SpatialToolCatalystEntity extends ItemEntity {
     
     public SpatialToolCatalystEntity(final Level level, final double x, final double y, final double z,
             final ItemStack stack) {
-        this(ImpracticalEnergisticsMod.SPATIAL_TOOL_CATALYST_ENTITY.get(), level);
+        this(ImpenRegistry.SPATIAL_TOOL_CATALYST_ENTITY.get(), level);
         this.setPos(x, y, z);
         this.setYRot(this.random.nextFloat() * 360f);
         this.setDeltaMovement((this.random.nextDouble() * 0.2) - 0.1, 0.2, (this.random.nextDouble() * 0.2) - 0.1);

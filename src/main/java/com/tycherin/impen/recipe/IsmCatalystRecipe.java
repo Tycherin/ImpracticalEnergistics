@@ -2,7 +2,7 @@ package com.tycherin.impen.recipe;
 
 import java.util.List;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.ism.IsmWeight;
 
 import net.minecraft.resources.ResourceLocation;
@@ -87,6 +87,6 @@ public class IsmCatalystRecipe implements Recipe<Container> {
 
     @Override
     public RecipeType<?> getType() {
-        return ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get();
+        return ImpenRegistry.ISM_CATALYST_RECIPE_TYPE.get();
     }
 }

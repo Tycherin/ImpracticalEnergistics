@@ -1,5 +1,6 @@
 package com.tycherin.impen.item;
 
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 
 import net.minecraft.world.item.Tier;
@@ -38,7 +39,7 @@ public class SpatialToolTier implements Tier {
     @Override
     public Ingredient getRepairIngredient() {
         // TODO Replace with the appropriate material
-        return Ingredient.of(ImpracticalEnergisticsMod.FLUIX_CATALYST_ITEM.get());
+        return Ingredient.of(ImpenRegistry.FLUIX_CATALYST_ITEM.get());
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.tycherin.impen.blockentity;
 
 import java.util.Random;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 
 import appeng.api.storage.cells.CellState;
 import appeng.blockentity.storage.ChestBlockEntity;
@@ -20,7 +20,7 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
     private static final Random RAND = new Random();
 
     public ToasterDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpracticalEnergisticsMod.TOASTER_DRIVE_BE.get(), pos, blockState);
+        super(ImpenRegistry.TOASTER_DRIVE_BE.get(), pos, blockState);
     }
 
     @Override
@@ -76,6 +76,6 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpracticalEnergisticsMod.TOASTER_DRIVE_ITEM.get();
+        return ImpenRegistry.TOASTER_DRIVE_ITEM.get();
     }
 }

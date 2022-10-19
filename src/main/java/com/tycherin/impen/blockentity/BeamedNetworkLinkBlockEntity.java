@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.util.AEPowerUtil;
 
@@ -81,7 +81,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     // TODO Figure out how chunk loading/unloading works
 
     public BeamedNetworkLinkBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BE.get(), pos, blockState);
+        super(ImpenRegistry.BEAMED_NETWORK_LINK_BE.get(), pos, blockState);
 
         this.getMainNode()
                 .setExposedOnSides(EnumSet.noneOf(Direction.class))
@@ -131,7 +131,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_ITEM.get();
+        return ImpenRegistry.BEAMED_NETWORK_LINK_ITEM.get();
     }
 
     // ***
@@ -369,7 +369,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             checkPos = checkPos.relative(this.getForward());
 
             final BlockState bs = this.level.getBlockState(checkPos);
-            if (bs.getBlock().equals(ImpracticalEnergisticsMod.BEAMED_NETWORK_LINK_BLOCK.get())) {
+            if (bs.getBlock().equals(ImpenRegistry.BEAMED_NETWORK_LINK_BLOCK.get())) {
                 final BlockEntity be = this.level.getBlockEntity(checkPos);
                 if (be != null && be instanceof BeamedNetworkLinkBlockEntity) {
                     targetBnl = (BeamedNetworkLinkBlockEntity) be;

@@ -2,6 +2,7 @@ package com.tycherin.impen.datagen;
 
 import java.util.function.Consumer;
 
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 
 import appeng.core.definitions.AEItems;
@@ -19,11 +20,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildCraftingRecipes(final Consumer<FinishedRecipe> consumer) {
-        ShapelessRecipeBuilder.shapeless(ImpracticalEnergisticsMod.PLANTABLE_CERTUS_SEEDS_ITEM.get())
+        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_CERTUS_SEEDS_ITEM.get())
                 .requires(AEItems.CERTUS_CRYSTAL_SEED)
                 .unlockedBy("has_certus_seed", has(AEItems.CERTUS_CRYSTAL_SEED))
                 .save(consumer, makeId("plantable_certus_seeds"));
-        ShapelessRecipeBuilder.shapeless(ImpracticalEnergisticsMod.PLANTABLE_FLUIX_SEEDS_ITEM.get())
+        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_FLUIX_SEEDS_ITEM.get())
                 .requires(AEItems.FLUIX_CRYSTAL_SEED)
                 .unlockedBy("has_fluix_seed", has(AEItems.FLUIX_CRYSTAL_SEED))
                 .save(consumer, makeId("plantable_fluix_seeds"));

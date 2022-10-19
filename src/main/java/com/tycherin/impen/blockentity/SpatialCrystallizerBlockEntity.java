@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipeManager;
@@ -44,11 +44,11 @@ public class SpatialCrystallizerBlockEntity extends AENetworkPowerBlockEntity
     private int progress = 0;
 
     public SpatialCrystallizerBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_BE.get(), pos, blockState);
+        super(ImpenRegistry.SPATIAL_CRYSTALLIZER_BE.get(), pos, blockState);
 
         this.getMainNode()
                 .addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get(), 3,
+        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get(), 3,
                 this::saveChanges);
         // TODO Tick time should be pulled from the recipe, and config should dictate the speed
         this.baseProgressTicks = ImpenConfig.SETTINGS.spatialCrystallizerWorkRate();
@@ -192,7 +192,7 @@ public class SpatialCrystallizerBlockEntity extends AENetworkPowerBlockEntity
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get();
+        return ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get();
     }
 
     private class InventoryItemFilter implements IAEItemFilter {

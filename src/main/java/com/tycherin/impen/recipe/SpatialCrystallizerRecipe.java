@@ -2,7 +2,7 @@ package com.tycherin.impen.recipe;
 
 import java.util.Optional;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -78,6 +78,6 @@ public class SpatialCrystallizerRecipe implements Recipe<Container> {
 
     @Override
     public RecipeType<?> getType() {
-        return ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get();
+        return ImpenRegistry.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get();
     }
 }

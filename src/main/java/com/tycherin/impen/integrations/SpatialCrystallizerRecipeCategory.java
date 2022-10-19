@@ -1,5 +1,6 @@
 package com.tycherin.impen.integrations;
 
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.SpatialCrystallizerRecipe;
 
@@ -31,7 +32,7 @@ public class SpatialCrystallizerRecipeCategory implements IRecipeCategory<Spatia
                 "textures/gui/imaginary_space_manipulator.png");
         this.background = guiHelper.createDrawable(location, 51, 44, 83, 25);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance());
+                ImpenRegistry.SPATIAL_CRYSTALLIZER_ITEM.get().getDefaultInstance());
     }
 
     @Override

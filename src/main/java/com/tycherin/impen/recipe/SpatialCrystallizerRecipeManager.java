@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 
 import net.minecraft.world.level.Level;
 
@@ -15,7 +15,7 @@ public class SpatialCrystallizerRecipeManager {
     public static Optional<SpatialCrystallizerRecipe> getRecipe(final Level level) {
         if (!RECIPE_CACHE.containsKey(level)) {
             final var recipeOpt = level.getRecipeManager()
-                    .getAllRecipesFor(ImpracticalEnergisticsMod.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()).stream()
+                    .getAllRecipesFor(ImpenRegistry.SPATIAL_CRYSTALLIZER_RECIPE_TYPE.get()).stream()
                     .filter(recipe -> recipe.getDimensionKey().equals(level.dimension().location()))
                     .findFirst();
             RECIPE_CACHE.put(level, recipeOpt);

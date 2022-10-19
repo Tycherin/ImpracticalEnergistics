@@ -1,6 +1,6 @@
 package com.tycherin.impen.blockentity;
 
-import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.ism.IsmCatalystProvider;
 
 import appeng.api.inventories.InternalInventory;
@@ -24,7 +24,7 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
     private String id; // See getId() for an explanation of why we lazy load this
     
     public ImaginarySpaceStabilizerBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_BE.get(), pos, blockState);
+        super(ImpenRegistry.IMAGINARY_SPACE_STABILIZER_BE.get(), pos, blockState);
 
         this.getMainNode()
                 .setFlags();
@@ -39,7 +39,7 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             return ImaginarySpaceStabilizerBlockEntity.this.level.getRecipeManager()
-                    .getRecipeFor(ImpracticalEnergisticsMod.ISM_CATALYST_RECIPE_TYPE.get(), inv.toContainer(), level)
+                    .getRecipeFor(ImpenRegistry.ISM_CATALYST_RECIPE_TYPE.get(), inv.toContainer(), level)
                     .isPresent();
         }
     }
@@ -119,6 +119,6 @@ public class ImaginarySpaceStabilizerBlockEntity extends AENetworkInvBlockEntity
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpracticalEnergisticsMod.IMAGINARY_SPACE_STABILIZER_ITEM.get();
+        return ImpenRegistry.IMAGINARY_SPACE_STABILIZER_ITEM.get();
     }
 }
