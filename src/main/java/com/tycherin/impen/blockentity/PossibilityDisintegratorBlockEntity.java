@@ -40,7 +40,6 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -50,15 +49,15 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.registries.RegistryObject;
 
 public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         implements IGridTickable, IUpgradeableObject {
 
-    // TODO Use real items instead of placeholders
-    public static final Item CONSUMABLE_LUCK = Items.EMERALD;
-    public static final Item CONSUMABLE_EGG = Items.EGG;
-    public static final Item CONSUMABLE_LOOT = Items.LAPIS_LAZULI;
-    public static final Item CONSUMABLE_PLAYER_KILL = Items.BLAZE_ROD;
+    public static final RegistryObject<Item> CONSUMABLE_LUCK = ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK;
+    public static final RegistryObject<Item> CONSUMABLE_EGG = ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG;
+    public static final RegistryObject<Item> CONSUMABLE_LOOT = ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT;
+    public static final RegistryObject<Item> CONSUMABLE_PLAYER_KILL = ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL;
 
     private static final Random RAND = new Random();
     private static final DamageSource DAMAGE_SOURCE = new DamageSource("possibility_disintegrator");
@@ -247,14 +246,14 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         if (!target.isAlive()) {
             if (precheck.hasPlayerKill()) {
                 // We did kill the target, so an ingredient should be consumed
-                this.consumeIngredient(CONSUMABLE_PLAYER_KILL);
+                this.consumeIngredient(CONSUMABLE_PLAYER_KILL.get());
             }
 
             if (precheck.hasEgg()) {
                 final var spawnEgg = ForgeSpawnEggItem.fromEntityType(target.getType());
                 if (spawnEgg != null) {
                     final boolean doSpawnEgg;
-                    if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK)) {
+                    if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK.get())) {
                         doSpawnEgg = this.rollRandom(EGG_CHANCE_BASE * 2);
                     }
                     else {
@@ -262,7 +261,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                     }
 
                     if (doSpawnEgg) {
-                        this.consumeIngredient(CONSUMABLE_EGG);
+                        this.consumeIngredient(CONSUMABLE_EGG.get());
                         target.spawnAtLocation(spawnEgg);
                     }
                 }
@@ -276,7 +275,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
 
         if (precheck.hasLoot()) {
             final boolean doSpawnLoot;
-            if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK)) {
+            if (precheck.hasLuck() && this.consumeIngredient(CONSUMABLE_LUCK.get())) {
                 doSpawnLoot = this.rollRandom(LOOT_CHANCE_BASE * 3);
             }
             else {
@@ -284,7 +283,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
             }
 
             if (doSpawnLoot) {
-                this.consumeIngredient(CONSUMABLE_LOOT);
+                this.consumeIngredient(CONSUMABLE_LOOT.get());
 
                 // This code is mostly adapted from LivingEntity code that isn't easily accessible
                 //
@@ -298,7 +297,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                         .withParameter(LootContextParams.ORIGIN, target.position())
                         .withParameter(LootContextParams.DAMAGE_SOURCE, DAMAGE_SOURCE);
 
-                if (precheck.hasPlayerKill() && this.consumeIngredient(CONSUMABLE_PLAYER_KILL)) {
+                if (precheck.hasPlayerKill() && this.consumeIngredient(CONSUMABLE_PLAYER_KILL.get())) {
                     ctxBuilder.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, fakePlayer.get())
                             .withParameter(LootContextParams.KILLER_ENTITY, fakePlayer.get())
                             .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, fakePlayer.get());
@@ -360,17 +359,17 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     protected Item getItemFromBlockEntity() {
         return ImpenRegistry.POSSIBILITY_DISINTEGRATOR.item();
     }
-    
+
     public double getPowerPerOperation() {
         return this.basePowerPerOperation;
     }
 
     public ConsumableSnapshot getAvailableConsumables() {
         return new ConsumableSnapshot(
-                this.hasIngredient(CONSUMABLE_LUCK),
-                this.hasIngredient(CONSUMABLE_EGG),
-                this.hasIngredient(CONSUMABLE_LOOT),
-                this.hasIngredient(CONSUMABLE_PLAYER_KILL));
+                this.hasIngredient(CONSUMABLE_LUCK.get()),
+                this.hasIngredient(CONSUMABLE_EGG.get()),
+                this.hasIngredient(CONSUMABLE_LOOT.get()),
+                this.hasIngredient(CONSUMABLE_PLAYER_KILL.get()));
     }
 
     public static record ConsumableSnapshot(boolean hasLuck, boolean hasEgg, boolean hasLoot, boolean hasPlayerKill) {

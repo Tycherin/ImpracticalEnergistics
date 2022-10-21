@@ -22,11 +22,11 @@ public class PossibilityDisintegratorScreen extends UpgradeableScreen<Possibilit
             final Component title, final ScreenStyle style) {
         super(menu, playerInventory, title, style);
 
-        this.luckSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LUCK);
-        this.lootSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LOOT);
-        this.eggSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_EGG);
+        this.luckSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LUCK.get());
+        this.lootSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LOOT.get());
+        this.eggSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_EGG.get());
         this.playerKillSlot = new ToggleableClientDisplaySlot(
-                PossibilityDisintegratorBlockEntity.CONSUMABLE_PLAYER_KILL);
+                PossibilityDisintegratorBlockEntity.CONSUMABLE_PLAYER_KILL.get());
 
         // The SlotSemantic values here don't actually make any sense, I'm just hijacking them to get AE2 to render the
         // screen with the layout that I want, and it isn't worth the trouble to register custom semantics just for this
