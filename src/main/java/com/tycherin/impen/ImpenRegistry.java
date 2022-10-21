@@ -187,14 +187,7 @@ public class ImpenRegistry {
     // Basic Blocks
     // TODO I have no idea if these are the right materials to use
     public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", Material.STONE);
-    public static final BlockDefinition RIFT_SHARD_ORE;
-    static {
-        final var blockHolder = BLOCKS.register("rift_shard_ore", () -> new OreBlock(
-                BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).strength(4.5F, 3.0F).sound(SoundType.DEEPSLATE)));
-        final var itemHolder = ITEMS.register("rift_shard_ore",
-                () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
-        RIFT_SHARD_ORE = new BlockDefinition(blockHolder, itemHolder);
-    }
+    public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore", Material.STONE);
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", Material.STONE);
     public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", Material.STONE);
     public static final BlockDefinition RIFT_GLASS = makeBasicBlock("rift_glass", Material.GLASS);
@@ -294,6 +287,13 @@ public class ImpenRegistry {
 
     private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
         final var blockHolder = BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of(mat)));
+        final var itemHolder = ITEMS.register(name, () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
+        return new BlockDefinition(blockHolder, itemHolder);
+    }
+
+    private static BlockDefinition makeOreBlock(final String name, final Material mat) {
+        final var blockHolder = BLOCKS.register(name,
+                () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
         final var itemHolder = ITEMS.register(name, () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
         return new BlockDefinition(blockHolder, itemHolder);
     }
