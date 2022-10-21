@@ -50,7 +50,9 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -133,7 +135,7 @@ public class ImpenRegistry {
             makeMachine("atmospheric_crystallizer", AtmosphericCrystallizerBlock::new, AtmosphericCrystallizerBlockEntity::new, true);
 
     public static final MachineDefinition<PossibilityDisintegratorBlock, PossibilityDisintegratorBlockEntity> POSSIBILITY_DISINTEGRATOR =
-            makeMachine("possibility_disintegrator", PossibilityDisintegratorBlock::new, PossibilityDisintegratorBlockEntity::new, true);
+            makeMachine("possibility_disintegrator", PossibilityDisintegratorBlock::new, PossibilityDisintegratorBlockEntity::new, false);
 
     public static final MachineDefinition<ToasterDriveBlock, ToasterDriveBlockEntity> TOASTER_DRIVE =
             makeMachine("toaster_drive", ToasterDriveBlock::new, ToasterDriveBlockEntity::new, true);
@@ -151,6 +153,57 @@ public class ImpenRegistry {
     public static final RegistryObject<Item> RIFT_PICKAXE_ITEM = makeTool("rift_pickaxe", RiftPickaxeItem::new);
     public static final RegistryObject<Item> RIFT_SPADE_ITEM = makeTool("rift_spade", RiftSpadeItem::new);
     public static final RegistryObject<Item> RIFT_SWORD_ITEM = makeTool("rift_sword", RiftSwordItem::new);
+
+    // Materials
+    public static final RegistryObject<Item> AEROCRYSTAL = makeItem("aerocrystal");
+    public static final RegistryObject<Item> BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
+    public static final RegistryObject<Item> EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
+
+    public static final RegistryObject<Item> BASIC_RIFT_CATALYST = makeItem("basic_rift_catalyst");
+    public static final RegistryObject<Item> ADVANCED_RIFT_CATALYST = makeItem("advanced_rift_catalyst");
+    public static final RegistryObject<Item> PRISTINE_RIFT_CATALYST = makeItem("pristine_rift_catalyst");
+    public static final RegistryObject<Item> OVERWORLD_ORE_CATALYST = makeItem("overworld_ore_catalyst");
+    public static final RegistryObject<Item> DEEPSLATE_ORE_CATALYST = makeItem("deepslate_ore_catalyst");
+    public static final RegistryObject<Item> DEEPSLATE_GEM_CATALYST = makeItem("deepslate_gem_catalyst");
+    public static final RegistryObject<Item> NETHER_ORE_CATALYST = makeItem("nether_ore_catalyst");
+    public static final RegistryObject<Item> NETHER_SECRET_CATALYST = makeItem("nether_secret_catalyst");
+    public static final RegistryObject<Item> END_SECRET_CATALYST = makeItem("end_secret_catalyst");
+    public static final RegistryObject<Item> RIFT_SPACE_CATALYST = makeItem("rift_space_catalyst");
+    public static final RegistryObject<Item> OVERWORLD_SECRET_CATALYST = makeItem("overworld_secret_catalyst");
+    public static final RegistryObject<Item> BLACKSTONE_SECRET_CATALYST = makeItem("blackstone_secret_catalyst");
+    // TODO: Add catalysts integrating ores from other mods via tags
+
+    public static final RegistryObject<Item> EMPTY_DISINTEGRATOR_CAPSULE = makeItem("empty_disintegrator_capsule");
+    public static final RegistryObject<Item> WHITE_DISINTEGRATOR_CAPSULE = makeItem("white_disintegrator_capsule");
+    public static final RegistryObject<Item> BLUE_DISINTEGRATOR_CAPSULE = makeItem("blue_disintegrator_capsule");
+    public static final RegistryObject<Item> YELLOW_DISINTEGRATOR_CAPSULE = makeItem("yellow_disintegrator_capsule");
+    public static final RegistryObject<Item> ORANGE_DISINTEGRATOR_CAPSULE = makeItem("orange_disintegrator_capsule");
+
+    public static final RegistryObject<Item> RIFT_SHARD = makeItem("rift_shard");
+
+    // TODO Hide this from JEI
+    public static final RegistryObject<Item> FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
+
+    // Basic Blocks
+    // TODO I have no idea if these are the right materials to use
+    public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", Material.STONE);
+    public static final BlockDefinition RIFT_SHARD_ORE;
+    static {
+        final var blockHolder = BLOCKS.register("rift_shard_ore", () -> new OreBlock(
+                BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).strength(4.5F, 3.0F).sound(SoundType.DEEPSLATE)));
+        final var itemHolder = ITEMS.register("rift_shard_ore",
+                () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
+        RIFT_SHARD_ORE = new BlockDefinition(blockHolder, itemHolder);
+    }
+    public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", Material.STONE);
+    public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", Material.STONE);
+    public static final BlockDefinition RIFT_GLASS = makeBasicBlock("rift_glass", Material.GLASS);
+    public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
+    public static final BlockDefinition BLAZING_AEROCRYSTAL_BLOCK = makeBasicBlock("blazing_aerocrystal_block",
+            Material.AMETHYST);
+    public static final BlockDefinition EXOTIC_AEROCRYSTAL_BLOCK = makeBasicBlock("exotic_aerocrystal_block",
+            Material.AMETHYST);
+    public static final BlockDefinition RIFT_SHARD_BLOCK = makeBasicBlock("rift_shard_block", Material.AMETHYST);
 
     // Droppable items
     public static final DroppableItemDefinition<RiftPrismEntity> RIFT_PRISM = makeDroppableItem(
@@ -206,6 +259,10 @@ public class ImpenRegistry {
         return ITEMS.register(name, () -> func.apply(getItemProps()));
     }
 
+    public static RegistryObject<Item> makeItem(final String name) {
+        return ITEMS.register(name, () -> new Item(getItemProps()));
+    }
+
     private static <BT extends CropBlock> PlantDefinition<BT> makeCrop(final String cropName, final String seedName,
             final Function<BlockBehaviour.Properties, BT> func) {
         final var blockHolder = BLOCKS.register(cropName, () -> func.apply(BlockBehaviour.Properties.of(Material.PLANT)
@@ -234,7 +291,13 @@ public class ImpenRegistry {
             }
         });
     }
-    
+
+    private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
+        final var blockHolder = BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of(mat)));
+        final var itemHolder = ITEMS.register(name, () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
+        return new BlockDefinition(blockHolder, itemHolder);
+    }
+
     private static Item.Properties getItemProps() {
         // TODO Use real creative tab
         return new Item.Properties().tab(CreativeModeTab.TAB_MISC);
@@ -307,4 +370,22 @@ public class ImpenRegistry {
         }
     }
 
+    public static class BlockDefinition {
+        private final RegistryObject<? extends Block> blockHolder;
+        private final RegistryObject<? extends Item> itemHolder;
+
+        private BlockDefinition(final RegistryObject<? extends Block> blockHolder,
+                final RegistryObject<? extends Item> itemHolder) {
+            this.blockHolder = blockHolder;
+            this.itemHolder = itemHolder;
+        }
+
+        public Block block() {
+            return blockHolder.get();
+        }
+
+        public Item item() {
+            return itemHolder.get();
+        }
+    }
 }
