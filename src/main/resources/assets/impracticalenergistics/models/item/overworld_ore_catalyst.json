@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "impracticalenergistics:item/overworld_ore_catalyst"
-  }
-}

@@ -159,25 +159,25 @@ public class ImpenRegistry {
     public static final RegistryObject<Item> BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final RegistryObject<Item> EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
 
-    public static final RegistryObject<Item> BASIC_RIFT_CATALYST = makeItem("basic_rift_catalyst");
-    public static final RegistryObject<Item> ADVANCED_RIFT_CATALYST = makeItem("advanced_rift_catalyst");
-    public static final RegistryObject<Item> PRISTINE_RIFT_CATALYST = makeItem("pristine_rift_catalyst");
-    public static final RegistryObject<Item> OVERWORLD_ORE_CATALYST = makeItem("overworld_ore_catalyst");
-    public static final RegistryObject<Item> DEEPSLATE_ORE_CATALYST = makeItem("deepslate_ore_catalyst");
-    public static final RegistryObject<Item> DEEPSLATE_GEM_CATALYST = makeItem("deepslate_gem_catalyst");
-    public static final RegistryObject<Item> NETHER_ORE_CATALYST = makeItem("nether_ore_catalyst");
-    public static final RegistryObject<Item> NETHER_SECRET_CATALYST = makeItem("nether_secret_catalyst");
-    public static final RegistryObject<Item> END_SECRET_CATALYST = makeItem("end_secret_catalyst");
-    public static final RegistryObject<Item> RIFT_SPACE_CATALYST = makeItem("rift_space_catalyst");
-    public static final RegistryObject<Item> OVERWORLD_SECRET_CATALYST = makeItem("overworld_secret_catalyst");
-    public static final RegistryObject<Item> BLACKSTONE_SECRET_CATALYST = makeItem("blackstone_secret_catalyst");
+    public static final RegistryObject<Item> BASIC_RIFT_CATALYST = makeItem("catalyst_base_t1");
+    public static final RegistryObject<Item> ADVANCED_RIFT_CATALYST = makeItem("catalyst_base_t2");
+    public static final RegistryObject<Item> PRISTINE_RIFT_CATALYST = makeItem("catalyst_base_t3");
+    public static final RegistryObject<Item> OVERWORLD_ORE_CATALYST = makeItem("catalyst_overworld_ore");
+    public static final RegistryObject<Item> DEEPSLATE_ORE_CATALYST = makeItem("catalyst_deepslate_ore");
+    public static final RegistryObject<Item> DEEPSLATE_GEM_CATALYST = makeItem("catalyst_deepslate_gem");
+    public static final RegistryObject<Item> NETHER_ORE_CATALYST = makeItem("catalyst_nether_ore");
+    public static final RegistryObject<Item> NETHER_SECRET_CATALYST = makeItem("catalyst_nether_secret");
+    public static final RegistryObject<Item> END_SECRET_CATALYST = makeItem("catalyst_end_secret");
+    public static final RegistryObject<Item> RIFT_SPACE_CATALYST = makeItem("catalyst_rift_ore");
+    public static final RegistryObject<Item> OVERWORLD_SECRET_CATALYST = makeItem("catalyst_overworld_secret");
+    public static final RegistryObject<Item> BLACKSTONE_SECRET_CATALYST = makeItem("catalyst_blackstone_secret");
     // TODO: Add catalysts integrating ores from other mods via tags
 
-    public static final RegistryObject<Item> EMPTY_DISINTEGRATOR_CAPSULE = makeItem("empty_disintegrator_capsule");
-    public static final RegistryObject<Item> WHITE_DISINTEGRATOR_CAPSULE = makeItem("white_disintegrator_capsule");
-    public static final RegistryObject<Item> BLUE_DISINTEGRATOR_CAPSULE = makeItem("blue_disintegrator_capsule");
-    public static final RegistryObject<Item> YELLOW_DISINTEGRATOR_CAPSULE = makeItem("yellow_disintegrator_capsule");
-    public static final RegistryObject<Item> ORANGE_DISINTEGRATOR_CAPSULE = makeItem("orange_disintegrator_capsule");
+    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
+    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
+    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
+    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
+    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
 
     public static final RegistryObject<Item> RIFT_SHARD = makeItem("rift_shard");
 
