@@ -1,0 +1,10 @@
+{
+    "type": "impracticalenergistics:rift_catalyst",
+    "catalyst_item": {"item": "impracticalenergistics:catalyst_overworld_ore"},
+    "base_block": {"block": "minecraft:stone"},
+    "block_weights": [
+        { "block": "minecraft:coal_ore", "value": 10 },
+        { "block": "minecraft:iron_ore", "value": 10 },
+        { "block": "minecraft:copper_ore", "value": 10 }
+    ]
+}

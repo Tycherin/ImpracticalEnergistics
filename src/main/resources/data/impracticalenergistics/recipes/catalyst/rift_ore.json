@@ -1,0 +1,8 @@
+{
+    "type": "impracticalenergistics:rift_catalyst",
+    "catalyst_item": {"item": "impracticalenergistics:catalyst_rift_ore"},
+    "base_block": {"block": "impracticalenergistics:riftstone"},
+    "block_weights": [
+        { "block": "impracticalenergistics:rift_shard_ore", "value": 10 }
+    ]
+}
