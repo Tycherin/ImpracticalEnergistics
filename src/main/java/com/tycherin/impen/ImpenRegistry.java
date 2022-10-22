@@ -288,14 +288,16 @@ public class ImpenRegistry {
 
     private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
         final var blockHolder = BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of(mat)));
-        final var itemHolder = ITEMS.register(name, () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
+        final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
+                () -> new BlockItem(blockHolder.get(), getItemProps()));
         return new BlockDefinition(blockHolder, itemHolder);
     }
 
     private static BlockDefinition makeOreBlock(final String name, final Material mat) {
         final var blockHolder = BLOCKS.register(name,
                 () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
-        final var itemHolder = ITEMS.register(name, () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
+        final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
+                () -> new BlockItem(blockHolder.get(), getItemProps()));
         return new BlockDefinition(blockHolder, itemHolder);
     }
 
