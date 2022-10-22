@@ -485,9 +485,9 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .smelting(Ingredient.of(ImpenRegistry.RIFTSTONE), ImpenRegistry.SMOOTH_RIFTSTONE, 0.1F, 200)
                 .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
-        oreSmeltingOverride(consumer, Collections.singletonList(ImpenRegistry.RIFT_SHARD_ORE), ImpenRegistry.RIFT_SHARD_ORE,
+        oreSmeltingOverride(consumer, Collections.singletonList(ImpenRegistry.RIFT_SHARD_ORE), ImpenRegistry.RIFT_SHARD,
                 0.7F, 200, null);
-        oreBlastingOverride(consumer, Collections.singletonList(ImpenRegistry.RIFT_SHARD_ORE), ImpenRegistry.RIFT_SHARD_ORE,
+        oreBlastingOverride(consumer, Collections.singletonList(ImpenRegistry.RIFT_SHARD_ORE), ImpenRegistry.RIFT_SHARD,
                 0.7F, 100, null);
 
         // Stonecutter recipes
