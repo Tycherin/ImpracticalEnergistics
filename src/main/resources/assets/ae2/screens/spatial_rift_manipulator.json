@@ -25,16 +25,10 @@
         "top": 6
       }
     },
-    "chosen_effect": {
-      "position": {
-        "left": 13,
-        "top": 21
-      }
-    },
     "power_requirement": {
       "position": {
         "left": 13,
-        "top": 31
+        "top": 21
       }
     },
     "status_text": {

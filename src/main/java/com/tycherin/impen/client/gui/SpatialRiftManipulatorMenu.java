@@ -31,8 +31,6 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
     public int currentProgress;
     @GuiSync(15)
     public int maxProgress;
-    @GuiSync(16)
-    public String effectName;
     @GuiSync(17)
     public int statusCode;
 
@@ -55,7 +53,6 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
             this.setRequiredPower(Math.round(100.0 * be.getPowerDraw()));
             this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
             this.setMaxProgress(Math.max(1, be.getMaxProgress()));
-            this.setEffectName("default"); // TODO Remove this
 
             this.statusCode = be.getStatusCode();
         }
@@ -99,14 +96,6 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
 
     private void setMaxProgress(final int i) {
         this.maxProgress = i;
-    }
-
-    public String getEffectName() {
-        return effectName;
-    }
-
-    private void setEffectName(final String s) {
-        this.effectName = s;
     }
 
     public int getStatusCode() {
