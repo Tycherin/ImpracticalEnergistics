@@ -1,6 +1,7 @@
 package com.tycherin.impen.integrations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -20,6 +21,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -146,4 +148,10 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);
     }
 
+    @Override
+    public void onRuntimeAvailable(final IJeiRuntime jeiRuntime) {
+        // Hide the fake dimension item, which shouldn't be exposed to the player
+        jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
+                Collections.singletonList(ImpenRegistry.FAKE_DIMENSION_PLACEHOLDER.asItem().getDefaultInstance()));
+    }
 }

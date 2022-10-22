@@ -182,7 +182,7 @@ public class ImpenRegistry {
 
     public static final ItemDefinition RIFT_SHARD = makeItem("rift_shard");
 
-    // TODO Hide this from JEI
+    // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
 
     // Basic Blocks
