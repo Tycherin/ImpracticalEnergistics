@@ -2,8 +2,6 @@ package com.tycherin.impen;
 
 import java.util.function.Function;
 
-import org.lwjgl.system.CallbackI.B;
-
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.PlantableCertusBlock;
@@ -43,7 +41,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.crafting.Recipe;
@@ -302,8 +299,7 @@ public class ImpenRegistry {
     }
 
     private static Item.Properties getItemProps() {
-        // TODO Use real creative tab
-        return new Item.Properties().tab(CreativeModeTab.TAB_MISC);
+        return new Item.Properties().tab(ImpenCreativeModeTab.TAB);
     }
 
     // ***
