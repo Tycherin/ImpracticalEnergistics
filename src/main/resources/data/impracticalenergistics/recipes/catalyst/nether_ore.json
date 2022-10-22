@@ -4,7 +4,7 @@
     "base_block": {"block": "minecraft:netherrack"},
     "block_weights": [
         { "block": "minecraft:nether_quartz_ore", "value": 10 },
-        { "block": "minecraft:glowstone_block", "value": 5 },
+        { "block": "minecraft:glowstone", "value": 5 },
         { "block": "minecraft:nether_gold_ore", "value": 10 }
     ]
 }
