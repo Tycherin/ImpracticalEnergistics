@@ -29,11 +29,11 @@ public class StabilizedRiftPrismEntity extends ItemEntity {
 
     private static final Random RAND = new Random();
     private static final Map<Item, Item> CONVERSIONS = ImmutableMap.of(
-            AEItems.FLUIX_AXE.asItem(), ImpenRegistry.RIFT_AXE_ITEM.get(),
-            AEItems.FLUIX_HOE.asItem(), ImpenRegistry.RIFT_HOE_ITEM.get(),
-            AEItems.FLUIX_PICK.asItem(), ImpenRegistry.RIFT_PICKAXE_ITEM.get(),
-            AEItems.FLUIX_SHOVEL.asItem(), ImpenRegistry.RIFT_SPADE_ITEM.get(),
-            AEItems.FLUIX_SWORD.asItem(), ImpenRegistry.RIFT_SWORD_ITEM.get());
+            AEItems.FLUIX_AXE.asItem(), ImpenRegistry.RIFT_AXE_ITEM.asItem(),
+            AEItems.FLUIX_HOE.asItem(), ImpenRegistry.RIFT_HOE_ITEM.asItem(),
+            AEItems.FLUIX_PICK.asItem(), ImpenRegistry.RIFT_PICKAXE_ITEM.asItem(),
+            AEItems.FLUIX_SHOVEL.asItem(), ImpenRegistry.RIFT_SPADE_ITEM.asItem(),
+            AEItems.FLUIX_SWORD.asItem(), ImpenRegistry.RIFT_SWORD_ITEM.asItem());
     
     private int transformTime = 0;
     

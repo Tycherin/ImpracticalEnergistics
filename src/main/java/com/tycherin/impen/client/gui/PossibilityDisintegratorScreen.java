@@ -9,7 +9,7 @@ import appeng.client.gui.style.ScreenStyle;
 import appeng.menu.SlotSemantics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 
 public class PossibilityDisintegratorScreen extends UpgradeableScreen<PossibilityDisintegratorMenu> {
 
@@ -22,11 +22,11 @@ public class PossibilityDisintegratorScreen extends UpgradeableScreen<Possibilit
             final Component title, final ScreenStyle style) {
         super(menu, playerInventory, title, style);
 
-        this.luckSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LUCK.get());
-        this.lootSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LOOT.get());
-        this.eggSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_EGG.get());
+        this.luckSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LUCK);
+        this.lootSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_LOOT);
+        this.eggSlot = new ToggleableClientDisplaySlot(PossibilityDisintegratorBlockEntity.CONSUMABLE_EGG);
         this.playerKillSlot = new ToggleableClientDisplaySlot(
-                PossibilityDisintegratorBlockEntity.CONSUMABLE_PLAYER_KILL.get());
+                PossibilityDisintegratorBlockEntity.CONSUMABLE_PLAYER_KILL);
 
         // The SlotSemantic values here don't actually make any sense, I'm just hijacking them to get AE2 to render the
         // screen with the layout that I want, and it isn't worth the trouble to register custom semantics just for this
@@ -49,8 +49,8 @@ public class PossibilityDisintegratorScreen extends UpgradeableScreen<Possibilit
     private static class ToggleableClientDisplaySlot extends ClientDisplaySlot {
         private boolean activeFlag = false;
 
-        public ToggleableClientDisplaySlot(final Item displayItem) {
-            super(GenericStack.fromItemStack(displayItem.getDefaultInstance()));
+        public ToggleableClientDisplaySlot(final ItemLike displayItem) {
+            super(GenericStack.fromItemStack(displayItem.asItem().getDefaultInstance()));
         }
 
         public void setActive(final boolean activeFlag) {

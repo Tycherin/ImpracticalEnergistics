@@ -59,7 +59,7 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropWhenSilkTouch(ImpenRegistry.RIFT_GLASS.block());
 
             this.add(ImpenRegistry.RIFT_SHARD_ORE.block(), (block) -> {
-                return createOreDrop(block, ImpenRegistry.RIFT_SHARD.get());
+                return createOreDrop(block, ImpenRegistry.RIFT_SHARD.asItem());
             });
 
             this.add(ImpenRegistry.SMOOTH_RIFTSTONE.block(), (block) -> {

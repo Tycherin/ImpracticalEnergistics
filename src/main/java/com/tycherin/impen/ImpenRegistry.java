@@ -49,6 +49,7 @@ import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
@@ -148,41 +149,41 @@ public class ImpenRegistry {
             "plantable_fluix_seeds", PlantableFluixBlock::new);
 
     // Tools
-    public static final RegistryObject<Item> RIFT_AXE_ITEM = makeTool("rift_axe", RiftAxeItem::new);
-    public static final RegistryObject<Item> RIFT_HOE_ITEM = makeTool("rift_hoe", RiftHoeItem::new);
-    public static final RegistryObject<Item> RIFT_PICKAXE_ITEM = makeTool("rift_pickaxe", RiftPickaxeItem::new);
-    public static final RegistryObject<Item> RIFT_SPADE_ITEM = makeTool("rift_spade", RiftSpadeItem::new);
-    public static final RegistryObject<Item> RIFT_SWORD_ITEM = makeTool("rift_sword", RiftSwordItem::new);
+    public static final ItemDefinition RIFT_AXE_ITEM = makeTool("rift_axe", RiftAxeItem::new);
+    public static final ItemDefinition RIFT_HOE_ITEM = makeTool("rift_hoe", RiftHoeItem::new);
+    public static final ItemDefinition RIFT_PICKAXE_ITEM = makeTool("rift_pickaxe", RiftPickaxeItem::new);
+    public static final ItemDefinition RIFT_SPADE_ITEM = makeTool("rift_spade", RiftSpadeItem::new);
+    public static final ItemDefinition RIFT_SWORD_ITEM = makeTool("rift_sword", RiftSwordItem::new);
 
     // Materials
-    public static final RegistryObject<Item> AEROCRYSTAL = makeItem("aerocrystal");
-    public static final RegistryObject<Item> BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
-    public static final RegistryObject<Item> EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
+    public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
+    public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
+    public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
 
-    public static final RegistryObject<Item> BASIC_RIFT_CATALYST = makeItem("catalyst_base_t1");
-    public static final RegistryObject<Item> ADVANCED_RIFT_CATALYST = makeItem("catalyst_base_t2");
-    public static final RegistryObject<Item> PRISTINE_RIFT_CATALYST = makeItem("catalyst_base_t3");
-    public static final RegistryObject<Item> OVERWORLD_ORE_CATALYST = makeItem("catalyst_overworld_ore");
-    public static final RegistryObject<Item> DEEPSLATE_ORE_CATALYST = makeItem("catalyst_deepslate_ore");
-    public static final RegistryObject<Item> DEEPSLATE_GEM_CATALYST = makeItem("catalyst_deepslate_gem");
-    public static final RegistryObject<Item> NETHER_ORE_CATALYST = makeItem("catalyst_nether_ore");
-    public static final RegistryObject<Item> NETHER_SECRET_CATALYST = makeItem("catalyst_nether_secret");
-    public static final RegistryObject<Item> END_SECRET_CATALYST = makeItem("catalyst_end_secret");
-    public static final RegistryObject<Item> RIFT_SPACE_CATALYST = makeItem("catalyst_rift_ore");
-    public static final RegistryObject<Item> OVERWORLD_SECRET_CATALYST = makeItem("catalyst_overworld_secret");
-    public static final RegistryObject<Item> BLACKSTONE_SECRET_CATALYST = makeItem("catalyst_blackstone_secret");
+    public static final ItemDefinition BASIC_RIFT_CATALYST = makeItem("catalyst_base_t1");
+    public static final ItemDefinition ADVANCED_RIFT_CATALYST = makeItem("catalyst_base_t2");
+    public static final ItemDefinition PRISTINE_RIFT_CATALYST = makeItem("catalyst_base_t3");
+    public static final ItemDefinition OVERWORLD_ORE_CATALYST = makeItem("catalyst_overworld_ore");
+    public static final ItemDefinition DEEPSLATE_ORE_CATALYST = makeItem("catalyst_deepslate_ore");
+    public static final ItemDefinition DEEPSLATE_GEM_CATALYST = makeItem("catalyst_deepslate_gem");
+    public static final ItemDefinition NETHER_ORE_CATALYST = makeItem("catalyst_nether_ore");
+    public static final ItemDefinition NETHER_SECRET_CATALYST = makeItem("catalyst_nether_secret");
+    public static final ItemDefinition END_SECRET_CATALYST = makeItem("catalyst_end_secret");
+    public static final ItemDefinition RIFT_SPACE_CATALYST = makeItem("catalyst_rift_ore");
+    public static final ItemDefinition OVERWORLD_SECRET_CATALYST = makeItem("catalyst_overworld_secret");
+    public static final ItemDefinition BLACKSTONE_SECRET_CATALYST = makeItem("catalyst_blackstone_secret");
     // TODO: Add catalysts integrating ores from other mods via tags
 
-    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
-    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
-    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
-    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
-    public static final RegistryObject<Item> DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
 
-    public static final RegistryObject<Item> RIFT_SHARD = makeItem("rift_shard");
+    public static final ItemDefinition RIFT_SHARD = makeItem("rift_shard");
 
     // TODO Hide this from JEI
-    public static final RegistryObject<Item> FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
+    public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
 
     // Basic Blocks
     // TODO I have no idea if these are the right materials to use
@@ -205,11 +206,11 @@ public class ImpenRegistry {
             "stabilized_rift_prism", StabilizedRiftPrismEntity::new, StabilizedRiftPrismEntity::new);
 
     // Misc items
-    public static final RegistryObject<LunchboxCellItem> LUNCHBOX_CELL_ITEM = ITEMS.register("lunchbox_cell",
-            () -> new LunchboxCellItem());
+    public static final ItemDefinition LUNCHBOX_CELL_ITEM = new ItemDefinition(ITEMS.register("lunchbox_cell",
+            () -> new LunchboxCellItem()));
 
-    public static final RegistryObject<Item> CAPTURE_PLANE_ITEM = ITEMS.register("capture_plane",
-            () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
+    public static final ItemDefinition CAPTURE_PLANE_ITEM = new ItemDefinition(ITEMS.register("capture_plane",
+            () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new)));
 
     // Custom recipe types
     public static final RegistryObject<RecipeType<RiftCatalystRecipe>> RIFT_CATALYST_RECIPE_TYPE = ImpenRegistry
@@ -247,13 +248,13 @@ public class ImpenRegistry {
         return new MachineDefinition<>(blockHolder, blockEntityHolder, blockItemHolder);
     }
 
-    public static RegistryObject<Item> makeTool(final String name,
+    public static ItemDefinition makeTool(final String name,
             final Function<Item.Properties, ? extends Item> func) {
-        return ITEMS.register(name, () -> func.apply(getItemProps()));
+        return new ItemDefinition(ITEMS.register(name, () -> func.apply(getItemProps())));
     }
 
-    public static RegistryObject<Item> makeItem(final String name) {
-        return ITEMS.register(name, () -> new Item(getItemProps()));
+    public static ItemDefinition makeItem(final String name) {
+        return new ItemDefinition(ITEMS.register(name, () -> new Item(getItemProps())));
     }
 
     private static <BT extends CropBlock> PlantDefinition<BT> makeCrop(final String cropName, final String seedName,
@@ -307,7 +308,8 @@ public class ImpenRegistry {
     // Many static inner classes
     // ***
 
-    public static class MachineDefinition<B extends Block, E extends BlockEntity> {
+    public static class MachineDefinition<B extends Block, E extends BlockEntity>
+            implements ItemLike, RegistryIdProvider {
         private final RegistryObject<B> blockHolder;
         private final RegistryObject<BlockEntityType<E>> blockEntityHolder;
         private final RegistryObject<BlockItem> blockItemHolder;
@@ -331,9 +333,19 @@ public class ImpenRegistry {
         public BlockItem item() {
             return blockItemHolder.get();
         }
+
+        @Override
+        public Item asItem() {
+            return this.item();
+        }
+
+        @Override
+        public String getKey() {
+            return blockHolder.getId().getPath();
+        }
     }
 
-    public static class PlantDefinition<B extends CropBlock> {
+    public static class PlantDefinition<B extends CropBlock> implements RegistryIdProvider {
         private final RegistryObject<B> blockHolder;
         private final RegistryObject<? extends Item> itemHolder;
 
@@ -349,9 +361,14 @@ public class ImpenRegistry {
         public Item item() {
             return itemHolder.get();
         }
+
+        @Override
+        public String getKey() {
+            return blockHolder.getId().getPath();
+        }
     }
 
-    public static class DroppableItemDefinition<E extends Entity> {
+    public static class DroppableItemDefinition<E extends Entity> implements ItemLike, RegistryIdProvider {
         private final RegistryObject<? extends Item> itemHolder;
         private final RegistryObject<EntityType<E>> entityHolder;
 
@@ -368,9 +385,19 @@ public class ImpenRegistry {
         public EntityType<E> entity() {
             return entityHolder.get();
         }
+
+        @Override
+        public Item asItem() {
+            return this.item();
+        }
+
+        @Override
+        public String getKey() {
+            return itemHolder.getId().getPath();
+        }
     }
 
-    public static class BlockDefinition {
+    public static class BlockDefinition implements ItemLike, RegistryIdProvider {
         private final RegistryObject<? extends Block> blockHolder;
         private final RegistryObject<? extends Item> itemHolder;
 
@@ -387,5 +414,37 @@ public class ImpenRegistry {
         public Item item() {
             return itemHolder.get();
         }
+
+        @Override
+        public Item asItem() {
+            return this.item();
+        }
+
+        @Override
+        public String getKey() {
+            return itemHolder.getId().getPath();
+        }
+    }
+    
+    public static class ItemDefinition implements ItemLike, RegistryIdProvider {
+        private final RegistryObject<? extends Item> itemHolder;
+
+        private ItemDefinition(final RegistryObject<? extends Item> itemHolder) {
+            this.itemHolder = itemHolder;
+        }
+
+        @Override
+        public Item asItem() {
+            return this.itemHolder.get();
+        }
+
+        @Override
+        public String getKey() {
+            return itemHolder.getId().getPath();
+        }
+    }
+    
+    public static interface RegistryIdProvider {
+        String getKey();
     }
 }
