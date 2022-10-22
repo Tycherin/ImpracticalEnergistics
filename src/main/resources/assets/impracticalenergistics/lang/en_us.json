@@ -78,7 +78,20 @@
     "dimension.minecraft:the_nether": "The Nether",
     "dimension.minecraft:the_end": "The End",
     
+    "jei.impracticalenergistics.description.atmospheric_crystallizer": "Atmospheric Crystallizers use ME network energy to gradually form crystals out of the surrounding air. This produces different items depending on which dimension the Crystallizer is placed in.",
     "jei.impracticalenergistics.description.beamed_network_link": "Beamed Network Link blocks can be used to link AE2 networks across distances without cables. If two BNLs are within 16 blocks of each other, and they are facing each other, they will connect automatically.",
+    "jei.impracticalenergistics.description.capture_plane": "Converts projectiles that hit the plane into items. Works on all types of arrows, thrown items like snowballs and eggs, and more!",
+    "jei.impracticalenergistics.description.disintegrator_capsule_loot": "When used in a Possibility Disintegrator, causes trapped mobs to drop more loot as they are disintegrated.",
+    "jei.impracticalenergistics.description.disintegrator_capsule_egg": "When used in a Possibility Disintegrator, causes trapped mobs to sometimes drop spawn eggs when killed.",
+    "jei.impracticalenergistics.description.disintegrator_capsule_luck": "When used in a Possibility Disintegrator, improves the chances of other capsule effects triggering.",
+    "jei.impracticalenergistics.description.disintegrator_capsule_player_kill": "When used in a Possibility Disintegrator, any loot dropped by trapped mobs will drop as though the mob was attacked by a player.",
+    "jei.impracticalenergistics.description.lunchbox_cell": "A specially modified Storage Cell that you can eat from directly. Use while holding to eat any items stored in the cell.",
+    "jei.impracticalenergistics.description.plantable_certus_seeds": "Certus seeds suitable for planting in the ground. Works like a normal crop, but doesn't drop extra seeds.",
+    "jei.impracticalenergistics.description.plantable_fluix_seeds": "Fluix seeds suitable for planting in the ground. Works like a normal crop, but doesn't drop extra seeds.",
+    "jei.impracticalenergistics.description.possibility_disintegrator": "Traps mobs that walk on it and gradually disintegrates them. Can consume Disintegrator Capsule items from an attached ME storage system to add additional effects.",
+    "jei.impracticalenergistics.description.spatial_rift_manipulator": "Fills spatial storage cells with blocks from alternate spacetimes. Requires catalysts provided by Spatial Rift Stabilizers on the same ME network.",
+    "jei.impracticalenergistics.description.spatial_rift_stabilizer": "Supplies Rift Catalysts to Spatial Rift Manipulators on the same ME network. Note that providing the same catalyst multiple times will have a diminishing effect.",
+    "jei.impracticalenergistics.description.toaster_drive": "A specially modified ME Chest that ejects its storage cell when the cell is full of items or types. Will push into any inventory above it, or into the world otherwise.",
     
     "ignore.me": "This space intentionally left blank"
 }

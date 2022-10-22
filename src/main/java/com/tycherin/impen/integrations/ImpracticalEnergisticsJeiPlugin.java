@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
+import com.tycherin.impen.recipe.RiftCatalystRecipe;
 
 import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
@@ -23,10 +23,10 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.ItemLike;
 
 @JeiPlugin
 public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
@@ -38,8 +38,21 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     private static final RecipeType<AtmosphericCrystallizerRecipe> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
     
-    private static final List<Item> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
-            ImpenRegistry.BEAMED_NETWORK_LINK.item());
+    private static final List<ItemLike> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
+            ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
+            ImpenRegistry.BEAMED_NETWORK_LINK,
+            ImpenRegistry.CAPTURE_PLANE_ITEM,
+            ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT,
+            ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK,
+            ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG,
+            ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL,
+            ImpenRegistry.LUNCHBOX_CELL_ITEM,
+            ImpenRegistry.PLANTABLE_CERTUS.item(),
+            ImpenRegistry.PLANTABLE_FLUIX.item(),
+            ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
+            ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
+            ImpenRegistry.SPATIAL_RIFT_STABILIZER,
+            ImpenRegistry.TOASTER_DRIVE);
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -70,8 +83,43 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                     List.of(
                             Ingredient.of(Items.REDSTONE),
                             Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
-                            Ingredient.of(ImpenRegistry.RIFT_PRISM.item())),
+                            Ingredient.of(ImpenRegistry.RIFT_PRISM)),
                     AEItems.FLUIX_DUST.stack(4),
+                    false));
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE_BLOCK),
+                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
+                            Ingredient.of(AEItems.FLUIX_AXE)),
+                    ImpenRegistry.RIFT_AXE_ITEM.asItem().getDefaultInstance(),
+                    false));
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE_BLOCK),
+                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
+                            Ingredient.of(AEItems.FLUIX_HOE)),
+                    ImpenRegistry.RIFT_HOE_ITEM.asItem().getDefaultInstance(),
+                    false));
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE_BLOCK),
+                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
+                            Ingredient.of(AEItems.FLUIX_PICK)),
+                    ImpenRegistry.RIFT_PICKAXE_ITEM.asItem().getDefaultInstance(),
+                    false));
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE_BLOCK),
+                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
+                            Ingredient.of(AEItems.FLUIX_SHOVEL)),
+                    ImpenRegistry.RIFT_SPADE_ITEM.asItem().getDefaultInstance(),
+                    false));
+            waterRecipes.add(new ThrowingInWaterDisplay(
+                    List.of(
+                            Ingredient.of(Items.REDSTONE_BLOCK),
+                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
+                            Ingredient.of(AEItems.FLUIX_SWORD)),
+                    ImpenRegistry.RIFT_SWORD_ITEM.asItem().getDefaultInstance(),
                     false));
         }
         // Make a new RecipeType here because AE2 is still doing things the old way
@@ -79,8 +127,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
             final String translationKey = "jei.impracticalenergistics.description."
-                    + item.getRegistryName().getPath();
-            registry.addIngredientInfo(item.getDefaultInstance(), VanillaTypes.ITEM_STACK,
+                    + item.asItem().getRegistryName().getPath();
+            registry.addIngredientInfo(item.asItem().getDefaultInstance(), VanillaTypes.ITEM_STACK,
                     new TranslatableComponent(translationKey));
         });
     }
