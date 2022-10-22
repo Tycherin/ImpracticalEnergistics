@@ -127,6 +127,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         // Make a new RecipeType here because AE2 is still doing things the old way
         registry.addRecipes(new RecipeType<>(ThrowingInWaterCategory.ID, ThrowingInWaterDisplay.class), waterRecipes);
 
+        // TODO Change this call the bulk insert version
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
             final String translationKey = "jei.impracticalenergistics.description."
                     + item.asItem().getRegistryName().getPath();

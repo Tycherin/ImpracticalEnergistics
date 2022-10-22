@@ -14,7 +14,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.rift.RiftManipulatorStatusCodes;
 import com.tycherin.impen.logic.rift.RiftService;
-import com.tycherin.impen.logic.rift.RiftWeightTracker.IsmWeightWrapper;
+import com.tycherin.impen.logic.rift.RiftWeightTracker;
 import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.config.YesNo;
@@ -177,7 +177,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         final int cycleCount = this.getCycleCount(operation.get().plot().get());
         final List<ItemStack> catalysts = RiftService.get(this).get().triggerOperation(cycleCount);
         catalysts.forEach(this.catalystInv::addItems);
-        this.maxProgressTicks = (int) Math.ceil(cycleCount * BLOCKS_PER_CYCLE / this.getWorkRate());
+        this.maxProgressTicks = (int) Math.ceil(cycleCount * BLOCKS_PER_CYCLE * TICKS_PER_BLOCK);
         this.progressTicks = 0;
         this.statusCode = RiftManipulatorStatusCodes.RUNNING;
 
@@ -206,7 +206,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         final int cycleCount = this.getCycleCount(plot);
         final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
-        final var weights = IsmWeightWrapper.fromCatalysts(catalystItems, cycleCount, this.level);
+        final var weights = RiftWeightTracker.weightsFromCatalysts(catalystItems, cycleCount, this.level);
 
         // Go through the target zone and update each block based on the supplier results
         final Supplier<Block> blockSupplier = weights.getSupplier();
@@ -316,7 +316,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
     /** @return The work rate, in blocks per tick */
     private double getWorkRate() {
-        return Math.pow(2, this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) / TICKS_PER_BLOCK;
+        return Math.pow(2, this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD));
     }
 
     /** @return The amount of power drawn per tick */
@@ -384,8 +384,8 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             rate = TickRateModulation.IDLE;
         }
         else {
-            if (AEPowerUtil.drawPower(this, this.getPowerDraw() * ticksSinceLastCall)) {
-                this.progressTicks += Math.floor(this.getWorkRate() * ticksSinceLastCall);
+            if (AEPowerUtil.drawPower(this, this.getPowerDraw())) {
+                this.progressTicks += (int)this.getWorkRate();
             }
 
             if (this.progressTicks >= this.maxProgressTicks) {
@@ -400,6 +400,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             else {
                 rate = TickRateModulation.FASTER;
             }
+            this.saveChanges();
         }
 
         // We delay doing this update until the end to avoid triggering it multiple times if there are multiple updates
