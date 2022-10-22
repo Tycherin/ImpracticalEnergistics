@@ -31,7 +31,6 @@ import net.minecraft.world.level.block.Block;
  */
 public class RiftWeightTracker {
 
-    // TODO Make configurable?
     public static final double DIMINISHING_RETURNS_RATE = 0.75;
 
     private static final Logger LOGGER = LogUtils.getLogger();

@@ -139,7 +139,6 @@ public class CapturePlanePart extends BasicStatePart {
             if (insertCount > 0) {
                 projectile.discard();
                 event.setCanceled(true);
-                // TODO It would be helpful if there was a visual effect here
             }
         }
     }

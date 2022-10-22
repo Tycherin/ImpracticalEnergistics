@@ -78,8 +78,6 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
             boolean isPrimarySide) {
     }
 
-    // TODO Figure out how chunk loading/unloading works
-
     public BeamedNetworkLinkBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.BEAMED_NETWORK_LINK.blockEntity(), pos, blockState);
 

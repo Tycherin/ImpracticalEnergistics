@@ -38,7 +38,6 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
         final Item catalyst = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "catalyst_item"));
         final Block baseBlock = this.getAsBlock(GsonHelper.getAsJsonObject(json, "base_block"));
         final List<RiftWeight> weights = new ArrayList<>();
-        // TODO Add dimension restrictions... somehow?
         final JsonArray blockWeightsJson = GsonHelper.getAsJsonArray(json, "block_weights");
         if (blockWeightsJson.size() > MAX_OUTPUTS) {
             throw new JsonSyntaxException(String.format("Too many outputs for '%s'", recipeId));

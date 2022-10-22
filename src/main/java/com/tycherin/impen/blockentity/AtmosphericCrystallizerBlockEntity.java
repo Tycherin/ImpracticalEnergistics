@@ -50,7 +50,6 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
                 .addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item(), 3,
                 this::saveChanges);
-        // TODO Tick time should be pulled from the recipe, and config should dictate the speed
         this.baseProgressTicks = ImpenConfig.SETTINGS.atmosphericCrystallizerWorkRate();
         this.basePowerDraw = ImpenConfig.POWER.atmosphericCrystallizerCost();
     }

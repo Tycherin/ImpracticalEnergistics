@@ -23,8 +23,6 @@ public class SpatialRiftStabilizerMenu extends AEBaseMenu {
             .build("spatial_rift_stabilizer");
 
     // TODO Add fields needed to display weight impacts
-//    @GuiSync(0)
-//    public long currentPower;
     
     private int delay = 40;
 

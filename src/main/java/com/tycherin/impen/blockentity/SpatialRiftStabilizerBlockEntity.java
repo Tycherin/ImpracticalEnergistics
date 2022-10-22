@@ -114,7 +114,6 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
             returnedItems.setCount(desiredAmount);
             return returnedItems;
         }
-        // TODO What if the catalyst is something in a container, e.g. a bucket of water?
     }
 
     @Override

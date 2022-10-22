@@ -43,10 +43,6 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
     
     // TODO Change item model when food is available vs. not
     
-    // TODO Display the name of what item is loaded in the tooltip
-    
-    // TODO Add small & large variants
-    
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack lunchIs = player.getItemInHand(hand);
         final Optional<ItemStack> storedIs = this.getStoredItemStack(lunchIs);

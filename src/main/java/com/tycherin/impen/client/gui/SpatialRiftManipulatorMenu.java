@@ -40,7 +40,6 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
             final SpatialRiftManipulatorBlockEntity ism) {
         super(TYPE, id, playerInv, ism);
 
-        // TODO Better decoupling for inventory management slots & things
         this.addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.SPATIAL_STORAGE_CELLS,
                 ism.getInternalInventory(), 0), SlotSemantics.MACHINE_INPUT);
         this.addSlot(new OutputSlot(ism.getInternalInventory(), 1,
@@ -56,7 +55,7 @@ public class SpatialRiftManipulatorMenu extends UpgradeableMenu<SpatialRiftManip
             this.setRequiredPower(Math.round(100.0 * be.getPowerDraw()));
             this.setCurrentProgress(Math.max(0, be.getCurrentProgress()));
             this.setMaxProgress(Math.max(1, be.getMaxProgress()));
-            this.setEffectName("default"); // TODO Pull this from the BE once that's implemented
+            this.setEffectName("default"); // TODO Remove this
 
             this.statusCode = be.getStatusCode();
         }
