@@ -74,9 +74,9 @@
     "gui.impracticalenergistics.jei.atmospheric_crystallizer_recipe_title": "Atmospheric Crystallization",
     "gui.impracticalenergistics.jei.base_block_explanation": "Base Block - This will spawn by default, unless another block spawns instead",
     
-    "dimension.minecraft:overworld": "Overworld",
-    "dimension.minecraft:the_nether": "The Nether",
-    "dimension.minecraft:the_end": "The End",
+    "dimension.minecraft:overworld": "Dimension: Overworld",
+    "dimension.minecraft:the_nether": "Dimension: The Nether",
+    "dimension.minecraft:the_end": "Dimension: The End",
     
     "jei.impracticalenergistics.description.atmospheric_crystallizer": "Atmospheric Crystallizers use ME network energy to gradually form crystals out of the surrounding air. This produces different items depending on which dimension the Crystallizer is placed in.",
     "jei.impracticalenergistics.description.beamed_network_link": "Beamed Network Link blocks can be used to link AE2 networks across distances without cables. If two BNLs are within 16 blocks of each other, and they are facing each other, they will connect automatically.",

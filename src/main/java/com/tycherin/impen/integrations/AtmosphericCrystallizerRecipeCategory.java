@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<AtmosphericCrystallizerRecipe> {
 
@@ -38,8 +37,7 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
     @Override
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final AtmosphericCrystallizerRecipe recipe,
             final IFocusGroup focusGroup) {
-        // TODO Use fake dimension item here
-        final ItemStack fakeIs = Items.COMMAND_BLOCK.getDefaultInstance().copy();
+        final ItemStack fakeIs = ImpenRegistry.FAKE_DIMENSION_PLACEHOLDER.asItem().getDefaultInstance();
         final Component dimensionName = new TranslatableComponent("dimension." + recipe.getDimensionKey());
         fakeIs.setHoverName(dimensionName);
         layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 4)
