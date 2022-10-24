@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "impracticalenergistics:item/rift_catalyst_t2"
+    "layer0": "impracticalenergistics:item/catalyst_base_t2"
   }
 }
