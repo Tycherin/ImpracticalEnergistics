@@ -114,7 +114,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                             Ingredient.of(Items.REDSTONE_BLOCK),
                             Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
                             Ingredient.of(AEItems.FLUIX_SHOVEL)),
-                    ImpenRegistry.RIFT_SPADE_ITEM.asItem().getDefaultInstance(),
+                    ImpenRegistry.RIFT_SHOVEL_ITEM.asItem().getDefaultInstance(),
                     false));
             waterRecipes.add(new ThrowingInWaterDisplay(
                     List.of(

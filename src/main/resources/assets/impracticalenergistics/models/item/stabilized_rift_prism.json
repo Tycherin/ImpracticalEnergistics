@@ -1,3 +1,6 @@
 {
-    "parent": "impracticalenergistics:item/rift_prism"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "impracticalenergistics:item/stabilized_rift_prism"
+  }
 }

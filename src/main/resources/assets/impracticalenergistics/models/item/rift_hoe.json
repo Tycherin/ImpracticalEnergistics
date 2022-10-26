@@ -1,3 +1,6 @@
 {
-    "parent": "minecraft:item/diamond_hoe"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "impracticalenergistics:item/rift_hoe"
+  }
 }

@@ -22,7 +22,7 @@ import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.RiftAxeItem;
 import com.tycherin.impen.item.RiftHoeItem;
 import com.tycherin.impen.item.RiftPickaxeItem;
-import com.tycherin.impen.item.RiftSpadeItem;
+import com.tycherin.impen.item.RiftShovelItem;
 import com.tycherin.impen.item.RiftSwordItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
@@ -148,7 +148,7 @@ public class ImpenRegistry {
     public static final ItemDefinition RIFT_AXE_ITEM = makeTool("rift_axe", RiftAxeItem::new);
     public static final ItemDefinition RIFT_HOE_ITEM = makeTool("rift_hoe", RiftHoeItem::new);
     public static final ItemDefinition RIFT_PICKAXE_ITEM = makeTool("rift_pickaxe", RiftPickaxeItem::new);
-    public static final ItemDefinition RIFT_SPADE_ITEM = makeTool("rift_spade", RiftSpadeItem::new);
+    public static final ItemDefinition RIFT_SHOVEL_ITEM = makeTool("rift_shovel", RiftShovelItem::new);
     public static final ItemDefinition RIFT_SWORD_ITEM = makeTool("rift_sword", RiftSwordItem::new);
 
     // Materials

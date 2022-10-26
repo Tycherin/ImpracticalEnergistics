@@ -10,8 +10,8 @@ import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class RiftSpadeItem extends ShovelItem implements RiftEnchantItem {
-    public RiftSpadeItem(final Properties props) {
+public class RiftShovelItem extends ShovelItem implements RiftEnchantItem {
+    public RiftShovelItem(final Properties props) {
         super(RiftToolTier.INSTANCE, 1.5F, -3.0F, props);
     }
 
