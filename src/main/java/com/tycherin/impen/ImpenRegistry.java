@@ -1,6 +1,7 @@
 package com.tycherin.impen;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
@@ -50,6 +51,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -186,8 +188,9 @@ public class ImpenRegistry {
     public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", Material.STONE);
     public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore", Material.STONE);
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", Material.STONE);
-    public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", Material.STONE);
-    public static final BlockDefinition RIFT_GLASS = makeBasicBlock("rift_glass", Material.GLASS);
+    public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", Material.STONE);
+    public static final BlockDefinition RIFT_GLASS = makeCustomBlock("rift_glass",
+            () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_STAINED_GLASS)));
     public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
     public static final BlockDefinition BLAZING_AEROCRYSTAL_BLOCK = makeBasicBlock("blazing_aerocrystal_block",
             Material.AMETHYST);
@@ -282,8 +285,19 @@ public class ImpenRegistry {
         });
     }
 
+    private static BlockDefinition makeCustomBlock(final String name, final Supplier<Block> sup) {
+        final var blockHolder = BLOCKS.register(name, sup);
+        final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
+                () -> new BlockItem(blockHolder.get(), getItemProps()));
+        return new BlockDefinition(blockHolder, itemHolder);
+    }
+
     private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
-        final var blockHolder = BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of(mat)));
+        return ImpenRegistry.makeBasicBlock(name, BlockBehaviour.Properties.of(mat));
+    }
+    
+    private static BlockDefinition makeBasicBlock(final String name, final BlockBehaviour.Properties props) {
+        final var blockHolder = BLOCKS.register(name, () -> new Block(props));
         final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
                 () -> new BlockItem(blockHolder.get(), getItemProps()));
         return new BlockDefinition(blockHolder, itemHolder);

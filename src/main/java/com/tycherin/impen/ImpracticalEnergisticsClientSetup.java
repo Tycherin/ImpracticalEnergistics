@@ -47,6 +47,8 @@ public class ImpracticalEnergisticsClientSetup {
                     RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_FLUIX.block(),
                     RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.RIFT_GLASS.block(),
+                    RenderType.translucent());
         });
     }
 

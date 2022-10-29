@@ -126,7 +126,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
         // === Materials ===
 
         // Riftstone Brick
-        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFTSTONE_BRICK, 4)
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFTSTONE_BRICKS, 4)
                 .pattern("##")
                 .pattern("##")
                 .define('#', ImpenRegistry.SMOOTH_RIFTSTONE)
@@ -491,7 +491,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 0.7F, 100, null);
 
         // Stonecutter recipes
-        stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICK, ImpenRegistry.SMOOTH_RIFTSTONE);
+        stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICKS, ImpenRegistry.SMOOTH_RIFTSTONE);
     }
 
     private ResourceLocation makeId(final String key) {
