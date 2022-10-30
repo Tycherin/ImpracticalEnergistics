@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "impracticalenergistics:block/plantable_fluix_stage3"
+  }
+}
