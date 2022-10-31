@@ -38,9 +38,8 @@ import net.minecraftforge.event.entity.ProjectileImpactEvent;
 
 public class CapturePlanePart extends BasicStatePart {
 
-    // TODO Have an actual model for this
-    private static final PlaneModels MODELS = new PlaneModels("part/annihilation_plane",
-            "part/annihilation_plane_on");
+    private static final PlaneModels MODELS = new PlaneModels("part/capture_plane",
+            "part/capture_plane_on");
 
     @PartModels
     public static List<IPartModel> getModels() {

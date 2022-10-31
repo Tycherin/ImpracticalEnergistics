@@ -6,6 +6,7 @@ import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.datagen.ImpenLootProvider;
+import com.tycherin.impen.datagen.ImpenModelProvider;
 import com.tycherin.impen.datagen.ImpenRecipeProvider;
 import com.tycherin.impen.logic.rift.RiftService;
 import com.tycherin.impen.part.CapturePlanePart;
@@ -63,5 +64,6 @@ public class ImpracticalEnergisticsMod {
         final DataGenerator gen = event.getGenerator();
         gen.addProvider(new ImpenRecipeProvider(gen));
         gen.addProvider(new ImpenLootProvider(gen));
+        gen.addProvider(new ImpenModelProvider(gen, event.getExistingFileHelper()));
     }
 }
