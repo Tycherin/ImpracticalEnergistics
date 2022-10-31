@@ -4,6 +4,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 
+import appeng.api.ids.AEConstants;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -27,9 +28,9 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
     private final IDrawable icon;
 
     public AtmosphericCrystallizerRecipeCategory(final IGuiHelper guiHelper) {
-        final ResourceLocation location = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID,
-                "textures/gui/spatial_rift_manipulator.png"); // TODO Replace placeholder value
-        this.background = guiHelper.createDrawable(location, 51, 44, 83, 25);
+        final ResourceLocation location = new ResourceLocation(AEConstants.MOD_ID,
+                "textures/guis/atmospheric_crystallizer.png");
+        this.background = guiHelper.createDrawable(location, 33, 25, 79, 55);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item().getDefaultInstance());
     }
@@ -40,10 +41,10 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
         final ItemStack fakeIs = ImpenRegistry.FAKE_DIMENSION_PLACEHOLDER.asItem().getDefaultInstance();
         final Component dimensionName = new TranslatableComponent("dimension." + recipe.getDimensionKey());
         fakeIs.setHoverName(dimensionName);
-        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 4)
+        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 10, 23)
                 .addItemStack(fakeIs);
 
-        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 62, 5)
+        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 48, 23)
                 .addItemStack(recipe.getResultItem());
     }
 

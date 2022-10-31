@@ -2,25 +2,25 @@
   "$schema": "schema.json",
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
-    "texture": "guis/spatial_rift_manipulator.png",
+    "texture": "guis/possibility_disintegrator.png",
     "srcRect": [0, 0, 176, 197]
   },
   "slots": {
     "INSCRIBER_PLATE_BOTTOM": {
-      "left": 22,
-      "top": 48
+      "left": 35,
+      "top": 40
     },
     "INSCRIBER_PLATE_TOP": {
-      "left": 42,
-      "top": 48
+      "left": 65,
+      "top": 40
     },
     "BIOMETRIC_CARD": {
-      "left": 62,
-      "top": 48
+      "left": 95,
+      "top": 40
     },
     "BLANK_PATTERN": {
-      "left": 82,
-      "top": 48
+      "left": 125,
+      "top": 40
     }
   },
   "text": {
@@ -32,6 +32,15 @@
         "left": 8,
         "top": 6
       }
+    },
+    "description": {
+        "text": {
+            "translate": "gui.impracticalenergistics.possibility_disintegrator.description"
+        },
+        "position": {
+            "left": 34,
+            "top": 28
+        }
     }
   }
 }
