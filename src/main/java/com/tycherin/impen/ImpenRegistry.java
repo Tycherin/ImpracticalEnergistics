@@ -122,7 +122,8 @@ public class ImpenRegistry {
     // Machines
     //@formatter:off
     public static final MachineDefinition<BeamedNetworkLinkBlock, BeamedNetworkLinkBlockEntity> BEAMED_NETWORK_LINK =
-            makeMachine("beamed_network_link", BeamedNetworkLinkBlock::new, BeamedNetworkLinkBlockEntity::new, true);
+            makeMachine("beamed_network_link", BeamedNetworkLinkBlock::new, BeamedNetworkLinkBlockEntity::new, true,
+                    props -> props.noOcclusion());
 
     public static final MachineDefinition<SpatialRiftManipulatorBlock, SpatialRiftManipulatorBlockEntity> SPATIAL_RIFT_MANIPULATOR =
             makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
@@ -229,19 +230,35 @@ public class ImpenRegistry {
     private static <B extends Block, E extends BlockEntity> MachineDefinition<B, E> makeMachine(final String name,
             final Function<BlockBehaviour.Properties, B> blockSupplier,
             final BlockEntityType.BlockEntitySupplier<E> blockEntitySupplier, final boolean orientable) {
+        return ImpenRegistry.makeMachine(name, blockSupplier, blockEntitySupplier, orientable, Function.identity());
+    }
+
+    private static <B extends Block, E extends BlockEntity> MachineDefinition<B, E> makeMachine(final String name,
+            final Function<BlockBehaviour.Properties, B> blockSupplier,
+            final BlockEntityType.BlockEntitySupplier<E> blockEntitySupplier, final boolean orientable,
+            final Function<BlockBehaviour.Properties, BlockBehaviour.Properties> propsModifier) {
+        final var blockProps = BlockBehaviour.Properties.of(Material.METAL);
+        return ImpenRegistry.makeMachine(name, blockSupplier, blockEntitySupplier, orientable,
+                propsModifier.apply(blockProps));
+    }
+
+    private static <B extends Block, E extends BlockEntity> MachineDefinition<B, E> makeMachine(final String name,
+            final Function<BlockBehaviour.Properties, B> blockSupplier,
+            final BlockEntityType.BlockEntitySupplier<E> blockEntitySupplier, final boolean orientable,
+            final BlockBehaviour.Properties blockProps) {
         final var blockHolder = BLOCKS
-                .register(name, () -> blockSupplier.apply(BlockBehaviour.Properties.of(Material.METAL)));
+                .register(name, () -> blockSupplier.apply(blockProps));
         final var blockEntityHolder = BLOCK_ENTITIES
                 .register(blockHolder.getId().getPath(),
                         () -> BlockEntityType.Builder.of(blockEntitySupplier, blockHolder.get()).build(null));
         final var blockItemHolder = ITEMS.register(
                 blockHolder.getId().getPath(), () -> {
-                    final var props = getItemProps();
+                    final var itemProps = getItemProps();
                     if (orientable) {
-                        return new AEBaseBlockItem(blockHolder.get(), props);
+                        return new AEBaseBlockItem(blockHolder.get(), itemProps);
                     }
                     else {
-                        return new BlockItem(blockHolder.get(), props);
+                        return new BlockItem(blockHolder.get(), itemProps);
                     }
                 });
         return new MachineDefinition<>(blockHolder, blockEntityHolder, blockItemHolder);

@@ -189,14 +189,14 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     @Override
     public void setOrientation(final Direction inForward, final Direction inUp) {
         super.setOrientation(inForward, inUp);
-        this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(inForward)));
+        this.getMainNode().setExposedOnSides(EnumSet.of(inForward.getOpposite()));
         this.forceUpdate();
     }
 
     @Override
     public void onReady() {
         super.onReady();
-        this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(this.getForward())));
+        this.getMainNode().setExposedOnSides(EnumSet.of(this.getForward().getOpposite()));
         this.forceUpdate();
     }
 
