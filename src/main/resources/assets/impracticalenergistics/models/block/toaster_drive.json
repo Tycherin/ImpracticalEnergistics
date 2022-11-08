@@ -1,7 +1,17 @@
 {
-  "parent": "minecraft:block/cube_column_horizontal",
-  "textures": {
-    "end": "minecraft:block/cyan_glazed_terracotta",
-    "side": "minecraft:block/granite"
-  }
+    "parent": "block/cube",
+    "textures": {
+        "particle": "#side",
+        "down": "#end",
+        "up": "#end",
+        "north": "#input",
+        "east": "#side",
+        "south": "#output",
+        "west": "#side",
+        
+        "end": "impracticalenergistics:block/toaster_drive_end",
+        "side": "impracticalenergistics:block/toaster_drive_side",
+        "input": "impracticalenergistics:block/toaster_drive_input",
+        "output": "impracticalenergistics:block/toaster_drive_output"
+    }
 }
