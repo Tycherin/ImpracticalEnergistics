@@ -4,9 +4,9 @@
         "particle": "#side",
         "down": "#end",
         "up": "#end",
-        "north": "#input",
+        "north": "#output",
         "east": "#side",
-        "south": "#output",
+        "south": "#input",
         "west": "#side",
         
         "end": "impracticalenergistics:block/toaster_drive_end",

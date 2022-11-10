@@ -1,12 +1,14 @@
 package com.tycherin.impen.blockentity;
 
-import java.util.Random;
+import java.util.EnumSet;
 
 import com.tycherin.impen.ImpenRegistry;
 
+import appeng.api.inventories.InternalInventory;
 import appeng.api.storage.cells.CellState;
 import appeng.blockentity.storage.ChestBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +19,7 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
-    private static final Random RAND = new Random();
+    // TODO: Force eject if the block gets a redstone signal
 
     public ToasterDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.TOASTER_DRIVE.blockEntity(), pos, blockState);
@@ -32,15 +34,51 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
         }
     }
 
+    @Override
+    public void onReady() {
+        super.onReady();
+        this.setOrientationFromState();
+    }
+
+    @Override
+    public void setOrientation(final Direction inForward, final Direction inUp) {
+        super.setOrientation(inForward, inUp);
+        this.setOrientationFromState();
+    }
+
+    private void setOrientationFromState() {
+        final var exposedSides = EnumSet.complementOf(EnumSet.of(this.getForward(), this.getForward().getOpposite()));
+        this.getMainNode().setExposedOnSides(exposedSides);
+        this.setPowerSides(exposedSides);
+    }
+
+    @Override
+    public InternalInventory getExposedInventoryForSide(final Direction side) {
+        // Some shenanigans here to trick the ChestBlockEntity into returning the right inventory based on our state
+
+        if (side == this.getForward()) {
+            // Forward face: output only, no exposed inventory
+            return InternalInventory.empty();
+        }
+        else if (side == this.getForward().getOpposite()) {
+            // Back face: you can put cells in here
+            return super.getExposedInventoryForSide(this.getForward());
+        }
+        else {
+            // Any other face: exposes the inventory of the stored cell
+            return super.getExposedInventoryForSide(this.getForward().getOpposite());
+        }
+    }
+
     private void ejectCell() {
         final ItemStack cell = this.getCell();
 
-        // If there's a block above this one that has an inventory, put the cell into that
+        // If there's a block next to this one that has an inventory, put the cell into that
         boolean didInsert = false;
-        final BlockEntity aboveNeighbor = this.level.getBlockEntity(this.getBlockPos().relative(this.getUp()));
-        if (aboveNeighbor != null) {
-            final var invCapOpt = aboveNeighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                    this.getUp().getOpposite());
+        final BlockEntity neighbor = this.level.getBlockEntity(this.getBlockPos().relative(this.getForward()));
+        if (neighbor != null) {
+            final var invCapOpt = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    this.getForward().getOpposite());
             if (invCapOpt.isPresent()) {
                 final IItemHandler itemHandler = invCapOpt.resolve().get();
                 for (int i = 0; i < itemHandler.getSlots(); i++) {
@@ -57,14 +95,44 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
         // Otherwise, just spawn the item in the world
         if (!didInsert) {
-            final double x = this.getBlockPos().getX() + .5;
-            final double y = this.getBlockPos().getY() + 1;
-            final double z = this.getBlockPos().getZ() + .5;
-            final double xSpeed = (RAND.nextDouble() * .1); // [0, 0.1)
-            final double ySpeed = (RAND.nextDouble() * .1) + .4; // [0.4, .5)
-            final double zSpeed = (RAND.nextDouble() * .1); // [0, 0.1)
+            double xPos = this.getBlockPos().getX() + .5;
+            double yPos = this.getBlockPos().getY() + .5;
+            double zPos = this.getBlockPos().getZ() + .5;
+            double xSpeed = 0;
+            double ySpeed = 0;
+            double zSpeed = 0;
 
-            final ItemEntity itemEntity = new ItemEntity(level, x, y, z, cell);
+            // I'm sure there's a more elegant way to do this somehow
+            switch (this.getForward()) {
+            case DOWN:
+                yPos = yPos - 1;
+                ySpeed = -1;
+                break;
+            case EAST:
+                xPos = xPos + 1;
+                xSpeed = 1;
+                break;
+            case NORTH:
+                zPos = zPos - 1;
+                zSpeed = -1;
+                break;
+            case SOUTH:
+                zPos = zPos + 1;
+                zSpeed = 1;
+                break;
+            case UP:
+                yPos = yPos + 1;
+                ySpeed = 1;
+                break;
+            case WEST:
+                xPos = xPos - 1;
+                xSpeed = -1;
+                break;
+            default:
+                throw new RuntimeException("Unhandled direction " + this.getForward());
+            }
+
+            final ItemEntity itemEntity = new ItemEntity(level, xPos, yPos, zPos, cell);
             itemEntity.setDeltaMovement(xSpeed, ySpeed, zSpeed);
             itemEntity.setDefaultPickUpDelay();
             level.addFreshEntity(itemEntity);
