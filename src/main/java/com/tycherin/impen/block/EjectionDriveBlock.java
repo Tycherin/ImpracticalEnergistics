@@ -2,7 +2,7 @@ package com.tycherin.impen.block;
 
 import javax.annotation.Nullable;
 
-import com.tycherin.impen.blockentity.ToasterDriveBlockEntity;
+import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 
 import appeng.block.AEBaseEntityBlock;
 import appeng.core.definitions.AEBlocks;
@@ -21,11 +21,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class ToasterDriveBlock extends AEBaseEntityBlock<ToasterDriveBlockEntity> {
+public class EjectionDriveBlock extends AEBaseEntityBlock<EjectionDriveBlockEntity> {
 
     private static final EnumProperty<Direction> PROP_FACING = EnumProperty.create("facing", Direction.class);
 
-    public ToasterDriveBlock(final BlockBehaviour.Properties ignored) {
+    public EjectionDriveBlock(final BlockBehaviour.Properties ignored) {
         super(BlockBehaviour.Properties.copy(AEBlocks.CHEST.block()));
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(PROP_FACING, Direction.NORTH));
@@ -40,7 +40,7 @@ public class ToasterDriveBlock extends AEBaseEntityBlock<ToasterDriveBlockEntity
 
     @Override
     protected BlockState updateBlockStateFromBlockEntity(final BlockState currentState,
-            final ToasterDriveBlockEntity be) {
+            final EjectionDriveBlockEntity be) {
         return currentState
                 .setValue(PROP_FACING, be.getForward());
     }

@@ -54,7 +54,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
             ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
             ImpenRegistry.SPATIAL_RIFT_STABILIZER,
-            ImpenRegistry.TOASTER_DRIVE);
+            ImpenRegistry.EJECTION_DRIVE);
 
     @Override
     public ResourceLocation getPluginUid() {

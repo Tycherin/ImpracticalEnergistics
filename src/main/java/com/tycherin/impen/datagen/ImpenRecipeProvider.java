@@ -88,7 +88,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_fluix_crystal", has(AEItems.FLUIX_CRYSTAL))
                 .save(consumer);
         // Toaster Drive
-        ShapedRecipeBuilder.shaped(ImpenRegistry.TOASTER_DRIVE)
+        ShapedRecipeBuilder.shaped(ImpenRegistry.EJECTION_DRIVE)
                 .pattern("BCB")
                 .define('B', Items.BREAD)
                 .define('C', AEBlocks.CHEST)

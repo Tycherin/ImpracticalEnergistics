@@ -10,13 +10,13 @@ import com.tycherin.impen.block.PlantableFluixBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.SpatialRiftStabilizerBlock;
-import com.tycherin.impen.block.ToasterDriveBlock;
+import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
-import com.tycherin.impen.blockentity.ToasterDriveBlockEntity;
+import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -105,7 +105,7 @@ public class ImpenRegistry {
                 ATMOSPHERIC_CRYSTALLIZER.blockEntity(), null, null);
         POSSIBILITY_DISINTEGRATOR.block().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
                 POSSIBILITY_DISINTEGRATOR.blockEntity(), null, null);
-        TOASTER_DRIVE.block().setBlockEntity(ToasterDriveBlockEntity.class, TOASTER_DRIVE.blockEntity(), null,
+        EJECTION_DRIVE.block().setBlockEntity(EjectionDriveBlockEntity.class, EJECTION_DRIVE.blockEntity(), null,
                 (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
 
         // AE2 upgrades need to be registered after normal registry events
@@ -137,8 +137,8 @@ public class ImpenRegistry {
     public static final MachineDefinition<PossibilityDisintegratorBlock, PossibilityDisintegratorBlockEntity> POSSIBILITY_DISINTEGRATOR =
             makeMachine("possibility_disintegrator", PossibilityDisintegratorBlock::new, PossibilityDisintegratorBlockEntity::new, false);
 
-    public static final MachineDefinition<ToasterDriveBlock, ToasterDriveBlockEntity> TOASTER_DRIVE =
-            makeMachine("toaster_drive", ToasterDriveBlock::new, ToasterDriveBlockEntity::new, true);
+    public static final MachineDefinition<EjectionDriveBlock, EjectionDriveBlockEntity> EJECTION_DRIVE =
+            makeMachine("ejection_drive", EjectionDriveBlock::new, EjectionDriveBlockEntity::new, true);
     //@formatter:on
 
     // Plantable crops

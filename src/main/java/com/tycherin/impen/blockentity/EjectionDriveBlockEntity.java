@@ -17,12 +17,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ToasterDriveBlockEntity extends ChestBlockEntity {
+public class EjectionDriveBlockEntity extends ChestBlockEntity {
 
     // TODO: Force eject if the block gets a redstone signal
 
-    public ToasterDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
-        super(ImpenRegistry.TOASTER_DRIVE.blockEntity(), pos, blockState);
+    public EjectionDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
+        super(ImpenRegistry.EJECTION_DRIVE.blockEntity(), pos, blockState);
     }
 
     @Override
@@ -144,6 +144,6 @@ public class ToasterDriveBlockEntity extends ChestBlockEntity {
 
     @Override
     protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.TOASTER_DRIVE.item();
+        return ImpenRegistry.EJECTION_DRIVE.item();
     }
 }
