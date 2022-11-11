@@ -5,6 +5,7 @@ import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
+import com.tycherin.impen.datagen.ImpenBlockTagsProvider;
 import com.tycherin.impen.datagen.ImpenLootProvider;
 import com.tycherin.impen.datagen.ImpenModelProvider;
 import com.tycherin.impen.datagen.ImpenRecipeProvider;
@@ -59,11 +60,12 @@ public class ImpracticalEnergisticsMod {
                 AtmosphericCrystallizerMenu.TYPE,
                 PossibilityDisintegratorMenu.TYPE);
     }
-    
+
     public void gatherData(final GatherDataEvent event) {
         final DataGenerator gen = event.getGenerator();
         gen.addProvider(new ImpenRecipeProvider(gen));
         gen.addProvider(new ImpenLootProvider(gen));
         gen.addProvider(new ImpenModelProvider(gen, event.getExistingFileHelper()));
+        gen.addProvider(new ImpenBlockTagsProvider(gen, MOD_ID, event.getExistingFileHelper()));
     }
 }
