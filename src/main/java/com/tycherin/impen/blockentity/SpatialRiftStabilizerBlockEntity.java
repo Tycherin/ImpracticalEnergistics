@@ -4,6 +4,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.rift.RiftCatalystProvider;
 
 import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNodeListener;
 import appeng.blockentity.grid.AENetworkInvBlockEntity;
 import appeng.util.inv.AppEngInternalInventory;
@@ -27,7 +28,7 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
         super(ImpenRegistry.SPATIAL_RIFT_STABILIZER.blockEntity(), pos, blockState);
 
         this.getMainNode()
-                .setFlags();
+                .setFlags(GridFlags.REQUIRE_CHANNEL);
     }
     
     private class InventoryItemFilter implements IAEItemFilter {
@@ -97,13 +98,22 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
 
     @Override
     public ItemStack getCatalyst() {
-        return this.inv.getStackInSlot(0);
+        if (this.getMainNode().isActive()) {
+            return this.inv.getStackInSlot(0);
+        }
+        else {
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
     public ItemStack consumeCatalyst(final int desiredAmount) {
+        if (this.getMainNode().isActive()) {
+            return ItemStack.EMPTY;
+        }
+
         final ItemStack is = this.inv.getStackInSlot(0);
-        
+
         if (desiredAmount >= is.getCount()) {
             this.inv.setItemDirect(0, ItemStack.EMPTY);
             return is;

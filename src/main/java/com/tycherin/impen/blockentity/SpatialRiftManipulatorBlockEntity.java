@@ -20,6 +20,7 @@ import com.tycherin.impen.util.AEPowerUtil;
 import appeng.api.config.YesNo;
 import appeng.api.implementations.items.ISpatialStorageCell;
 import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.ticking.IGridTickable;
@@ -93,7 +94,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
         this.getMainNode()
                 .addService(IGridTickable.class, this)
-                .setFlags();
+                .setFlags(GridFlags.REQUIRE_CHANNEL);
 
         this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item(),
                 3, this::saveChanges);
