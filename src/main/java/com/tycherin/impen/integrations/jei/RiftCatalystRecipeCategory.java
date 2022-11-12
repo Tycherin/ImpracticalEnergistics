@@ -31,7 +31,9 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     private static final String TITLE_TRANSLATION_KEY = "gui.impracticalenergistics.jei.rift_recipe_title";
     private static final int TEXT_COLOR = 0x000000;
     private static final Component BASE_BLOCK_TEXT = new TranslatableComponent(
-            "gui.impracticalenergistics.jei.base_block_explanation");
+            "gui.impracticalenergistics.jei.rift_catalyst.base_block_explanation");
+    private static final Component CATALYST_TEXT = new TranslatableComponent(
+            "gui.impracticalenergistics.jei.rift_catalyst.catalyst_explanation");
 
     public static final ResourceLocation UID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst");
 
@@ -41,7 +43,7 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     public RiftCatalystRecipeCategory(final IGuiHelper guiHelper) {
         final ResourceLocation location = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID,
                 "textures/gui/rift_catalyst_jei.png");
-        this.background = guiHelper.createDrawable(location, 24, 16, 131, 58);
+        this.background = guiHelper.createDrawable(location, 15, 8, 144, 47);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item().getDefaultInstance());
     }
@@ -49,10 +51,26 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     @Override
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final RiftCatalystRecipe recipe,
             final IFocusGroup focusGroup) {
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addItemStack(recipe.getCatalyst().getDefaultInstance());
+        // Mmm, delicious kludge
+        for (int i = 0; i < recipe.getConsumedItems().size(); i++) {
+            final var ingredient = recipe.getConsumedItems().get(i);
+            var xPos = 1;
+            var yPos = 6;
+            if (i == 1 || i == 3) {
+                xPos += 18;
+            }
+            if (i == 2 || i == 3) {
+                yPos += 18;
+            }
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, xPos, yPos)
+                    .addIngredients(ingredient);
+        }
+        
+        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 50, 3)
+                .addItemStack(recipe.getCatalyst().getDefaultInstance())
+                .addTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(CATALYST_TEXT));
 
-        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 26, 14)
+        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 50, 27)
                 .addItemStack(getBlockItemStack(recipe.getBaseBlock()))
                 .addTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(BASE_BLOCK_TEXT));
 
@@ -87,10 +105,10 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
 
     private void forEachOutput(final List<RiftWeight> weights, final OutputBoxOperator func) {
         for (int i = 0; i < weights.size(); i++) {
-            final int row = i / 4;
-            final int col = i % 4;
+            final int row = i / 3;
+            final int col = i % 3;
 
-            final int xPos = 51 + (col * 21);
+            final int xPos = 85 + (col * 21);
             final int yPos = 1 + (row * 29);
 
             func.handleOutputBox(weights.get(i), xPos, yPos);

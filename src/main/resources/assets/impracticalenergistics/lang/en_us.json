@@ -81,7 +81,8 @@
     
     "gui.impracticalenergistics.jei.rift_recipe_title": "Rift Space Manipulation",
     "gui.impracticalenergistics.jei.atmospheric_crystallizer_recipe_title": "Atmospheric Crystallization",
-    "gui.impracticalenergistics.jei.base_block_explanation": "Base Block - This will spawn by default, unless another block spawns instead",
+    "gui.impracticalenergistics.jei.rift_catalyst.base_block_explanation": "Base Block - This will spawn by default, unless another block spawns instead",
+    "gui.impracticalenergistics.jei.rift_catalyst.catalyst_explanation": "Catalyst Item - This will not be consumed by the operation",
     
     "dimension.minecraft:overworld": "Dimension: Overworld",
     "dimension.minecraft:the_nether": "Dimension: The Nether",
