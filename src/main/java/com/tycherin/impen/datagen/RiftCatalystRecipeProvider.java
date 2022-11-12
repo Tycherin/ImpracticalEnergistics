@@ -116,8 +116,13 @@ public class RiftCatalystRecipeProvider {
 
             @Override
             public void serializeRecipeData(final JsonObject json) {
-                json.addProperty("base_block", baseBlock.getRegistryName().toString());
-                json.addProperty("catalyst", catalyst.getRegistryName().toString());
+                final var baseBlockJson = new JsonObject();
+                baseBlockJson.addProperty("block", baseBlock.getRegistryName().toString());
+                json.add("base_block", baseBlockJson);
+
+                final var catalystJson = new JsonObject();
+                catalystJson.addProperty("item", catalyst.getRegistryName().toString());
+                json.add("catalyst", catalystJson);
 
                 final var consumedItemsJson = new JsonArray();
                 consumedItems.forEach(ingredient -> consumedItemsJson.add(ingredient.toJson()));
