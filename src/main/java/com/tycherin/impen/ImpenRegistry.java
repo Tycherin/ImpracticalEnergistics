@@ -1,22 +1,24 @@
 package com.tycherin.impen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
+import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.PlantableCertusBlock;
 import com.tycherin.impen.block.PlantableFluixBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.SpatialRiftStabilizerBlock;
-import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
+import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
-import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -65,6 +67,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ImpenRegistry {
+    
+    private static final List<ItemLike> ITEMS_LIST = new ArrayList<>();
+    private static final List<BlockLike> BLOCKS_LIST = new ArrayList<>();
 
     // ***
     // Mostly boilerplate registry stuff
@@ -148,11 +153,11 @@ public class ImpenRegistry {
             "plantable_fluix_seeds", PlantableFluixBlock::new);
 
     // Tools
-    public static final ItemDefinition RIFT_AXE_ITEM = makeTool("rift_axe", RiftAxeItem::new);
-    public static final ItemDefinition RIFT_HOE_ITEM = makeTool("rift_hoe", RiftHoeItem::new);
-    public static final ItemDefinition RIFT_PICKAXE_ITEM = makeTool("rift_pickaxe", RiftPickaxeItem::new);
-    public static final ItemDefinition RIFT_SHOVEL_ITEM = makeTool("rift_shovel", RiftShovelItem::new);
-    public static final ItemDefinition RIFT_SWORD_ITEM = makeTool("rift_sword", RiftSwordItem::new);
+    public static final ItemDefinition RIFT_AXE_ITEM = makeItem("rift_axe", RiftAxeItem::new);
+    public static final ItemDefinition RIFT_HOE_ITEM = makeItem("rift_hoe", RiftHoeItem::new);
+    public static final ItemDefinition RIFT_PICKAXE_ITEM = makeItem("rift_pickaxe", RiftPickaxeItem::new);
+    public static final ItemDefinition RIFT_SHOVEL_ITEM = makeItem("rift_shovel", RiftShovelItem::new);
+    public static final ItemDefinition RIFT_SWORD_ITEM = makeItem("rift_sword", RiftSwordItem::new);
 
     // Materials
     public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
@@ -206,11 +211,10 @@ public class ImpenRegistry {
             "stabilized_rift_prism", StabilizedRiftPrismEntity::new, StabilizedRiftPrismEntity::new);
 
     // Misc items
-    public static final ItemDefinition LUNCHBOX_CELL_ITEM = new ItemDefinition(ITEMS.register("lunchbox_cell",
-            () -> new LunchboxCellItem()));
+    public static final ItemDefinition LUNCHBOX_CELL_ITEM = makeItem("lunchbox_cell", LunchboxCellItem::new);
 
-    public static final ItemDefinition CAPTURE_PLANE_ITEM = new ItemDefinition(ITEMS.register("capture_plane",
-            () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new)));
+    public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
+            () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
 
     // Custom recipe types
     public static final RegistryObject<RecipeType<RiftCatalystRecipe>> RIFT_CATALYST_RECIPE_TYPE = ImpenRegistry
@@ -261,16 +265,24 @@ public class ImpenRegistry {
                         return new BlockItem(blockHolder.get(), itemProps);
                     }
                 });
-        return new MachineDefinition<>(blockHolder, blockEntityHolder, blockItemHolder);
+        final var def = new MachineDefinition<>(blockHolder, blockEntityHolder, blockItemHolder);
+        ImpenRegistry.BLOCKS_LIST.add(def);
+        ImpenRegistry.ITEMS_LIST.add(def);
+        return def;
     }
 
-    public static ItemDefinition makeTool(final String name,
-            final Function<Item.Properties, ? extends Item> func) {
-        return new ItemDefinition(ITEMS.register(name, () -> func.apply(getItemProps())));
+    public static ItemDefinition makeItem(final String name, final Function<Item.Properties, ? extends Item> func) {
+        return makeItem(name, () -> func.apply(getItemProps()));
     }
 
     public static ItemDefinition makeItem(final String name) {
-        return new ItemDefinition(ITEMS.register(name, () -> new Item(getItemProps())));
+        return makeItem(name, Item::new);
+    }
+
+    public static ItemDefinition makeItem(final String name, final Supplier<Item> sup) {
+        final var def = new ItemDefinition(ITEMS.register(name, sup));
+        ImpenRegistry.ITEMS_LIST.add(def);
+        return def;
     }
 
     private static <BT extends CropBlock> PlantDefinition<BT> makeCrop(final String cropName, final String seedName,
@@ -279,7 +291,10 @@ public class ImpenRegistry {
                 .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
         final var itemHolder = ITEMS.register(seedName,
                 () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
-        return new PlantDefinition<BT>(blockHolder, itemHolder);
+        final var def = new PlantDefinition<BT>(blockHolder, itemHolder);
+        ImpenRegistry.BLOCKS_LIST.add(def);
+        ImpenRegistry.ITEMS_LIST.add(def);
+        return def;
     }
 
     private static <E extends Entity> DroppableItemDefinition<E> makeDroppableItem(final String name,
@@ -290,7 +305,9 @@ public class ImpenRegistry {
                 .register(itemHolder.getId().getPath(), () -> EntityType.Builder
                         .<E>of(entityFunc, MobCategory.MISC).sized(0.25F, 0.25F)
                         .clientTrackingRange(6).updateInterval(20).build(ImpracticalEnergisticsMod.MOD_ID));
-        return new DroppableItemDefinition<E>(itemHolder, entityHolder);
+        final var def = new DroppableItemDefinition<E>(itemHolder, entityHolder);
+        ImpenRegistry.ITEMS_LIST.add(def);
+        return def;
     }
 
     private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {
@@ -306,7 +323,10 @@ public class ImpenRegistry {
         final var blockHolder = BLOCKS.register(name, sup);
         final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
                 () -> new BlockItem(blockHolder.get(), getItemProps()));
-        return new BlockDefinition(blockHolder, itemHolder);
+        final var def = new BlockDefinition(blockHolder, itemHolder);
+        ImpenRegistry.BLOCKS_LIST.add(def);
+        ImpenRegistry.ITEMS_LIST.add(def);
+        return def;
     }
 
     private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
@@ -314,30 +334,39 @@ public class ImpenRegistry {
     }
     
     private static BlockDefinition makeBasicBlock(final String name, final BlockBehaviour.Properties props) {
-        final var blockHolder = BLOCKS.register(name, () -> new Block(props));
-        final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
-                () -> new BlockItem(blockHolder.get(), getItemProps()));
-        return new BlockDefinition(blockHolder, itemHolder);
+        return ImpenRegistry.makeCustomBlock(name, () -> new Block(props));
     }
 
     private static BlockDefinition makeOreBlock(final String name, final Material mat) {
-        final var blockHolder = BLOCKS.register(name,
-                () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
-        final var itemHolder = ITEMS.register(blockHolder.getId().getPath(),
-                () -> new BlockItem(blockHolder.get(), getItemProps()));
-        return new BlockDefinition(blockHolder, itemHolder);
+        return ImpenRegistry.makeCustomBlock(name, () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
     }
 
     private static Item.Properties getItemProps() {
         return new Item.Properties().tab(ImpenCreativeModeTab.TAB);
+    }
+    
+    // ***
+    // Convenience methods for scanning the registry
+    // ***
+
+    public static List<ItemLike> getRegisteredItems() {
+        return ITEMS_LIST;
+    }
+
+    public static List<BlockLike> getRegisteredBlocks() {
+        return BLOCKS_LIST;
     }
 
     // ***
     // Many static inner classes
     // ***
 
+    public static interface BlockLike {
+        Block asBlock();
+    }
+
     public static class MachineDefinition<B extends Block, E extends BlockEntity>
-            implements ItemLike, RegistryIdProvider {
+            implements ItemLike, BlockLike, RegistryIdProvider {
         private final RegistryObject<B> blockHolder;
         private final RegistryObject<BlockEntityType<E>> blockEntityHolder;
         private final RegistryObject<BlockItem> blockItemHolder;
@@ -368,12 +397,17 @@ public class ImpenRegistry {
         }
 
         @Override
+        public Block asBlock() {
+            return this.block();
+        }
+
+        @Override
         public String getKey() {
             return blockHolder.getId().getPath();
         }
     }
 
-    public static class PlantDefinition<B extends CropBlock> implements RegistryIdProvider {
+    public static class PlantDefinition<B extends CropBlock> implements ItemLike, BlockLike, RegistryIdProvider {
         private final RegistryObject<B> blockHolder;
         private final RegistryObject<? extends Item> itemHolder;
 
@@ -388,6 +422,16 @@ public class ImpenRegistry {
 
         public Item item() {
             return itemHolder.get();
+        }
+
+        @Override
+        public Block asBlock() {
+            return block();
+        }
+
+        @Override
+        public Item asItem() {
+            return item();
         }
 
         @Override
@@ -425,7 +469,7 @@ public class ImpenRegistry {
         }
     }
 
-    public static class BlockDefinition implements ItemLike, RegistryIdProvider {
+    public static class BlockDefinition implements ItemLike, BlockLike, RegistryIdProvider {
         private final RegistryObject<? extends Block> blockHolder;
         private final RegistryObject<? extends Item> itemHolder;
 
@@ -446,6 +490,11 @@ public class ImpenRegistry {
         @Override
         public Item asItem() {
             return this.item();
+        }
+
+        @Override
+        public Block asBlock() {
+            return this.block();
         }
 
         @Override
