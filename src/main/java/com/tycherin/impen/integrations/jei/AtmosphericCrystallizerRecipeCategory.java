@@ -1,4 +1,4 @@
-package com.tycherin.impen.integrations;
+package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;

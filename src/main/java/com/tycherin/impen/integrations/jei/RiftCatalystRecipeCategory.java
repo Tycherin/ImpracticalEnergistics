@@ -1,4 +1,4 @@
-package com.tycherin.impen.integrations;
+package com.tycherin.impen.integrations.jei;
 
 import java.util.List;
 import java.util.Optional;
