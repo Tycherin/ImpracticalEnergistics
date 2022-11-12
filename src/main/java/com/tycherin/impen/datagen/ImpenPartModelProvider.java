@@ -9,9 +9,9 @@ import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-public class ImpenModelProvider extends PartModelProvider {
+public class ImpenPartModelProvider extends PartModelProvider {
 
-    public ImpenModelProvider(final DataGenerator generator, final ExistingFileHelper existingFileHelper) {
+    public ImpenPartModelProvider(final DataGenerator generator, final ExistingFileHelper existingFileHelper) {
         super(generator, existingFileHelper);
     }
 
