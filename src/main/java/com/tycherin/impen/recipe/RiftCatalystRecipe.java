@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -19,36 +20,55 @@ public class RiftCatalystRecipe implements Recipe<Container> {
 
     private final ResourceLocation id;
 
-    private final Item catalyst;
     private final Block baseBlock;
+    private final Item catalyst;
+    private final List<Ingredient> consumedItems;
     private final List<RiftWeight> weights;
 
-    public RiftCatalystRecipe(final ResourceLocation id, final Item catalyst, final Block baseBlock,
-            final List<RiftWeight> weights) {
+    public RiftCatalystRecipe(final ResourceLocation id, final Block baseBlock, final Item catalyst,
+            final List<Ingredient> consumedItems, final List<RiftWeight> weights) {
         this.id = id;
-        this.catalyst = catalyst;
         this.baseBlock = baseBlock;
+        this.catalyst = catalyst;
+        this.consumedItems = consumedItems;
         this.weights = weights;
-    }
-
-    public Item getCatalyst() {
-        return this.catalyst;
     }
 
     public Block getBaseBlock() {
         return this.baseBlock;
     }
 
+    public Item getCatalyst() {
+        return this.catalyst;
+    }
+
+    public List<Ingredient> getConsumedItems() {
+        return this.consumedItems;
+    }
+
     public List<RiftWeight> getWeights() {
         return this.weights;
     }
 
-    @Override
-    public boolean matches(final Container container, final Level level) {
-        if (container.getContainerSize() > 1) {
+    public boolean matches(final ItemStack catalystStack, final Container container) {
+        if (!catalystStack.getItem().equals(catalyst)) {
             return false;
         }
-        return container.countItem(getCatalyst()) > 0;
+        for (final var ingredient : consumedItems) {
+            boolean matched = false;
+            for (int i = 0; i < container.getContainerSize(); i++) {
+                matched |= ingredient.test(container.getItem(i));
+            }
+            if (!matched) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean matches(final Container container, final Level level) {
+        return false;
     }
 
     // ***

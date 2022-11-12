@@ -33,6 +33,7 @@
     "item.impracticalenergistics.aerocrystal": "Aerocrystal",
     "item.impracticalenergistics.blazing_aerocrystal": "Blazing Aerocrystal",
     "item.impracticalenergistics.exotic_aerocrystal": "Exotic Aerocrystal",
+    
     "item.impracticalenergistics.catalyst_base_t1": "Basic Rift Catalyst",
     "item.impracticalenergistics.catalyst_base_t2": "Advanced Rift Catalyst",
     "item.impracticalenergistics.catalyst_base_t3": "Pristine Rift Catalyst",
@@ -45,6 +46,13 @@
     "item.impracticalenergistics.catalyst_rift_ore": "Rift Space Catalyst",
     "item.impracticalenergistics.catalyst_overworld_secret": "Overworld Secret Catalyst",
     "item.impracticalenergistics.catalyst_blackstone_secret": "Blackstone Secret Catalyst",
+    
+    "item.impracticalenergistics.rift_catalyst_blackstone": "Blackstone Rift Catalyst",
+    "item.impracticalenergistics.rift_catalyst_deepslate": "Deepslate Rift Catalyst",
+    "item.impracticalenergistics.rift_catalyst_dirt": "Dirt Rift Catalyst",
+    "item.impracticalenergistics.rift_catalyst_end_stone": "End Stone Rift Catalyst",
+    "item.impracticalenergistics.rift_catalyst_netherrack": "Netherrack Rift Catalyst",
+    "item.impracticalenergistics.rift_catalyst_stone": "Stone Rift Catalyst",
     "item.impracticalenergistics.disintegrator_capsule_empty": "Empty Disintegrator Capsule",
     "item.impracticalenergistics.disintegrator_capsule_luck": "White Disintegrator Capsule",
     "item.impracticalenergistics.disintegrator_capsule_loot": "Blue Disintegrator Capsule",

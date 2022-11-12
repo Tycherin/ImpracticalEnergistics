@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.tycherin.impen.ImpenRegistry.RegistryIdProvider;
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
@@ -40,6 +41,7 @@ import appeng.core.definitions.AEItems;
 import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -164,6 +166,7 @@ public class ImpenRegistry {
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
 
+    // TODO: Remove all of these
     public static final ItemDefinition BASIC_RIFT_CATALYST = makeItem("catalyst_base_t1");
     public static final ItemDefinition ADVANCED_RIFT_CATALYST = makeItem("catalyst_base_t2");
     public static final ItemDefinition PRISTINE_RIFT_CATALYST = makeItem("catalyst_base_t3");
@@ -176,7 +179,13 @@ public class ImpenRegistry {
     public static final ItemDefinition RIFT_SPACE_CATALYST = makeItem("catalyst_rift_ore");
     public static final ItemDefinition OVERWORLD_SECRET_CATALYST = makeItem("catalyst_overworld_secret");
     public static final ItemDefinition BLACKSTONE_SECRET_CATALYST = makeItem("catalyst_blackstone_secret");
-    // TODO: Add catalysts integrating ores from other mods via tags
+    // These are the new ones
+    public static final ItemDefinition RIFT_CATALYST_BLACKSTONE = makeItem("rift_catalyst_blackstone");
+    public static final ItemDefinition RIFT_CATALYST_DEEPSLATE = makeItem("rift_catalyst_deepslate");
+    public static final ItemDefinition RIFT_CATALYST_DIRT = makeItem("rift_catalyst_dirt");
+    public static final ItemDefinition RIFT_CATALYST_END_STONE = makeItem("rift_catalyst_end_stone");
+    public static final ItemDefinition RIFT_CATALYST_NETHERRACK = makeItem("rift_catalyst_netherrack");
+    public static final ItemDefinition RIFT_CATALYST_STONE = makeItem("rift_catalyst_stone");
 
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
@@ -356,7 +365,7 @@ public class ImpenRegistry {
     public static List<BlockLike> getRegisteredBlocks() {
         return BLOCKS_LIST;
     }
-
+    
     // ***
     // Many static inner classes
     // ***

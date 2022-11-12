@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpenRegistry.BlockDefinition;
 import com.tycherin.impen.ImpenRegistry.ItemDefinition;
-import com.tycherin.impen.ImpenRegistry.RegistryIdProvider;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.util.ImpenIdUtil;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
@@ -20,7 +20,6 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -113,7 +112,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.RIFT_PRISM)
                 .define('B', ConventionTags.ALL_FLUIX)
                 .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
-                .save(consumer, makeId(ImpenRegistry.CAPTURE_PLANE_ITEM, "vertical"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.CAPTURE_PLANE_ITEM, "vertical"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.CAPTURE_PLANE_ITEM)
                 .pattern("AAA")
                 .pattern("BCB")
@@ -121,7 +120,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.RIFT_PRISM)
                 .define('B', ConventionTags.ALL_FLUIX)
                 .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
-                .save(consumer, makeId(ImpenRegistry.CAPTURE_PLANE_ITEM, "horizontal"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.CAPTURE_PLANE_ITEM, "horizontal"));
 
         // === Materials ===
 
@@ -183,7 +182,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('A', ImpenRegistry.AEROCRYSTAL)
                 .define('C', AEItems.CERTUS_QUARTZ_CRYSTAL)
                 .unlockedBy("has_aerocrystal", has(ImpenRegistry.AEROCRYSTAL))
-                .save(consumer, makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "1"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "1"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.BASIC_RIFT_CATALYST, 4)
                 .pattern("A B")
                 .pattern(" C ")
@@ -192,7 +191,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('B', ImpenRegistry.BLAZING_AEROCRYSTAL)
                 .define('C', AEItems.CERTUS_QUARTZ_CRYSTAL)
                 .unlockedBy("has_blazing_aerocrystal", has(ImpenRegistry.BLAZING_AEROCRYSTAL))
-                .save(consumer, makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "4"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "4"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.BASIC_RIFT_CATALYST, 16)
                 .pattern("AEB")
                 .pattern(" C ")
@@ -202,7 +201,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('E', ImpenRegistry.EXOTIC_AEROCRYSTAL)
                 .define('C', AEItems.CERTUS_QUARTZ_CRYSTAL)
                 .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
-                .save(consumer, makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "16"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.BASIC_RIFT_CATALYST, "16"));
         // T2 Rift Catalyst Recipes
         ShapedRecipeBuilder.shaped(ImpenRegistry.ADVANCED_RIFT_CATALYST, 4)
                 .pattern("A B")
@@ -212,7 +211,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('B', ImpenRegistry.BLAZING_AEROCRYSTAL)
                 .define('R', ImpenRegistry.RIFT_SHARD)
                 .unlockedBy("has_rift_shard", has(ImpenRegistry.RIFT_SHARD))
-                .save(consumer, makeId(ImpenRegistry.ADVANCED_RIFT_CATALYST, "4"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.ADVANCED_RIFT_CATALYST, "4"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.ADVANCED_RIFT_CATALYST, 16)
                 .pattern("AEB")
                 .pattern(" R ")
@@ -222,7 +221,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('E', ImpenRegistry.EXOTIC_AEROCRYSTAL)
                 .define('R', ImpenRegistry.RIFT_SHARD)
                 .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
-                .save(consumer, makeId(ImpenRegistry.ADVANCED_RIFT_CATALYST, "16"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.ADVANCED_RIFT_CATALYST, "16"));
         // T3 Rift Catalyst Recipes
         ShapedRecipeBuilder.shaped(ImpenRegistry.PRISTINE_RIFT_CATALYST, 16)
                 .pattern("AEB")
@@ -234,7 +233,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('P', ImpenRegistry.STABILIZED_RIFT_PRISM)
                 .define('R', ImpenRegistry.RIFT_SHARD)
                 .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
-                .save(consumer, makeId(ImpenRegistry.PRISTINE_RIFT_CATALYST, "16"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.PRISTINE_RIFT_CATALYST, "16"));
         // Overworld Ore
         ShapedRecipeBuilder.shaped(ImpenRegistry.OVERWORLD_ORE_CATALYST)
                 .pattern("ABC")
@@ -367,7 +366,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.RABBIT_FOOT)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "rabbit_foot"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "rabbit_foot"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, 4)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -376,7 +375,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.AMETHYST_SHARD)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "amethyst"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "amethyst"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, 16)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -385,7 +384,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.EMERALD)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "emerald"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK, "emerald"));
         // Loot Capsule
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, 8)
                 .pattern(" A ")
@@ -395,7 +394,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.LAPIS_LAZULI)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, "lapis"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, "lapis"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, 8)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -406,7 +405,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('E', Items.GUNPOWDER)
                 .define('F', Items.ROTTEN_FLESH)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, "mob_drops"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT, "mob_drops"));
         // Egg Capsule
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, 2)
                 .pattern(" A ")
@@ -416,7 +415,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.EGG)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "egg"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "egg"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, 8)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -426,7 +425,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('D', Items.EGG)
                 .define('E', Tags.Items.HEADS)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "egg_better"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "egg_better"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, 64)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -435,7 +434,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.DRAGON_EGG)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "dragon_egg"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG, "dragon_egg"));
         // Player Kill Capsule
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, 4)
                 .pattern(" A ")
@@ -445,7 +444,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('C', ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY)
                 .define('#', Items.ARMOR_STAND)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, "armor_stand"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, "armor_stand"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, 16)
                 .pattern(" A ")
                 .pattern(" C ")
@@ -456,18 +455,18 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('E', Items.STONE_SWORD)
                 .define('F', Items.LEVER)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
-                .save(consumer, makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, "misc"));
+                .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, "misc"));
 
         // === Seeds ===
 
         ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_CERTUS.item())
                 .requires(AEItems.CERTUS_CRYSTAL_SEED)
                 .unlockedBy("has_certus_seed", has(AEItems.CERTUS_CRYSTAL_SEED))
-                .save(consumer, makeId("plantable_certus_seeds"));
+                .save(consumer, ImpenIdUtil.makeId("plantable_certus_seeds"));
         ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_FLUIX.item())
                 .requires(AEItems.FLUIX_CRYSTAL_SEED)
                 .unlockedBy("has_fluix_seed", has(AEItems.FLUIX_CRYSTAL_SEED))
-                .save(consumer, makeId("plantable_fluix_seeds"));
+                .save(consumer, ImpenIdUtil.makeId("plantable_fluix_seeds"));
 
         // === Storage Blocks ===
 
@@ -492,16 +491,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
         // Stonecutter recipes
         stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICKS, ImpenRegistry.SMOOTH_RIFTSTONE);
+        
+        // Rift Catalyst recipes
+        new RiftCatalystRecipeProvider().addRecipes(consumer);
     }
 
-    private ResourceLocation makeId(final String key) {
-        return new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, key);
-    }
-
-    private ResourceLocation makeId(final RegistryIdProvider obj, final String suffix) {
-        return makeId(obj.getKey() + "_" + suffix);
-    }
-    
     // These methods shadow or copy vanilla methods because that code assumes the vanilla namespace, and we want it to
     // use our mod's namespace instead 
     
@@ -532,7 +526,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
             SimpleCookingRecipeBuilder.cooking(Ingredient.of(itemlike), p_176537_, p_176538_, p_176539_, p_176535_)
                     .group(p_176540_).unlockedBy(getHasName(itemlike), has(itemlike))
                     // This is the bit we actually need to override
-                    .save(p_176534_, makeId(getItemName(p_176537_) + p_176541_ + "_" + getItemName(itemlike)));
+                    .save(p_176534_, ImpenIdUtil.makeId(getItemName(p_176537_) + p_176541_ + "_" + getItemName(itemlike)));
         }
     }
 
@@ -546,6 +540,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(p_176549_), p_176548_, p_176550_)
                 .unlockedBy(getHasName(p_176549_), has(p_176549_))
                 // This is the bit we actually need to override
-                .save(p_176547_, makeId(getConversionRecipeName(p_176548_, p_176549_) + "_stonecutting"));
+                .save(p_176547_, ImpenIdUtil.makeId(getConversionRecipeName(p_176548_, p_176549_) + "_stonecutting"));
     }
 }

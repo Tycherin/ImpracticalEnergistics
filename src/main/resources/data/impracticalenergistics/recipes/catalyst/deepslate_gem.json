@@ -1,9 +1,0 @@
-{
-    "type": "impracticalenergistics:rift_catalyst",
-    "catalyst_item": {"item": "impracticalenergistics:catalyst_deepslate_gem"},
-    "base_block": {"block": "minecraft:deepslate"},
-    "block_weights": [
-        { "block": "minecraft:deepslate_diamond_ore", "value": 10 },
-        { "block": "minecraft:deepslate_emerald_ore", "value": 10 }
-    ]
-}

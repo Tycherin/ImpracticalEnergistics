@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
@@ -35,10 +36,17 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
     @Override
     public RiftCatalystRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
 
-        final Item catalyst = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "catalyst_item"));
         final Block baseBlock = this.getAsBlock(GsonHelper.getAsJsonObject(json, "base_block"));
+        final Item catalyst = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "catalyst"));
+
+        final List<Ingredient> consumedItems = new ArrayList<>();
+        final JsonArray consumedItemsJson = GsonHelper.getAsJsonArray(json, "consumed_items");
+        consumedItemsJson.forEach(ingredientJson -> {
+            consumedItems.add(Ingredient.fromJson(ingredientJson));
+        });
+        
         final List<RiftWeight> weights = new ArrayList<>();
-        final JsonArray blockWeightsJson = GsonHelper.getAsJsonArray(json, "block_weights");
+        final JsonArray blockWeightsJson = GsonHelper.getAsJsonArray(json, "weights");
         if (blockWeightsJson.size() > MAX_OUTPUTS) {
             throw new JsonSyntaxException(String.format("Too many outputs for '%s'", recipeId));
         }
@@ -48,21 +56,28 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
             }
             final JsonObject weightObj = weightJson.getAsJsonObject();
             final Block weightBlock = this.getAsBlock(weightObj);
-            final Double weightValue = GsonHelper.getAsDouble(weightObj, "value");
-            if ((weightValue > 100) || (weightValue < 0)) {
-                throw new JsonSyntaxException(String.format("Weights must be between 100 and 0 '%s'", weightValue));
+            final Double weightProbability = GsonHelper.getAsDouble(weightObj, "probability");
+            if ((weightProbability > 100) || (weightProbability < 0)) {
+                throw new JsonSyntaxException(String.format("Weights must be between 100 and 0 '%s'", weightProbability));
             }
-            weights.add(new RiftWeight(weightBlock, weightValue));
+            weights.add(new RiftWeight(weightBlock, weightProbability));
         });
-
-        return new RiftCatalystRecipe(recipeId, catalyst, baseBlock, weights);
+        
+        return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);
     }
 
     @Nullable
     @Override
     public RiftCatalystRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer) {
-        final Item catalyst = buffer.readItem().getItem();
         final Block baseBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
+        final Item catalyst = buffer.readItem().getItem();
+
+        final int consumedItemCount = buffer.readInt();
+        final List<Ingredient> consumedItems = new ArrayList<>();
+        for (int i = 0; i < consumedItemCount; i++) {
+            consumedItems.add(Ingredient.fromNetwork(buffer));
+        }
+
         final int weightCount = buffer.readInt();
         final List<RiftWeight> weights = new ArrayList<>();
         for (int i = 0; i < weightCount; i++) {
@@ -71,13 +86,17 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
             weights.add(new RiftWeight(weightBlock, weightValue));
         }
 
-        return new RiftCatalystRecipe(recipeId, catalyst, baseBlock, weights);
+        return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);
     }
 
     @Override
     public void toNetwork(final FriendlyByteBuf buffer, final RiftCatalystRecipe recipe) {
-        buffer.writeItem(recipe.getCatalyst().getDefaultInstance());
         buffer.writeRegistryId(recipe.getBaseBlock());
+        buffer.writeItem(recipe.getCatalyst().getDefaultInstance());
+
+        buffer.writeInt(recipe.getConsumedItems().size());
+        recipe.getConsumedItems().forEach(ingredient -> ingredient.toNetwork(buffer));
+
         buffer.writeInt(recipe.getWeights().size());
         recipe.getWeights().forEach(weight -> {
             buffer.writeRegistryId(weight.block());
