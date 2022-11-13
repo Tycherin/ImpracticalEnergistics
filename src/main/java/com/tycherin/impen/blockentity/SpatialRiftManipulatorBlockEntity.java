@@ -1,6 +1,5 @@
 package com.tycherin.impen.blockentity;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -8,13 +7,12 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
+import com.tycherin.impen.logic.rift.RiftManipulatorInput;
 import com.tycherin.impen.logic.rift.RiftManipulatorStatusCodes;
 import com.tycherin.impen.logic.rift.RiftService;
-import com.tycherin.impen.logic.rift.RiftWeightTracker;
 import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.config.YesNo;
@@ -56,8 +54,8 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    /** Number of blocks that can be affected by a single catalyst item */
-    private static final int BLOCKS_PER_CYCLE = 64;
+    /** Number of blocks that can be affected by a single cycle */
+    private static final int MAX_BLOCKS_PER_CYCLE = 64;
     /** Base number of ticks required to process one block */
     private static final double TICKS_PER_BLOCK = 8;
 
@@ -68,7 +66,6 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 2);
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new InventoryItemFilter());
-    private final AppEngInternalInventory catalystInv = new AppEngInternalInventory(this, RiftService.MAX_CATALYSTS);
     private final IUpgradeInventory upgrades;
     private final ILevelRunnable callback = level -> startOperation();
 
@@ -83,6 +80,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
      */
     private Optional<SrmOperation> operation = Optional.empty();
 
+    private Optional<RiftManipulatorInput> storedInput = Optional.empty();
     private int progressTicks = -1;
     private int maxProgressTicks = -1;
     private YesNo lastRedstoneState = YesNo.UNDECIDED;
@@ -175,10 +173,10 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             return;
         }
 
-        final int cycleCount = this.getCycleCount(operation.get().plot().get());
-        final List<ItemStack> catalysts = RiftService.get(this).get().triggerOperation(cycleCount);
-        catalysts.forEach(this.catalystInv::addItems);
-        this.maxProgressTicks = (int) Math.ceil(cycleCount * BLOCKS_PER_CYCLE * TICKS_PER_BLOCK);
+        final RiftManipulatorInput input = RiftService.get(this).get().doOperation(true);
+        this.storedInput = Optional.of(input);
+        this.maxProgressTicks = (int) Math.ceil(TICKS_PER_BLOCK * 
+                Math.min(this.operation.get().blocksToUpdate(), MAX_BLOCKS_PER_CYCLE));
         this.progressTicks = 0;
         this.statusCode = RiftManipulatorStatusCodes.RUNNING;
 
@@ -188,38 +186,55 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         this.markForUpdate();
     }
 
-    /** @return True if the operation was completed successfully; false otherwise */
-    public boolean completeOperation() {
+    public CompleteOperationResult completeOperation() {
         if (this.level.isClientSide() || this.isRemoved()) {
-            return false;
+            return CompleteOperationResult.FAILURE;
         }
 
         if (this.operation.isEmpty()) {
             LOGGER.warn("Attempted to complete operation, but operation was missing");
-            return false;
+            return CompleteOperationResult.FAILURE;
         }
         else if (!this.operation.get().isValid()) {
             LOGGER.warn("Attempted to complete operation, but operation was invalid");
-            return false;
+            return CompleteOperationResult.FAILURE;
+        }
+        else if (this.storedInput.isEmpty()) {
+            LOGGER.warn("Attempted to complete operation, but no inputs were stored");
+            return CompleteOperationResult.FAILURE;
         }
 
         final SpatialStoragePlot plot = this.operation.get().plot().get();
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-        final int cycleCount = this.getCycleCount(plot);
-        final Collection<ItemStack> catalystItems = Lists.newArrayList(this.catalystInv.iterator());
-        final var weights = RiftWeightTracker.weightsFromCatalysts(catalystItems, cycleCount, this.level);
+        final var weights = this.storedInput.get().createWeightTracker(this.getLevel());
 
         // Go through the target zone and update each block based on the supplier results
         final Supplier<Block> blockSupplier = weights.getSupplier();
-        this.getReplaceableBlocks(plot).forEach(blockPos -> {
-            spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
-        });
-
-        // Operation completed, so move the input to the output
-        this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
-        this.inv.setItemDirect(InventorySlots.OUTPUT, this.operation.get().cell.get());
-        this.resetOperation();
-        return true;
+        final long blocksToReplace = Math.min(this.operation.get().blocksToUpdate, MAX_BLOCKS_PER_CYCLE);
+        this.getReplaceableBlocks(plot)
+                .limit(blocksToReplace)
+                .forEach(blockPos -> {
+                    spatialLevel.setBlock(blockPos, blockSupplier.get().defaultBlockState(), Block.UPDATE_NONE);
+                });
+        
+        final long blocksRemaining = Math.max(0, this.operation.get().blocksToUpdate - blocksToReplace);
+        if (blocksRemaining == 0) {
+            // Operation completed, so move the input to the output
+            this.inv.setItemDirect(InventorySlots.INPUT, ItemStack.EMPTY);
+            this.inv.setItemDirect(InventorySlots.OUTPUT, this.operation.get().cell.get());
+            this.resetOperation();
+            return CompleteOperationResult.FINISHED;
+        }
+        else {
+            // There's still more space in the cell, so we can try for another operation
+            return CompleteOperationResult.MORE_WORK;
+        }
+    }
+    
+    private static enum CompleteOperationResult {
+        FAILURE,
+        MORE_WORK,
+        FINISHED
     }
     
     private void updateOperation() {
@@ -260,7 +275,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             hasCatalysts = true;
         }
         else {
-            hasCatalysts = RiftService.get(this).get().hasCatalysts();
+            hasCatalysts = RiftService.get(this).get().hasRecipes();
         }
         return Optional.of(new SrmOperation(Optional.of(cell), plot, blocksToUpdate, hasCatalysts));
     }
@@ -268,9 +283,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
     private void resetOperation() {
         this.progressTicks = -1;
         this.maxProgressTicks = -1;
-        for (int i = 0; i < this.catalystInv.size(); i++) {
-            this.catalystInv.setItemDirect(i, ItemStack.EMPTY);
-        }
+        this.storedInput = Optional.empty();
         this.updateOperation();
     }
 
@@ -308,13 +321,6 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         return Optional.ofNullable(plotManager.getPlot(spatialCell.getAllocatedPlotId(cell)));
     }
 
-    /** @return The number of cycles required to process this plot */
-    private int getCycleCount(final SpatialStoragePlot plot) {
-        final int modifiableBlocks = (int) this.getReplaceableBlocks(plot).count();
-        final int cycleCount = (int) Math.ceil(modifiableBlocks / (double) BLOCKS_PER_CYCLE);
-        return cycleCount;
-    }
-
     /** @return The work rate, in blocks per tick */
     private double getWorkRate() {
         return Math.pow(2, this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD));
@@ -342,13 +348,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             return this.statusCode == RiftManipulatorStatusCodes.RUNNING;
         }
         else {
-            // If any catalysts are present, then there is an operation running
-            for (var stack : this.catalystInv) {
-                if (!stack.isEmpty()) {
-                    return true;
-                }
-            }
-            return false;
+            return this.storedInput.isPresent();
         }
     }
 
@@ -372,7 +372,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
         final int oldStatus = this.statusCode;
         final int newStatus = this.computeStatus();
         this.statusCode = newStatus;
-
+        
         final TickRateModulation rate;
         if (this.statusCode != RiftManipulatorStatusCodes.RUNNING) {
             // If the input got removed, cancel the current operation
@@ -390,13 +390,20 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             }
 
             if (this.progressTicks >= this.maxProgressTicks) {
-                if (this.completeOperation()) {
-                    this.resetOperation();
-                    rate = TickRateModulation.IDLE;
+                rate = switch (this.completeOperation()) {
+                case MORE_WORK -> {
+                    // There's more work to do, so try to start a new operation and see if that works
+                    this.startOperation();
+                    if (this.isRunning()) {
+                        yield TickRateModulation.SAME;                        
+                    }
+                    else {
+                        yield TickRateModulation.IDLE;
+                    }
                 }
-                else {
-                    rate = TickRateModulation.SAME;
-                }
+                case FAILURE -> TickRateModulation.SAME;
+                case FINISHED -> TickRateModulation.IDLE;
+                };
             }
             else {
                 rate = TickRateModulation.FASTER;
@@ -424,7 +431,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             data.putInt("progressTicks", this.progressTicks);
         }
         this.upgrades.writeToNBT(data, "upgrades");
-        this.catalystInv.writeToNBT(data, "catalysts");
+        this.storedInput.ifPresent(input -> input.writeToNBT(data, "storedInput"));
     }
 
     @Override
@@ -438,7 +445,7 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
             this.progressTicks = data.getInt("progressTicks");
         }
         this.upgrades.readFromNBT(data, "upgrades");
-        this.catalystInv.readFromNBT(data, "catalysts");
+        this.storedInput = RiftManipulatorInput.readFromNBT(data, "storedInput");
     }
 
     @Override
@@ -450,9 +457,6 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
         for (int i = 0; i < this.inv.size(); i++) {
             data.writeItem(inv.getStackInSlot(i));
-        }
-        for (int i = 0; i < this.catalystInv.size(); i++) {
-            data.writeItem(catalystInv.getStackInSlot(i));
         }
     }
 
@@ -472,10 +476,6 @@ public class SpatialRiftManipulatorBlockEntity extends AENetworkInvBlockEntity
 
         for (int i = 0; i < this.inv.size(); i++) {
             this.inv.setItemDirect(i, data.readItem());
-        }
-
-        for (int i = 0; i < this.catalystInv.size(); i++) {
-            this.catalystInv.setItemDirect(i, data.readItem());
         }
 
         return ret;

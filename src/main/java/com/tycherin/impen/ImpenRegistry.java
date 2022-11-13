@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.tycherin.impen.ImpenRegistry.RegistryIdProvider;
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
@@ -41,7 +40,6 @@ import appeng.core.definitions.AEItems;
 import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

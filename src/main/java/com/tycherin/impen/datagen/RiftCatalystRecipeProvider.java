@@ -44,7 +44,7 @@ public class RiftCatalystRecipeProvider {
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         RiftCatalystRecipeBuilder.of(ImpenRegistry.RIFT_CATALYST_STONE)
             .consumedItems(Items.APPLE)
-            .weights(new RiftWeight(Blocks.IRON_ORE, 0.05))
+            .weights(new RiftWeight(Blocks.IRON_ORE, 5))
             .save(consumer, "stone_apple");
         
         // TODO Generate remaining recipes

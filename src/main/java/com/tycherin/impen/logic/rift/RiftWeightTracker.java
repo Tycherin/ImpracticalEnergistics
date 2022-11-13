@@ -1,11 +1,9 @@
 package com.tycherin.impen.logic.rift;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -17,10 +15,6 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
 
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -29,50 +23,27 @@ import net.minecraft.world.level.block.Block;
  * @author Tycherin
  *
  */
-public class RiftWeightTracker {
+public record RiftWeightTracker(List<RiftWeight> displayedWeights, List<RiftWeight> actualWeights,
+        boolean isConflict, boolean hasCatalysts) {
 
     public static final double DIMINISHING_RETURNS_RATE = 0.75;
     public static final double WEIGHT_TOTAL_MINIMUM = 100.0;
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    
-    /** Creates an IsmWeightWrapper from a given collection of catalyst items */
-    public static RiftWeightWrapper weightsFromCatalysts(final Collection<ItemStack> items, final int cycleCount,
-            final Level level) {
-        final RecipeManager rm = level.getRecipeManager();
 
-        final Map<RiftCatalystRecipe, Integer> recipeCounts = new HashMap<>();
+    public static RiftWeightTracker fromRecipeCounts(final Map<RiftCatalystRecipe, Integer> recipeCounts) {
         final Map<Block, Double> runningWeights = new HashMap<>();
-
         final Set<Block> baseBlocks = new HashSet<>();
-        for (final ItemStack is : items) {
-            final Optional<RiftCatalystRecipe> recipeOpt = rm.getRecipeFor(
-                    ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get(), new SimpleContainer(is), level);
-            if (recipeOpt.isEmpty()) {
-                LOGGER.warn("ItemStack {} has no registered recipes and will be ignored", is);
-                continue;
-            }
-            else {
-                final RiftCatalystRecipe recipe = recipeOpt.get();
-                for (int i = is.getCount(); i >= 0; i -= cycleCount) {
-                    final int oldCount = recipeCounts.containsKey(recipe) ? recipeCounts.get(recipe) : 0;
-                    recipeCounts.merge(recipe, 1, Integer::sum);
 
-                    // Multiplier is (newCount - 1) ^ 0.75, which is equivalent to the below code
-                    final double multiplier = Math.pow(RiftWeightTracker.DIMINISHING_RETURNS_RATE, oldCount);
-
-                    // If the amount of this stack remaining is less than what we're looking for, then the effect of
-                    // this iteration is proportionately reduced
-                    final double ratioMultiplier = (i < cycleCount)
-                            ? multiplier * ((double) i / cycleCount)
-                            : multiplier;
-                    recipe.getWeights().forEach(weight -> {
-                        runningWeights.merge(weight.block(), weight.probability() * ratioMultiplier, Double::sum);
-                    });
-                }
-                baseBlocks.add(recipe.getBaseBlock());
+        recipeCounts.forEach((recipe, count) -> {
+            for (int i = 0; i < count; i++) {
+                final double multiplier = Math.pow(RiftWeightTracker.DIMINISHING_RETURNS_RATE, i);
+                recipe.getWeights().forEach(weight -> {
+                    runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
+                });
             }
-        }
+            baseBlocks.add(recipe.getBaseBlock());
+        });
 
         final List<RiftWeight> aggregateWeights = runningWeights.entrySet().stream()
                 .map(entry -> new RiftWeight(entry.getKey(), entry.getValue()))
@@ -103,14 +74,11 @@ public class RiftWeightTracker {
         LOGGER.info("Generated new set of rift weights: {}",
                 String.join(", ", aggregateWeights.stream().map(Object::toString).collect(Collectors.toList())));
 
-        return new RiftWeightWrapper(aggregateWeights, aggregateWeights, false, aggregateWeights.size() > 1);
+        return new RiftWeightTracker(aggregateWeights, aggregateWeights, false, aggregateWeights.size() > 1);
     }
 
-    public static record RiftWeightWrapper(List<RiftWeight> displayedWeights, List<RiftWeight> actualWeights,
-            boolean isConflict, boolean hasCatalysts) {
-        public Supplier<Block> getSupplier() {
-            return new RiftBlockSupplier(actualWeights);
-        }
+    public Supplier<Block> getSupplier() {
+        return new RiftBlockSupplier(actualWeights);
     }
 
     public static class RiftBlockSupplier implements Supplier<Block> {
@@ -131,7 +99,7 @@ public class RiftWeightTracker {
             int cumulativeProbability = 0;
             for (int i = 0; i < weights.size(); i++) {
                 final RiftWeight weight = weights.get(i);
-                cumulativeProbability += (int) weight.probability();
+                cumulativeProbability += (int)weight.probability();
                 probabilities[i] = cumulativeProbability;
                 blocks[i] = weight.block();
             }
