@@ -174,7 +174,66 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
         // === Rift Catalysts ===
 
-        // TODO Add the new ones in
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_STONE)
+                .pattern("AIA")
+                .pattern("#G#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Blocks.GLASS)
+                .define('#', Blocks.STONE)
+                .unlockedBy("has_aerocrystal", has(ImpenRegistry.AEROCRYSTAL))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_NETHERRACK)
+                .pattern("AIA")
+                .pattern("#G#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Blocks.GLASS)
+                .define('#', Blocks.NETHERRACK)
+                .unlockedBy("has_blazing_aerocrystal", has(ImpenRegistry.BLAZING_AEROCRYSTAL))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_DIRT)
+                .pattern("AIA")
+                .pattern("#G#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Blocks.GLASS)
+                .define('#', Blocks.DIRT)
+                .unlockedBy("has_blazing_aerocrystal", has(ImpenRegistry.BLAZING_AEROCRYSTAL))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_DEEPSLATE)
+                .pattern("AIA")
+                .pattern("#R#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('R', ImpenRegistry.RIFT_SHARD)
+                .define('#', Blocks.DEEPSLATE)
+                .unlockedBy("has_blazing_aerocrystal", has(ImpenRegistry.BLAZING_AEROCRYSTAL))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_END_STONE)
+                .pattern("AIA")
+                .pattern("#R#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('R', ImpenRegistry.RIFT_SHARD_BLOCK)
+                .define('#', Blocks.END_STONE)
+                .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_BLACKSTONE)
+                .pattern("AIA")
+                .pattern("#R#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('R', ImpenRegistry.RIFT_SHARD_BLOCK)
+                .define('#', Blocks.BLACKSTONE)
+                .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
+                .save(consumer);
 
         // === Disintegrator Capsules ===
 
