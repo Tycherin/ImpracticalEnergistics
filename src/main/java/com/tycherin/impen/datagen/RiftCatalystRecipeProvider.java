@@ -82,6 +82,10 @@ public class RiftCatalystRecipeProvider {
                 AEItems.CERTUS_QUARTZ_CRYSTAL.asItem());
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_BLACKSTONE, AEBlocks.SKY_STONE_BLOCK.block());
 
+        // Just think: I'm in there!
+        helper.standardBlock(ImpenRegistry.RIFT_CATALYST_RIFTSTONE, ImpenRegistry.RIFT_SHARD_ORE.asBlock());
+
+        // TODO This doesn't work
         // Catchall for properly tagged ore blocks added by other mods
         // Note that the order is important - prefer more advanced stone types/catalysts over easier ones
         ForgeRegistries.BLOCKS.tags().getTag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE).forEach(ore -> {
