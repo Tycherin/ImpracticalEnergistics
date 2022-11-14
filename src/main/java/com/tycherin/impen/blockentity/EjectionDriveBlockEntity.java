@@ -5,8 +5,10 @@ import java.util.EnumSet;
 import com.tycherin.impen.ImpenRegistry;
 
 import appeng.api.inventories.InternalInventory;
+import appeng.api.storage.StorageCells;
 import appeng.api.storage.cells.CellState;
 import appeng.blockentity.storage.ChestBlockEntity;
+import appeng.me.cells.BasicCellInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -19,7 +21,9 @@ import net.minecraftforge.items.IItemHandler;
 
 public class EjectionDriveBlockEntity extends ChestBlockEntity {
 
-    // TODO: Force eject if the block gets a redstone signal
+    // Note that sleep ticks are a convenience thing to reduce the frequency of semi-expensive calculations, so they
+    // aren't persisted
+    private int sleepTicks = 0;
 
     public EjectionDriveBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.EJECTION_DRIVE.blockEntity(), pos, blockState);
@@ -29,9 +33,64 @@ public class EjectionDriveBlockEntity extends ChestBlockEntity {
     public void serverTick() {
         super.serverTick();
 
-        if (this.getCellStatus(0).equals(CellState.TYPES_FULL) || this.getCellStatus(0).equals(CellState.FULL)) {
-            this.ejectCell();
+        this.sleepTicks--;
+
+        if (this.sleepTicks <= 0) {
+            if (this.getCellStatus(0).equals(CellState.ABSENT)) {
+                this.sleepTicks = 100;
+            }
+
+            final double fillPercent = this.getFillPercent();
+            final double ejectThreshold = this.getEjectThreshold();
+            if (fillPercent >= ejectThreshold) {
+                this.ejectCell();
+                this.sleepTicks = 20;
+            }
+            else {
+                // Modulate how fast we tick based on how close we are to the threshold
+                final double diff = ejectThreshold - fillPercent;
+                if (diff > 0.1) {
+                    this.sleepTicks = 100;
+                }
+                else if (diff > 0.05) {
+                    this.sleepTicks = 20;
+                }
+                else if (diff > 0.01) {
+                    this.sleepTicks = 5;
+                }
+                else {
+                    this.sleepTicks = 1;
+                }
+            }
         }
+
+    }
+
+    private double getFillPercent() {
+        final CellState status = this.getCellStatus(0);
+        if (status.equals(CellState.TYPES_FULL) || status.equals(CellState.FULL)) {
+            return 1.0;
+        }
+        else if (status.equals(CellState.ABSENT)) {
+            return 0.0;
+        }
+        else {
+            final var storage = StorageCells.getCellInventory(this.getCell(), null);
+            if (storage instanceof BasicCellInventory cellInv) {
+                return (double)cellInv.getUsedBytes() / cellInv.getTotalBytes();
+            }
+            else {
+                return 0.0;
+            }
+        }
+    }
+
+    private double getEjectThreshold() {
+        // Redstone states:
+        // 0 (no signal) -> eject at 100% full
+        // 7 (half signal) -> eject at 50% full or more
+        // 15 (full signal) -> eject at 0% full or more
+        return (15 - this.level.getBestNeighborSignal(this.worldPosition)) / 15.0;
     }
 
     @Override
@@ -68,6 +127,12 @@ public class EjectionDriveBlockEntity extends ChestBlockEntity {
             // Any other face: exposes the inventory of the stored cell
             return super.getExposedInventoryForSide(this.getForward().getOpposite());
         }
+    }
+
+    @Override
+    public void onChangeInventory(final InternalInventory inv, final int slot) {
+        super.onChangeInventory(inv, slot);
+        this.sleepTicks = 0;
     }
 
     private void ejectCell() {
