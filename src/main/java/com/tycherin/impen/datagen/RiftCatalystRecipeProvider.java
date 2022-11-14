@@ -74,7 +74,7 @@ public class RiftCatalystRecipeProvider {
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_NETHERRACK, Blocks.MAGMA_BLOCK);
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_NETHERRACK, Blocks.ANCIENT_DEBRIS, Items.NETHERITE_SCRAP);
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_END_STONE, Blocks.AMETHYST_BLOCK, Items.AMETHYST_SHARD);
-        helper.standardBlock(ImpenRegistry.RIFT_CATALYST_END_STONE, Blocks.PRISMARINE, Items.PRISMARINE);
+        helper.standardBlock(ImpenRegistry.RIFT_CATALYST_END_STONE, Blocks.PRISMARINE, Items.PRISMARINE_SHARD);
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_BLACKSTONE, Blocks.OBSIDIAN);
 
         // AE2 stuff
