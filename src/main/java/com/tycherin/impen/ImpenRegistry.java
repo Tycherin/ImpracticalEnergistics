@@ -164,19 +164,6 @@ public class ImpenRegistry {
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
 
-    // TODO: Remove all of these
-    public static final ItemDefinition BASIC_RIFT_CATALYST = makeItem("catalyst_base_t1");
-    public static final ItemDefinition ADVANCED_RIFT_CATALYST = makeItem("catalyst_base_t2");
-    public static final ItemDefinition PRISTINE_RIFT_CATALYST = makeItem("catalyst_base_t3");
-    public static final ItemDefinition OVERWORLD_ORE_CATALYST = makeItem("catalyst_overworld_ore");
-    public static final ItemDefinition DEEPSLATE_ORE_CATALYST = makeItem("catalyst_deepslate_ore");
-    public static final ItemDefinition DEEPSLATE_GEM_CATALYST = makeItem("catalyst_deepslate_gem");
-    public static final ItemDefinition NETHER_ORE_CATALYST = makeItem("catalyst_nether_ore");
-    public static final ItemDefinition NETHER_SECRET_CATALYST = makeItem("catalyst_nether_secret");
-    public static final ItemDefinition END_SECRET_CATALYST = makeItem("catalyst_end_secret");
-    public static final ItemDefinition RIFT_SPACE_CATALYST = makeItem("catalyst_rift_ore");
-    public static final ItemDefinition OVERWORLD_SECRET_CATALYST = makeItem("catalyst_overworld_secret");
-    public static final ItemDefinition BLACKSTONE_SECRET_CATALYST = makeItem("catalyst_blackstone_secret");
     // These are the new ones
     public static final ItemDefinition RIFT_CATALYST_BLACKSTONE = makeItem("rift_catalyst_blackstone");
     public static final ItemDefinition RIFT_CATALYST_DEEPSLATE = makeItem("rift_catalyst_deepslate");
