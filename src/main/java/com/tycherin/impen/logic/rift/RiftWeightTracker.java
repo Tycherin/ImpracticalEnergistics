@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Block;
 public record RiftWeightTracker(List<RiftWeight> displayedWeights, List<RiftWeight> actualWeights,
         boolean isConflict, boolean hasCatalysts) {
 
-    public static final double DIMINISHING_RETURNS_RATE = 0.75;
+    public static final double DIMINISHING_RETURNS_RATE = 1.0; // I am unclear if this mechanic is a good idea or not
     public static final double WEIGHT_TOTAL_MINIMUM = 100.0;
 
     private static final Logger LOGGER = LogUtils.getLogger();

@@ -131,8 +131,6 @@ public class RiftCatalystRecipeProvider {
                     exchangeRate = 1;
                 }
                 else if (denseTag.contains(block)) {
-                    // TODO It really makes more sense to model this as requiring more of the input item, otherwise this
-                    // is kinda useless
                     exchangeRate = .25;
                 }
                 else {
