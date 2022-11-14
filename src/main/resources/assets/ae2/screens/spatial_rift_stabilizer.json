@@ -3,13 +3,18 @@
   "$schema": "schema.json",
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
-    "texture": "guis/bus.png",
-    "srcRect": [0, 0, 176, 184]
+    "texture": "guis/spatial_rift_stabilizer.png",
+    "srcRect": [0, 0, 176, 176]
   },
   "slots": {
+    "MACHINE_INPUT": {
+        "left": 45,
+        "top": 22,
+        "grid": "BREAK_AFTER_2COLS"
+    },
     "PROCESSING_INPUTS": {
-      "left": 80,
-      "top": 40
+      "left": 103,
+      "top": 31
     }
   },
   "text": {

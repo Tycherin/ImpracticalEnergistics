@@ -1,19 +1,14 @@
 package com.tycherin.impen.client.gui;
 
-import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
 
 import appeng.api.config.SecurityPermissions;
-import appeng.api.inventories.InternalInventory;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.slot.AppEngSlot;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class SpatialRiftStabilizerMenu extends AEBaseMenu {
     
@@ -22,14 +17,16 @@ public class SpatialRiftStabilizerMenu extends AEBaseMenu {
             .requirePermission(SecurityPermissions.BUILD)
             .build("spatial_rift_stabilizer");
 
-    // TODO Add fields needed to display weight impacts
-    
     private int delay = 40;
 
     public SpatialRiftStabilizerMenu(final int id, final Inventory playerInv, final SpatialRiftStabilizerBlockEntity be) {
         super(TYPE, id, playerInv, be);
 
-        this.addSlot(new CatalystItemSlot(be.getInternalInventory(), 0, be), SlotSemantics.PROCESSING_INPUTS);
+        this.addSlot(new AppEngSlot(be.getCatalystInventory(), 0), SlotSemantics.PROCESSING_INPUTS);
+        
+        for (int i = 0; i < 4; i++) {
+            this.addSlot(new AppEngSlot(be.getInputInventory(), i), SlotSemantics.MACHINE_INPUT);
+        }
 
         this.createPlayerInventorySlots(playerInv);
     }
@@ -51,22 +48,5 @@ public class SpatialRiftStabilizerMenu extends AEBaseMenu {
         }
 
         super.broadcastChanges();
-    }
-    
-    private static class CatalystItemSlot extends AppEngSlot {
-        private final BlockEntity be;
-        
-        public CatalystItemSlot(InternalInventory inv, int invSlot, BlockEntity be) {
-            super(inv, invSlot);
-            this.be = be;
-        }
-
-        @Override
-        public boolean mayPlace(final ItemStack stack) {
-            return super.mayPlace(stack) && be.getLevel().getRecipeManager()
-                    .getRecipeFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get(), new SimpleContainer(stack),
-                            be.getLevel())
-                    .isPresent();
-        }
     }
 }

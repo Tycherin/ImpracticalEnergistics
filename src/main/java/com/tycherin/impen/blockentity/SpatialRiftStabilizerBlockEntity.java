@@ -103,6 +103,14 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
         return this.combinedInv;
     }
 
+    public InternalInventory getInputInventory() {
+        return this.ingredientInv;
+    }
+
+    public InternalInventory getCatalystInventory() {
+        return this.catalystInvFiltered;
+    }
+
     @Override
     public void onChangeInventory(final InternalInventory inv, final int slot) {
     }

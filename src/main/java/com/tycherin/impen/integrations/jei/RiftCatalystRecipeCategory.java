@@ -43,7 +43,7 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     public RiftCatalystRecipeCategory(final IGuiHelper guiHelper) {
         final ResourceLocation location = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID,
                 "textures/gui/rift_catalyst_jei.png");
-        this.background = guiHelper.createDrawable(location, 15, 8, 144, 47);
+        this.background = guiHelper.createDrawable(location, 16, 7, 143, 58);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item().getDefaultInstance());
     }
@@ -55,7 +55,7 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
         for (int i = 0; i < recipe.getConsumedItems().size(); i++) {
             final var ingredient = recipe.getConsumedItems().get(i);
             var xPos = 1;
-            var yPos = 6;
+            var yPos = 12;
             if (i == 1 || i == 3) {
                 xPos += 18;
             }
@@ -66,11 +66,11 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
                     .addIngredients(ingredient);
         }
         
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 50, 3)
+        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 51, 9)
                 .addItemStack(recipe.getCatalyst().getDefaultInstance())
                 .addTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(CATALYST_TEXT));
 
-        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 50, 27)
+        layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 51, 32)
                 .addItemStack(getBlockItemStack(recipe.getBaseBlock()))
                 .addTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(BASE_BLOCK_TEXT));
 
@@ -108,8 +108,8 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
             final int row = i / 3;
             final int col = i % 3;
 
-            final int xPos = 85 + (col * 21);
-            final int yPos = 1 + (row * 29);
+            final int xPos = 84 + (col * 21);
+            final int yPos = 2 + (row * 29);
 
             func.handleOutputBox(weights.get(i), xPos, yPos);
         }
