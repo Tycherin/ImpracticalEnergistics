@@ -164,13 +164,14 @@ public class ImpenRegistry {
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
 
-    // These are the new ones
+    // Rift Catalysts
     public static final ItemDefinition RIFT_CATALYST_BLACKSTONE = makeItem("rift_catalyst_blackstone");
     public static final ItemDefinition RIFT_CATALYST_DEEPSLATE = makeItem("rift_catalyst_deepslate");
     public static final ItemDefinition RIFT_CATALYST_DIRT = makeItem("rift_catalyst_dirt");
     public static final ItemDefinition RIFT_CATALYST_END_STONE = makeItem("rift_catalyst_end_stone");
     public static final ItemDefinition RIFT_CATALYST_NETHERRACK = makeItem("rift_catalyst_netherrack");
     public static final ItemDefinition RIFT_CATALYST_STONE = makeItem("rift_catalyst_stone");
+    public static final ItemDefinition RIFT_CATALYST_RIFTSTONE = makeItem("rift_catalyst_riftstone");
 
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");

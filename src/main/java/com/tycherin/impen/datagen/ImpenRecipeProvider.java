@@ -234,6 +234,16 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('#', Blocks.BLACKSTONE)
                 .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
                 .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_CATALYST_RIFTSTONE)
+                .pattern("AIA")
+                .pattern("#G#")
+                .pattern("#I#")
+                .define('A', ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Blocks.GLASS)
+                .define('#', ImpenRegistry.RIFTSTONE)
+                .unlockedBy("has_exotic_aerocrystal", has(ImpenRegistry.EXOTIC_AEROCRYSTAL))
+                .save(consumer);
 
         // === Disintegrator Capsules ===
 

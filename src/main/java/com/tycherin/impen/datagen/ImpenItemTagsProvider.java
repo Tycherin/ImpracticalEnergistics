@@ -28,6 +28,7 @@ public class ImpenItemTagsProvider extends ItemTagsProvider {
                 .add(ImpenRegistry.RIFT_CATALYST_DIRT.asItem())
                 .add(ImpenRegistry.RIFT_CATALYST_END_STONE.asItem())
                 .add(ImpenRegistry.RIFT_CATALYST_NETHERRACK.asItem())
-                .add(ImpenRegistry.RIFT_CATALYST_STONE.asItem());
+                .add(ImpenRegistry.RIFT_CATALYST_STONE.asItem())
+                .add(ImpenRegistry.RIFT_CATALYST_RIFTSTONE.asItem());
     }
 }
