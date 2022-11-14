@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.datagen.ImpenItemTagsProvider;
 import com.tycherin.impen.logic.rift.RiftCatalystRecipeSource;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipeManager;
-import com.tycherin.impen.util.ImpenIdUtil;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
@@ -45,19 +45,17 @@ public class SpatialRiftStabilizerBlockEntity extends AENetworkInvBlockEntity im
         this.getMainNode()
                 .setFlags(GridFlags.REQUIRE_CHANNEL);
     }
-    
+
     private class CatalystItemFilter implements IAEItemFilter {
         private final @NotNull ITag<Item> catalystTag;
-        
+
         public CatalystItemFilter() {
-            catalystTag = ForgeRegistries.ITEMS.tags().getTag(ImpenIdUtil.getItemTag("rift_catalyst"));
+            catalystTag = ForgeRegistries.ITEMS.tags().getTag(ImpenItemTagsProvider.RIFT_CATALYSTS);
         }
-        
+
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            // TODO Add this tag filtering stuff
-            //return catalystTag.contains(stack.getItem());
-            return true;
+            return catalystTag.contains(stack.getItem());
         }
     }
     

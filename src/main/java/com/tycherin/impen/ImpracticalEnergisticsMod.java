@@ -7,6 +7,7 @@ import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.datagen.ImpenBlockTagsProvider;
 import com.tycherin.impen.datagen.ImpenItemModelProvider;
+import com.tycherin.impen.datagen.ImpenItemTagsProvider;
 import com.tycherin.impen.datagen.ImpenLootProvider;
 import com.tycherin.impen.datagen.ImpenPartModelProvider;
 import com.tycherin.impen.datagen.ImpenRecipeProvider;
@@ -68,7 +69,9 @@ public class ImpracticalEnergisticsMod {
         gen.addProvider(new ImpenRecipeProvider(gen));
         gen.addProvider(new ImpenLootProvider(gen));
         gen.addProvider(new ImpenPartModelProvider(gen, efh));
-        gen.addProvider(new ImpenBlockTagsProvider(gen, MOD_ID, efh));
+        final var blockTagsProvider = new ImpenBlockTagsProvider(gen, MOD_ID, efh);
+        gen.addProvider(blockTagsProvider);
+        gen.addProvider(new ImpenItemTagsProvider(gen, blockTagsProvider, MOD_ID, efh));
         gen.addProvider(new ImpenItemModelProvider(gen, MOD_ID, efh));
     }
 }
