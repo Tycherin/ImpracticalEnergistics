@@ -124,8 +124,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                     ImpenRegistry.RIFT_SWORD_ITEM.asItem().getDefaultInstance(),
                     false));
         }
-        // Make a new RecipeType here because AE2 is still doing things the old way
-        registry.addRecipes(new RecipeType<>(ThrowingInWaterCategory.ID, ThrowingInWaterDisplay.class), waterRecipes);
+
+        registry.addRecipes(ThrowingInWaterCategory.RECIPE_TYPE, waterRecipes);
 
         // TODO Change this call the bulk insert version
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
