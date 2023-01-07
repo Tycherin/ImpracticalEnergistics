@@ -86,41 +86,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                             Ingredient.of(ImpenRegistry.RIFT_PRISM)),
                     AEItems.FLUIX_DUST.stack(4),
                     false));
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE_BLOCK),
-                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
-                            Ingredient.of(AEItems.FLUIX_AXE)),
-                    ImpenRegistry.RIFT_AXE_ITEM.asItem().getDefaultInstance(),
-                    false));
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE_BLOCK),
-                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
-                            Ingredient.of(AEItems.FLUIX_HOE)),
-                    ImpenRegistry.RIFT_HOE_ITEM.asItem().getDefaultInstance(),
-                    false));
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE_BLOCK),
-                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
-                            Ingredient.of(AEItems.FLUIX_PICK)),
-                    ImpenRegistry.RIFT_PICKAXE_ITEM.asItem().getDefaultInstance(),
-                    false));
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE_BLOCK),
-                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
-                            Ingredient.of(AEItems.FLUIX_SHOVEL)),
-                    ImpenRegistry.RIFT_SHOVEL_ITEM.asItem().getDefaultInstance(),
-                    false));
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE_BLOCK),
-                            Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM),
-                            Ingredient.of(AEItems.FLUIX_SWORD)),
-                    ImpenRegistry.RIFT_SWORD_ITEM.asItem().getDefaultInstance(),
-                    false));
         }
 
         registry.addRecipes(ThrowingInWaterCategory.RECIPE_TYPE, waterRecipes);

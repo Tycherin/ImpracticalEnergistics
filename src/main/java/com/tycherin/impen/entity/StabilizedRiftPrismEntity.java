@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 
-import appeng.core.definitions.AEItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.util.Mth;
@@ -28,12 +27,7 @@ import net.minecraftforge.network.NetworkHooks;
 public class StabilizedRiftPrismEntity extends ItemEntity {
 
     private static final Random RAND = new Random();
-    private static final Map<Item, Item> CONVERSIONS = ImmutableMap.of(
-            AEItems.FLUIX_AXE.asItem(), ImpenRegistry.RIFT_AXE_ITEM.asItem(),
-            AEItems.FLUIX_HOE.asItem(), ImpenRegistry.RIFT_HOE_ITEM.asItem(),
-            AEItems.FLUIX_PICK.asItem(), ImpenRegistry.RIFT_PICKAXE_ITEM.asItem(),
-            AEItems.FLUIX_SHOVEL.asItem(), ImpenRegistry.RIFT_SHOVEL_ITEM.asItem(),
-            AEItems.FLUIX_SWORD.asItem(), ImpenRegistry.RIFT_SWORD_ITEM.asItem());
+    private static final Map<Item, Item> CONVERSIONS = ImmutableMap.of();
     
     private int transformTime = 0;
     

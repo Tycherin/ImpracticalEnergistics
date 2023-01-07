@@ -20,11 +20,6 @@ import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
-import com.tycherin.impen.item.RiftAxeItem;
-import com.tycherin.impen.item.RiftHoeItem;
-import com.tycherin.impen.item.RiftPickaxeItem;
-import com.tycherin.impen.item.RiftShovelItem;
-import com.tycherin.impen.item.RiftSwordItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
@@ -43,7 +38,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -53,7 +47,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.OreBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -143,13 +136,6 @@ public class ImpenRegistry {
     public static final MachineDefinition<EjectionDriveBlock, EjectionDriveBlockEntity> EJECTION_DRIVE =
             makeMachine("ejection_drive", EjectionDriveBlock::new, EjectionDriveBlockEntity::new, true);
     //@formatter:on
-
-    // Tools
-    public static final ItemDefinition RIFT_AXE_ITEM = makeItem("rift_axe", RiftAxeItem::new);
-    public static final ItemDefinition RIFT_HOE_ITEM = makeItem("rift_hoe", RiftHoeItem::new);
-    public static final ItemDefinition RIFT_PICKAXE_ITEM = makeItem("rift_pickaxe", RiftPickaxeItem::new);
-    public static final ItemDefinition RIFT_SHOVEL_ITEM = makeItem("rift_shovel", RiftShovelItem::new);
-    public static final ItemDefinition RIFT_SWORD_ITEM = makeItem("rift_sword", RiftSwordItem::new);
 
     // Materials
     public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
@@ -268,18 +254,6 @@ public class ImpenRegistry {
 
     public static ItemDefinition makeItem(final String name, final Supplier<Item> sup) {
         final var def = new ItemDefinition(ITEMS.register(name, sup));
-        ImpenRegistry.ITEMS_LIST.add(def);
-        return def;
-    }
-
-    private static <BT extends CropBlock> PlantDefinition<BT> makeCrop(final String cropName, final String seedName,
-            final Function<BlockBehaviour.Properties, BT> func) {
-        final var blockHolder = BLOCKS.register(cropName, () -> func.apply(BlockBehaviour.Properties.of(Material.PLANT)
-                .noCollission().randomTicks().instabreak().sound(SoundType.CROP)));
-        final var itemHolder = ITEMS.register(seedName,
-                () -> new ItemNameBlockItem(blockHolder.get(), getItemProps()));
-        final var def = new PlantDefinition<BT>(blockHolder, itemHolder);
-        ImpenRegistry.BLOCKS_LIST.add(def);
         ImpenRegistry.ITEMS_LIST.add(def);
         return def;
     }
