@@ -4,11 +4,11 @@ Readme goes here!
 
 ## About
 
-This is an impractical mod.
+An addon mod for Applied Energistics 2 that adds several features that are interesting, unique, and generally impractical.
 
 ## Contacts
 
-* Github (TODO)
+* Github https://github.com/Tycherin/ImpracticalEnergistics
 
 ## License
 
@@ -21,4 +21,4 @@ TODO
 
 ## Issues
 
-TODO
+https://github.com/Tycherin/ImpracticalEnergistics/issues
