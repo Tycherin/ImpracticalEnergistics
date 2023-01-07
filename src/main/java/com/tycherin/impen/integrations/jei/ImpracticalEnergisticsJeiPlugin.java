@@ -49,8 +49,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG,
             ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL,
             ImpenRegistry.LUNCHBOX_CELL_ITEM,
-            ImpenRegistry.PLANTABLE_CERTUS.item(),
-            ImpenRegistry.PLANTABLE_FLUIX.item(),
             ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
             ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
             ImpenRegistry.SPATIAL_RIFT_STABILIZER,

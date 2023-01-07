@@ -8,8 +8,6 @@ import java.util.function.Supplier;
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
-import com.tycherin.impen.block.PlantableCertusBlock;
-import com.tycherin.impen.block.PlantableFluixBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.SpatialRiftStabilizerBlock;
@@ -145,12 +143,6 @@ public class ImpenRegistry {
     public static final MachineDefinition<EjectionDriveBlock, EjectionDriveBlockEntity> EJECTION_DRIVE =
             makeMachine("ejection_drive", EjectionDriveBlock::new, EjectionDriveBlockEntity::new, true);
     //@formatter:on
-
-    // Plantable crops
-    public static final PlantDefinition<PlantableCertusBlock> PLANTABLE_CERTUS = makeCrop("plantable_certus",
-            "plantable_certus_seeds", PlantableCertusBlock::new);
-    public static final PlantDefinition<PlantableFluixBlock> PLANTABLE_FLUIX = makeCrop("plantable_fluix",
-            "plantable_fluix_seeds", PlantableFluixBlock::new);
 
     // Tools
     public static final ItemDefinition RIFT_AXE_ITEM = makeItem("rift_axe", RiftAxeItem::new);

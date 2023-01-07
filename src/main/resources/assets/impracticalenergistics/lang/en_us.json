@@ -19,8 +19,6 @@
     "block.impracticalenergistics.rift_shard_block": "Rift Shard Block",
     
     "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
-    "item.impracticalenergistics.plantable_certus_seeds": "Plantable Certus Seed",
-    "item.impracticalenergistics.plantable_fluix_seeds": "Plantable Fluix Seed",
     "item.impracticalenergistics.capture_plane": "ME Capture Plane",
     "item.impracticalenergistics.rift_prism": "Rift Prism",
     "item.impracticalenergistics.stabilized_rift_prism": "Stabilized Rift Prism",
@@ -84,8 +82,6 @@
     "jei.impracticalenergistics.description.disintegrator_capsule_luck": "When used in a Possibility Disintegrator, improves the chances of other capsule effects triggering.",
     "jei.impracticalenergistics.description.disintegrator_capsule_player_kill": "When used in a Possibility Disintegrator, any loot dropped by trapped mobs will drop as though the mob was attacked by a player.",
     "jei.impracticalenergistics.description.lunchbox_cell": "A specially modified Storage Cell that you can eat from directly. Use while holding to eat any items stored in the cell.",
-    "jei.impracticalenergistics.description.plantable_certus_seeds": "Certus seeds suitable for planting in the ground. Works like a normal crop, but doesn't drop extra seeds.",
-    "jei.impracticalenergistics.description.plantable_fluix_seeds": "Fluix seeds suitable for planting in the ground. Works like a normal crop, but doesn't drop extra seeds.",
     "jei.impracticalenergistics.description.possibility_disintegrator": "Traps mobs that walk on it and gradually disintegrates them. Can consume Disintegrator Capsule items from an attached ME storage system to add additional effects.",
     "jei.impracticalenergistics.description.spatial_rift_manipulator": "Fills spatial storage cells with blocks from alternate spacetimes. Requires catalysts provided by Spatial Rift Stabilizers on the same ME network.",
     "jei.impracticalenergistics.description.spatial_rift_stabilizer": "Supplies Rift Catalysts to Spatial Rift Manipulators on the same ME network. Note that providing the same catalyst multiple times will have a diminishing effect.",

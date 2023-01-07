@@ -17,7 +17,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.world.item.Items;
@@ -355,17 +354,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('F', Items.LEVER)
                 .unlockedBy("has_empty_disintegrator_capsule", has(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY))
                 .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL, "misc"));
-
-        // === Seeds ===
-
-        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_CERTUS.item())
-                .requires(AEItems.CERTUS_CRYSTAL_SEED)
-                .unlockedBy("has_certus_seed", has(AEItems.CERTUS_CRYSTAL_SEED))
-                .save(consumer, ImpenIdUtil.makeId("plantable_certus_seeds"));
-        ShapelessRecipeBuilder.shapeless(ImpenRegistry.PLANTABLE_FLUIX.item())
-                .requires(AEItems.FLUIX_CRYSTAL_SEED)
-                .unlockedBy("has_fluix_seed", has(AEItems.FLUIX_CRYSTAL_SEED))
-                .save(consumer, ImpenIdUtil.makeId("plantable_fluix_seeds"));
 
         // === Storage Blocks ===
 

@@ -67,10 +67,6 @@ public class ImpracticalEnergisticsClientSetup {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
 
-            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_CERTUS.block(),
-                    RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.PLANTABLE_FLUIX.block(),
-                    RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.RIFT_GLASS.block(),
                     RenderType.translucent());
         });
