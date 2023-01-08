@@ -50,8 +50,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL,
             ImpenRegistry.LUNCHBOX_CELL_ITEM,
             ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
-            ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
-            ImpenRegistry.SPATIAL_RIFT_STABILIZER,
             ImpenRegistry.EJECTION_DRIVE);
 
     @Override
@@ -102,7 +100,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(final IRecipeCatalystRegistration registry) {
         registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item().getDefaultInstance(),
+                ImpenRegistry.SPATIAL_RIFT_SPAWNER.item().getDefaultInstance(),
                 RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
                 ImpenRegistry.SPATIAL_RIFT_STABILIZER.item().getDefaultInstance(),

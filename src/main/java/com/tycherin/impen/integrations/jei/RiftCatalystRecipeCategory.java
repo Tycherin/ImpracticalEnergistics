@@ -45,7 +45,7 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
                 "textures/gui/rift_catalyst_jei.png");
         this.background = guiHelper.createDrawable(location, 16, 7, 143, 58);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.item().getDefaultInstance());
+                ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem().getDefaultInstance());
     }
 
     @Override

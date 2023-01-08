@@ -1,9 +1,9 @@
-package com.tycherin.impen.block;
+package com.tycherin.impen.block.rift;
 
 import javax.annotation.Nullable;
 
-import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
-import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
+import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 
 import appeng.block.AEBaseEntityBlock;
 import appeng.menu.MenuOpener;
@@ -17,12 +17,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class SpatialRiftStabilizerBlock extends AEBaseEntityBlock<SpatialRiftStabilizerBlockEntity>{
+public class SpatialRiftStabilizerBlock extends AEBaseEntityBlock<SpatialRiftStabilizerBlockEntity> {
 
-    public SpatialRiftStabilizerBlock(Properties props) {
+    public SpatialRiftStabilizerBlock(final Properties props) {
         super(props);
+        props.requiresCorrectToolForDrops();
     }
-
+    
     @Override
     public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p,
             final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
@@ -30,7 +31,8 @@ public class SpatialRiftStabilizerBlock extends AEBaseEntityBlock<SpatialRiftSta
             final var be = (SpatialRiftStabilizerBlockEntity) level.getBlockEntity(pos);
             if (be != null) {
                 if (!level.isClientSide()) {
-                    MenuOpener.open(SpatialRiftStabilizerMenu.TYPE, p, MenuLocators.forBlockEntity(be));
+                    // TODO Use correct types here
+                    MenuOpener.open(PossibilityDisintegratorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }

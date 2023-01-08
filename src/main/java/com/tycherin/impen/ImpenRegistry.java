@@ -9,17 +9,18 @@ import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
-import com.tycherin.impen.block.SpatialRiftManipulatorBlock;
-import com.tycherin.impen.block.SpatialRiftStabilizerBlock;
+import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
+import com.tycherin.impen.block.rift.SpatialRiftStabilizerBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
-import com.tycherin.impen.blockentity.SpatialRiftManipulatorBlockEntity;
-import com.tycherin.impen.blockentity.SpatialRiftStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
+import com.tycherin.impen.item.RiftedSpatialCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
@@ -93,8 +94,8 @@ public class ImpenRegistry {
         BEAMED_NETWORK_LINK.block().setBlockEntity(BeamedNetworkLinkBlockEntity.class,
                 BEAMED_NETWORK_LINK.blockEntity(),
                 null, (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
-        SPATIAL_RIFT_MANIPULATOR.block().setBlockEntity(SpatialRiftManipulatorBlockEntity.class,
-                SPATIAL_RIFT_MANIPULATOR.blockEntity(), null, null);
+        SPATIAL_RIFT_SPAWNER.block().setBlockEntity(SpatialRiftSpawnerBlockEntity.class,
+                SPATIAL_RIFT_SPAWNER.blockEntity(), null, null);
         SPATIAL_RIFT_STABILIZER.block().setBlockEntity(SpatialRiftStabilizerBlockEntity.class,
                 SPATIAL_RIFT_STABILIZER.blockEntity(), null, null);
         ATMOSPHERIC_CRYSTALLIZER.block().setBlockEntity(AtmosphericCrystallizerBlockEntity.class,
@@ -108,7 +109,6 @@ public class ImpenRegistry {
         Upgrades.add(AEItems.SPEED_CARD, ATMOSPHERIC_CRYSTALLIZER.item(), 3);
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
-        Upgrades.add(AEItems.SPEED_CARD, SPATIAL_RIFT_MANIPULATOR.item(), 3);
     }
 
     // ***
@@ -121,12 +121,6 @@ public class ImpenRegistry {
             makeMachine("beamed_network_link", BeamedNetworkLinkBlock::new, BeamedNetworkLinkBlockEntity::new, true,
                     props -> props.noOcclusion());
 
-    public static final MachineDefinition<SpatialRiftManipulatorBlock, SpatialRiftManipulatorBlockEntity> SPATIAL_RIFT_MANIPULATOR =
-            makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
-
-    public static final MachineDefinition<SpatialRiftStabilizerBlock, SpatialRiftStabilizerBlockEntity> SPATIAL_RIFT_STABILIZER =
-            makeMachine("spatial_rift_stabilizer", SpatialRiftStabilizerBlock::new, SpatialRiftStabilizerBlockEntity::new, false);
-
     public static final MachineDefinition<AtmosphericCrystallizerBlock, AtmosphericCrystallizerBlockEntity> ATMOSPHERIC_CRYSTALLIZER =
             makeMachine("atmospheric_crystallizer", AtmosphericCrystallizerBlock::new, AtmosphericCrystallizerBlockEntity::new, true);
 
@@ -135,6 +129,12 @@ public class ImpenRegistry {
 
     public static final MachineDefinition<EjectionDriveBlock, EjectionDriveBlockEntity> EJECTION_DRIVE =
             makeMachine("ejection_drive", EjectionDriveBlock::new, EjectionDriveBlockEntity::new, true);
+
+    public static final MachineDefinition<SpatialRiftSpawnerBlock, SpatialRiftSpawnerBlockEntity> SPATIAL_RIFT_SPAWNER =
+            makeMachine("spatial_rift_spawner", SpatialRiftSpawnerBlock::new, SpatialRiftSpawnerBlockEntity::new, false);
+
+    public static final MachineDefinition<SpatialRiftStabilizerBlock, SpatialRiftStabilizerBlockEntity> SPATIAL_RIFT_STABILIZER =
+            makeMachine("spatial_rift_stabilizer", SpatialRiftStabilizerBlock::new, SpatialRiftStabilizerBlockEntity::new, false);
     //@formatter:on
 
     // Materials
@@ -188,6 +188,9 @@ public class ImpenRegistry {
 
     public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
             () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
+
+    public static final ItemDefinition RIFTED_SPATIAL_CELL_ITEM = makeItem("rifted_spatial_cell",
+            RiftedSpatialCellItem::new);
 
     // Custom recipe types
     public static final RegistryObject<RecipeType<RiftCatalystRecipe>> RIFT_CATALYST_RECIPE_TYPE = ImpenRegistry

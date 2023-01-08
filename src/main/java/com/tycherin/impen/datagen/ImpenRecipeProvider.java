@@ -53,28 +53,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
                 .save(consumer);
         // TODO Advanced BNL
-        // SRM
-        ShapedRecipeBuilder.shaped(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR)
-                .pattern("III")
-                .pattern("PXP")
-                .pattern("IRI")
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('P', ImpenRegistry.RIFT_PRISM)
-                .define('X', AEBlocks.SPATIAL_IO_PORT)
-                .define('R', Blocks.REDSTONE_BLOCK)
-                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
-                .save(consumer);
-        // SRS
-        ShapedRecipeBuilder.shaped(ImpenRegistry.SPATIAL_RIFT_STABILIZER)
-                .pattern("III")
-                .pattern("PXP")
-                .pattern("IRI")
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('P', ImpenRegistry.RIFT_PRISM)
-                .define('X', AEBlocks.SPATIAL_PYLON)
-                .define('R', Items.REDSTONE)
-                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
-                .save(consumer);
+        // TODO Re-add Spatial Rift recipes
         // Atm. Crystallizer
         ShapedRecipeBuilder.shaped(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER)
                 .pattern(" I ")

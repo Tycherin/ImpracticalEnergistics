@@ -2,8 +2,6 @@ package com.tycherin.impen;
 
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
-import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
-import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.datagen.ImpenBlockTagsProvider;
 import com.tycherin.impen.datagen.ImpenItemModelProvider;
@@ -57,8 +55,6 @@ public class ImpracticalEnergisticsMod {
 
     public void registerMenus(final RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
-                SpatialRiftManipulatorMenu.TYPE,
-                SpatialRiftStabilizerMenu.TYPE,
                 AtmosphericCrystallizerMenu.TYPE,
                 PossibilityDisintegratorMenu.TYPE);
     }

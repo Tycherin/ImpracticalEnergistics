@@ -1,18 +1,15 @@
 package com.tycherin.impen;
 
-import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
-import com.tycherin.impen.client.gui.SpatialRiftManipulatorScreen;
-import com.tycherin.impen.client.gui.SpatialRiftStabilizerMenu;
-import com.tycherin.impen.client.gui.SpatialRiftStabilizerScreen;
-import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
-import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
-
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
+import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
+import appeng.blockentity.AEBaseBlockEntity;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.style.StyleManager;
 import appeng.client.render.SimpleModelLoader;
@@ -66,6 +63,7 @@ public class ImpracticalEnergisticsClientSetup {
     public static void clientSetupEvent(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
+            ImpracticalEnergisticsClientSetup.setupBlockEntityRepresentations();
 
             ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.RIFT_GLASS.block(),
                     RenderType.translucent());
@@ -73,18 +71,6 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void setupScreens() {
-        MenuScreens.<SpatialRiftManipulatorMenu, SpatialRiftManipulatorScreen>register(
-                SpatialRiftManipulatorMenu.TYPE,
-                (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_manipulator.json");
-                    return new SpatialRiftManipulatorScreen(menu, playerInv, title, style);
-                });
-        MenuScreens.<SpatialRiftStabilizerMenu, SpatialRiftStabilizerScreen>register(
-                SpatialRiftStabilizerMenu.TYPE,
-                (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_stabilizer.json");
-                    return new SpatialRiftStabilizerScreen(menu, playerInv, title, style);
-                });
         MenuScreens.<AtmosphericCrystallizerMenu, AtmosphericCrystallizerScreen>register(
                 AtmosphericCrystallizerMenu.TYPE,
                 (menu, playerInv, title) -> {
@@ -96,6 +82,18 @@ public class ImpracticalEnergisticsClientSetup {
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/possibility_disintegrator.json");
                     return new PossibilityDisintegratorScreen(menu, playerInv, title, style);
+                });
+    }
+    
+    public static void setupBlockEntityRepresentations() {
+        // AE2 needs to be told which item icon to use when representing each BE in the network display. This needs to
+        // happen before BEs are instantiated, or else AE2 will explode.
+        Arrays.asList(
+                // TODO Add everything else
+                ImpenRegistry.SPATIAL_RIFT_SPAWNER,
+                ImpenRegistry.SPATIAL_RIFT_STABILIZER)
+                .forEach(machineDef -> {
+                    AEBaseBlockEntity.registerBlockEntityItem(machineDef.blockEntity(), machineDef.item());
                 });
     }
 
