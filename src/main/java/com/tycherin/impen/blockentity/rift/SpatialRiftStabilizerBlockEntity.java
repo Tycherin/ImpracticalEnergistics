@@ -49,11 +49,15 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
     
     protected boolean doOperation() {
         final ItemStack input = this.invWrapper.getInput().getStackInSlot(0);
-        final int plotId = ((RiftedSpatialCellItem)input.getItem()).getPlotId(input);
+        final int plotId = ((RiftedSpatialCellItem) input.getItem()).getPlotId(input);
 
-        // TODO Need to store size/cell type
-        
-        final ItemStack output = AEItems.SPATIAL_CELL2.stack();
+        final int cellSize = ((RiftedSpatialCellItem) input.getItem()).getOriginalCellSize(input);
+        final ItemStack output = switch (cellSize) {
+        case 2 -> AEItems.SPATIAL_CELL2.stack();
+        case 16 -> AEItems.SPATIAL_CELL16.stack();
+        case 128 -> AEItems.SPATIAL_CELL128.stack();
+        default -> throw new RuntimeException("Unrecognized cell size: " + cellSize);
+        };
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
         

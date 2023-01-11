@@ -11,6 +11,7 @@ import com.tycherin.impen.util.SpatialRiftUtil;
 
 import appeng.api.implementations.items.ISpatialStorageCell;
 import appeng.api.inventories.InternalInventory;
+import appeng.items.storage.SpatialStorageCellItem;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,13 +74,13 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         }
     }
 
-    private ItemStack getOutputForSpatialCell(final ItemStack item, final ISpatialStorageCell cell) {
+    private ItemStack getOutputForSpatialCell(final ItemStack inputItem, final ISpatialStorageCell cell) {
         // Step 1: Find the spatial plot for the given cell, and fail if it doesn't exist
-        final int plotId = cell.getAllocatedPlotId(item);
+        final int plotId = cell.getAllocatedPlotId(inputItem);
         if (plotId == -1) {
             // No plot allocated. This shouldn't happen normally because of the input filter, but in case it does, we
             // fall back on returning the cell as-is as a safety measure.
-            return item;
+            return inputItem;
         }
 
         // Step 2: Update SpatialRiftManager with the association we're about to make
@@ -87,7 +88,9 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
         // Step 3: Create the new item with the relevant metadata and return it
         final ItemStack is = new ItemStack(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM);
-        ((RiftedSpatialCellItem)is.getItem()).setPlotId(is, plotId);
+        ((RiftedSpatialCellItem) is.getItem()).setPlotId(is, plotId);
+        ((RiftedSpatialCellItem) is.getItem()).setOriginalCellSize(is,
+                ((SpatialStorageCellItem) inputItem.getItem()).getMaxStoredDim(inputItem));
         return is;
     }
 
