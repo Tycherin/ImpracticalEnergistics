@@ -2,6 +2,9 @@ package com.tycherin.impen.blockentity.rift;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
@@ -20,6 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+    
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
     
     private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
@@ -60,6 +65,9 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
         };
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
+        
+        final var ingredientMap = ((RiftedSpatialCellItem) input.getItem()).getIngredients(input);
+        LOGGER.info("Found ingredients: {}", ingredientMap);
         
         // TODO Actually mutate blocks
         

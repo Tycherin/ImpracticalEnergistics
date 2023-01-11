@@ -9,12 +9,14 @@ import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
+import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
 import com.tycherin.impen.block.rift.SpatialRiftStabilizerBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
@@ -98,6 +100,8 @@ public class ImpenRegistry {
                 SPATIAL_RIFT_SPAWNER.blockEntity(), null, null);
         SPATIAL_RIFT_STABILIZER.block().setBlockEntity(SpatialRiftStabilizerBlockEntity.class,
                 SPATIAL_RIFT_STABILIZER.blockEntity(), null, null);
+        SPATIAL_RIFT_MANIPULATOR.block().setBlockEntity(SpatialRiftManipulatorBlockEntity.class,
+                SPATIAL_RIFT_MANIPULATOR.blockEntity(), null, null);
         ATMOSPHERIC_CRYSTALLIZER.block().setBlockEntity(AtmosphericCrystallizerBlockEntity.class,
                 ATMOSPHERIC_CRYSTALLIZER.blockEntity(), null, null);
         POSSIBILITY_DISINTEGRATOR.block().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
@@ -135,6 +139,9 @@ public class ImpenRegistry {
 
     public static final MachineDefinition<SpatialRiftStabilizerBlock, SpatialRiftStabilizerBlockEntity> SPATIAL_RIFT_STABILIZER =
             makeMachine("spatial_rift_stabilizer", SpatialRiftStabilizerBlock::new, SpatialRiftStabilizerBlockEntity::new, false);
+
+    public static final MachineDefinition<SpatialRiftManipulatorBlock, SpatialRiftManipulatorBlockEntity> SPATIAL_RIFT_MANIPULATOR =
+            makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
     //@formatter:on
 
     // Materials

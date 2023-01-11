@@ -91,6 +91,7 @@ public class ImpracticalEnergisticsClientSetup {
         Arrays.asList(
                 // TODO Add everything else
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,
+                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
                 ImpenRegistry.SPATIAL_RIFT_STABILIZER)
                 .forEach(machineDef -> {
                     AEBaseBlockEntity.registerBlockEntityItem(machineDef.blockEntity(), machineDef.item());

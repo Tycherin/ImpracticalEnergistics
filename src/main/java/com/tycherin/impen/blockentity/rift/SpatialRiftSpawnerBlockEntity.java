@@ -35,11 +35,6 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
                 this::doOperation);
     }
 
-    public int progressOperation() {
-        // TODO Draw power
-        return 1;
-    }
-
     @Override
     protected Optional<MachineOperation> getOperation() {
         if (!this.enableOperation()) {
@@ -118,5 +113,10 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             return slot == 0
                     && SpatialRiftUtil.getPlotId(stack).isPresent();
         }
+    }
+
+    @Override
+    protected int progressOperation() {
+        return 1;
     }
 }
