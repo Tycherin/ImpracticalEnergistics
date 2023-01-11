@@ -44,6 +44,7 @@ public class RiftCatalystRecipeProvider {
             .put(ImpenRegistry.RIFT_CATALYST_END_STONE, Blocks.END_STONE)
             .put(ImpenRegistry.RIFT_CATALYST_NETHERRACK, Blocks.NETHERRACK)
             .put(ImpenRegistry.RIFT_CATALYST_STONE, Blocks.STONE)
+            .put(ImpenRegistry.RIFT_CATALYST_RIFTSTONE, ImpenRegistry.RIFTSTONE.asBlock())
             .build();
 
     private static final int BASE_PROBABILITY = 5;
@@ -181,7 +182,7 @@ public class RiftCatalystRecipeProvider {
         public static RiftCatalystRecipeBuilder of(final ItemDefinition catalyst) {
             final var builder = new RiftCatalystRecipeBuilder();
             if (!CATALYSTS_TO_BLOCKS.containsKey(catalyst)) {
-                throw new IllegalArgumentException("No mapping found for catalyst: " + catalyst);
+                throw new IllegalArgumentException("No mapping found for catalyst: " + catalyst.getKey());
             }
 
             builder.catalyst = catalyst.asItem();

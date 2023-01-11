@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "textures": {
+    "end": "impracticalenergistics:block/spatial_rift_manipulator_end",
+    "side": "impracticalenergistics:block/spatial_rift_stabilizer_side"
+  }
+}

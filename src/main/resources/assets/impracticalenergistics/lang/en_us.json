@@ -1,5 +1,6 @@
 {
     "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
+    "block.impracticalenergistics.spatial_rift_spawner": "Spatial Rift Spawner",
     "block.impracticalenergistics.spatial_rift_manipulator": "Spatial Rift Manipulator",
     "block.impracticalenergistics.spatial_rift_stabilizer": "Spatial Rift Stabilizer",
     "block.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
@@ -22,6 +23,7 @@
     "item.impracticalenergistics.capture_plane": "ME Capture Plane",
     "item.impracticalenergistics.rift_prism": "Rift Prism",
     "item.impracticalenergistics.stabilized_rift_prism": "Stabilized Rift Prism",
+    "item.impracticalenergistics.rifted_spatial_cell": "Rifted Spatial Cell",
     
     "item.impracticalenergistics.aerocrystal": "Aerocrystal",
     "item.impracticalenergistics.blazing_aerocrystal": "Blazing Aerocrystal",
@@ -82,5 +84,5 @@
     "jei.impracticalenergistics.description.spatial_rift_stabilizer": "Supplies Rift Catalysts to Spatial Rift Manipulators on the same ME network. Note that providing the same catalyst multiple times will have a diminishing effect.",
     "jei.impracticalenergistics.description.toaster_drive": "A specially modified ME Chest that ejects its storage cell when the cell is full of items or types. Will push into any inventory above it, or into the world otherwise.",
     
-    "ignore.me": "This space intentionally left blank"
+    "impracticalenergistics.ignore.me": "This space intentionally left blank"
 }
