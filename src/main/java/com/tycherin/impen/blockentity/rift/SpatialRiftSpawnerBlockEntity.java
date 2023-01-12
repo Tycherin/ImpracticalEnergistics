@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
-import com.tycherin.impen.logic.rift.SpatialRiftManager;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 import com.tycherin.impen.util.SpatialRiftUtil;
 
@@ -77,9 +76,6 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             // fall back on returning the cell as-is as a safety measure.
             return inputItem;
         }
-
-        // Step 2: Update SpatialRiftManager with the association we're about to make
-        SpatialRiftManager.INSTANCE.getOrCreate(plotId);
 
         // Step 3: Create the new item with the relevant metadata and return it
         final ItemStack is = new ItemStack(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM);
