@@ -1,5 +1,7 @@
 package com.tycherin.impen.logic;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,8 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class SpatialRiftStabilizerLogic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final double WEIGHT_TOTAL_MINIMUM = 100.0;
-    private static final double DIMINISHING_RETURNS_RATE = 1.0; // I am unclear if this mechanic is a good idea or not
+    private static final Random RAND = new Random();
 
     private final SpatialRiftStabilizerBlockEntity be;
 
@@ -40,45 +42,48 @@ public class SpatialRiftStabilizerLogic {
         this.be = be;
     }
 
-    public boolean addBlocksToPlot(final SpatialStoragePlot plot, final Map<Item, Integer> ingredients) {
-        final Stream<BlockPos> blocksToReplace = getBlocksToReplace(plot);
-        final Supplier<Block> blockReplacer = getBlockReplacer(ingredients);
+    public void addBlocksToPlot(final SpatialStoragePlot plot, final Map<Item, Integer> ingredients) {
+        final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
+        final Supplier<Block> blockReplacer = getBlockReplacer(ingredients, blocksToReplace.size());
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
         blocksToReplace.forEach(blockPos -> {
             spatialLevel.setBlock(blockPos, blockReplacer.get().defaultBlockState(), Block.UPDATE_NONE);
         });
-
-        return true;
     }
 
-    private Stream<BlockPos> getBlocksToReplace(final SpatialStoragePlot plot) {
+    private List<BlockPos> getBlocksToReplace(final SpatialStoragePlot plot) {
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-        final BlockPos startPos = plot.getOrigin();
-        final BlockPos endPos = new BlockPos(
-                startPos.getX() + plot.getSize().getX() - 1,
-                startPos.getY() + plot.getSize().getY() - 1,
-                startPos.getZ() + plot.getSize().getZ() - 1);
 
-        final Stream<BlockPos> blocks = BlockPos.betweenClosedStream(startPos, endPos);
+        final BlockPos firstCorner = plot.getOrigin();
+        final BlockPos secondCorner = firstCorner.offset(
+                plot.getSize().getX() - 1,
+                plot.getSize().getY() - 1,
+                plot.getSize().getZ() - 1);
+        Stream<BlockPos> blocks = BlockPos.betweenClosedStream(firstCorner, secondCorner);
+
         if (ImpenConfig.SETTINGS.riftOverwriteBlocks()) {
-            return blocks.filter(blockPos -> {
+            blocks = blocks.filter(blockPos -> {
                 // Overwriting block entities is weird, and I don't want to mess with that
                 return spatialLevel.getBlockEntity(blockPos) == null;
             });
         }
         else {
-            return blocks.filter(blockPos -> {
+            blocks = blocks.filter(blockPos -> {
                 final BlockState bs = spatialLevel.getBlockState(blockPos);
                 // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite
                 // those
                 return bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block());
             });
         }
+        return blocks
+                // Need this call to freeze the MutableBlockPos that the iterator returns
+                .map(BlockPos::immutable)
+                .collect(Collectors.toList());
     }
 
-    private Supplier<Block> getBlockReplacer(final Map<Item, Integer> ingredients) {
-        final Map<Block, Double> runningWeights = new HashMap<>();
+    private Supplier<Block> getBlockReplacer(final Map<Item, Integer> ingredients, final int numBlocks) {
+        final Map<Block, Integer> weights = new HashMap<>();
         final Set<Block> baseBlocks = new HashSet<>();
 
         ingredients.forEach((item, count) -> {
@@ -89,87 +94,89 @@ public class SpatialRiftStabilizerLogic {
             }
             else {
                 final RiftCatalystRecipe recipe = recipeOpt.get();
-                for (int i = 0; i < count; i++) {
-                    final double multiplier = Math.pow(DIMINISHING_RETURNS_RATE, i);
-                    recipe.getWeights().forEach(weight -> {
-                        runningWeights.merge(weight.block(), weight.probability() * multiplier, Double::sum);
-                    });
-                }
+                recipe.getWeights().forEach(weight -> {
+                    weights.merge(weight.block(), weight.blockCount() * count, Integer::sum);
+                });
                 baseBlocks.add(recipe.getBaseBlock());
             }
         });
 
-        final List<SpatialRiftWeight> aggregateWeights = runningWeights.entrySet().stream()
-                .map(entry -> new SpatialRiftWeight(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-        final double totalWeight = aggregateWeights.stream().mapToDouble(SpatialRiftWeight::probability).sum();
-        if (totalWeight < WEIGHT_TOTAL_MINIMUM) {
-            final double baseWeight = WEIGHT_TOTAL_MINIMUM - totalWeight;
-            baseBlocks.forEach(block -> {
-                aggregateWeights.add(new SpatialRiftWeight(block, baseWeight / baseBlocks.size()));
-            });
+        final Block baseBlock;
+        final double riftAccidentProbability = switch (baseBlocks.size()) {
+        case 0 -> throw new RuntimeException("Must have at least one base block");
+        case 1 -> 0.0;
+        case 2 -> 0.2;
+        case 3 -> 0.4;
+        case 4 -> 0.8;
+        default -> 1;
+        };
+        if (RAND.nextDouble() < riftAccidentProbability) {
+            baseBlock = ImpenRegistry.RIFTSTONE.asBlock();
+        }
+        else {
+            baseBlock = new ArrayList<>(baseBlocks).get(RAND.nextInt(baseBlocks.size()));
         }
 
-        if (baseBlocks.size() > 1) {
-            // Conflicting base blocks leads to exciting things happening
-            final double existingWeightMax = Math.max(totalWeight, WEIGHT_TOTAL_MINIMUM);
-            final double riftstoneChance = switch (baseBlocks.size()) {
-            case 2 -> existingWeightMax / 3;
-            case 3 -> existingWeightMax;
-            default -> existingWeightMax * 4;
-            };
-            final double riftOreChance = riftstoneChance / 8;
+        int totalWeight = weights.values().stream().mapToInt(i -> i).sum();
 
-            aggregateWeights.add(new SpatialRiftWeight(ImpenRegistry.RIFTSTONE.block(), riftstoneChance));
-            aggregateWeights.add(new SpatialRiftWeight(ImpenRegistry.RIFT_SHARD_ORE.block(), riftOreChance));
+        // So here's the plan:
+        // 1. Roll a number between 0 and max(totalWeight, 100)
+        // 2. If it matches a block, increment the block count and decrement the block probability
+        // 3. If it doesn't match a block, increment the base block count
+        // This is slightly inefficient, but we're doing in-memory operations on small arrays, so it's still fast
+        final int numBlockTypes = weights.size() + 1;
+        final Block[] blockIndexes = new Block[numBlockTypes];
+        final int[] blockProbabilities = new int[numBlockTypes];
+        final int[] blockCounts = new int[numBlockTypes];
+        final AtomicInteger streamsDontHaveCounters = new AtomicInteger(); // sigh
+        weights.forEach((block, probability) -> {
+            final int idx = streamsDontHaveCounters.incrementAndGet() - 1;
+            blockIndexes[idx] = block;
+            blockProbabilities[idx] = probability;
+            blockCounts[idx] = 0;
+        });
+        blockIndexes[numBlockTypes - 1] = baseBlock;
+        blockProbabilities[numBlockTypes - 1] = Integer.MAX_VALUE;
+        blockCounts[numBlockTypes - 1] = 0;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int r = RAND.nextInt(Math.max(totalWeight, 100));
+
+            // The reason we don't need to do bounds checking on this next bit is that MAX_VALUE is so much larger than
+            // anything we care about that we can math around with it and not worry about the consequences
+            int idx = 0;
+            while (r > blockProbabilities[idx]) {
+                r -= blockProbabilities[idx];
+                idx++;
+            }
+
+            blockProbabilities[idx]--;
+            blockCounts[idx]++;
+            totalWeight--;
         }
 
-        LOGGER.info("Generated new set of rift weights: {}",
-                String.join(", ", aggregateWeights.stream().map(Object::toString).collect(Collectors.toList())));
+        final List<Block> blocksToGenerate = new ArrayList<>(numBlocks);
+        for (int i = 0; i < numBlockTypes; i++) {
+            for (int j = 0; j < blockCounts[i]; j++) {
+                blocksToGenerate.add(blockIndexes[i]);
+            }
+        }
+        Collections.shuffle(blocksToGenerate);
 
-        return new SpatialRiftBlockReplacer(aggregateWeights);
+        return new SpatialRiftBlockSupplier(blocksToGenerate);
     }
 
-    public static class SpatialRiftBlockReplacer implements Supplier<Block> {
-        private static final Random RAND = new Random();
-
-        private final int[] probabilities;
+    private static class SpatialRiftBlockSupplier implements Supplier<Block> {
         private final Block[] blocks;
-        private final int totalProbability;
+        private int idx = 0;
 
-        public SpatialRiftBlockReplacer(final List<SpatialRiftWeight> weights) {
-            if (weights.isEmpty()) {
-                throw new IllegalArgumentException("Must have at least 1 weight in the weights list");
-            }
-
-            this.probabilities = new int[weights.size()];
-            this.blocks = new Block[weights.size()];
-
-            int cumulativeProbability = 0;
-            for (int i = 0; i < weights.size(); i++) {
-                final SpatialRiftWeight weight = weights.get(i);
-                cumulativeProbability += (int)weight.probability();
-                probabilities[i] = cumulativeProbability;
-                blocks[i] = weight.block();
-            }
-
-            this.totalProbability = cumulativeProbability;
+        public SpatialRiftBlockSupplier(final List<Block> blocksList) {
+            this.blocks = blocksList.toArray(new Block[blocksList.size()]);
         }
 
         @Override
         public Block get() {
-            final int diceRoll = RAND.nextInt(totalProbability);
-            // It would theoretically be faster to put this in a tree to get O(log n) search times, but these arrays are
-            // small enough that O(n) is fine
-            for (int i = 0; i < probabilities.length; i++) {
-                if (diceRoll > probabilities[i]) {
-                    continue;
-                }
-                return blocks[i];
-            }
-            // If the list is constructed properly, this should never happen
-            throw new RuntimeException("Dice roll not found in probability list, somehow???");
+            return blocks[idx++];
         }
     }
 }

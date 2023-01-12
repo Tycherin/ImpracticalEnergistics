@@ -32,8 +32,6 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     private static final int TEXT_COLOR = 0x000000;
     private static final Component BASE_BLOCK_TEXT = new TranslatableComponent(
             "gui.impracticalenergistics.jei.rift_catalyst.base_block_explanation");
-    private static final Component CATALYST_TEXT = new TranslatableComponent(
-            "gui.impracticalenergistics.jei.rift_catalyst.catalyst_explanation");
 
     public static final ResourceLocation UID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst");
 
@@ -65,10 +63,6 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, xPos, yPos)
                     .addIngredients(ingredient);
         }
-        
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 51, 9)
-                .addItemStack(recipe.getCatalyst().getDefaultInstance())
-                .addTooltipCallback((recipeSlotView, tooltip) -> tooltip.add(CATALYST_TEXT));
 
         layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 51, 32)
                 .addItemStack(getBlockItemStack(recipe.getBaseBlock()))
@@ -85,16 +79,9 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
     public void draw(final RiftCatalystRecipe recipe, final IRecipeSlotsView recipeSlotsView, final PoseStack stack,
             final double mouseX, final double mouseY) {
         forEachOutput(recipe.getWeights(), (weight, xPos, yPos) -> {
-            // This works as long as probabilities are between 0 and 100
-            // 100 will display okay if it's the only one in the list, and semantically, that's the only thing that
-            // makes sense
-            // Numbers smaller than 0.1 will display as 0.0 because ¯\_(ツ)_/¯
-            final String percentageText = weight.probability() >= 1
-                    ? String.format("%.0f%%", weight.probability())
-                    : String.format("%.1f%%", weight.probability());
             // TODO It would be nice to center this string under the item box
-            Minecraft.getInstance().font.draw(stack, new TextComponent(percentageText), xPos - 1, yPos + 19,
-                    TEXT_COLOR);
+            Minecraft.getInstance().font.draw(stack, new TextComponent(Integer.toString(weight.blockCount())),
+                    xPos - 1, yPos + 19, TEXT_COLOR);
         });
     }
 

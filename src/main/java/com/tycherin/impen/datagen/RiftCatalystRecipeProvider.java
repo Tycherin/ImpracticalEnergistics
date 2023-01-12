@@ -128,25 +128,30 @@ public class RiftCatalystRecipeProvider {
             standardBlock(catalyst, block);
 
             checkRecipe(item, (recipeName) -> {
-                final double exchangeRate;
-                if (sparseTag.contains(block)) {
-                    exchangeRate = 2;
-                }
-                else if (singularTag.contains(block)) {
-                    exchangeRate = 1;
-                }
-                else if (denseTag.contains(block)) {
-                    exchangeRate = .25;
-                }
-                else {
-                    // Not an ore, or not a properly tagged ore
-                    exchangeRate = .25;
-                }
-
+                
                 RiftCatalystRecipeBuilder.of(catalyst)
-                        .consumedItems(item)
-                        .weights(new SpatialRiftWeight(block, BASE_PROBABILITY * exchangeRate))
-                        .save(consumer, recipeName);
+                .consumedItems(item)
+                .weights(new SpatialRiftWeight(block, 4))
+                .save(consumer, recipeName);
+                
+                // TODO Figure out numbers & balancing
+                
+//                final double exchangeRate;
+//                if (sparseTag.contains(block)) {
+//                    exchangeRate = 2;
+//                }
+//                else if (singularTag.contains(block)) {
+//                    exchangeRate = 1;
+//                }
+//                else if (denseTag.contains(block)) {
+//                    exchangeRate = .25;
+//                }
+//                else {
+//                    // Not an ore, or not a properly tagged ore
+//                    exchangeRate = .25;
+//                }
+
+                
             });
         }
 
@@ -172,7 +177,6 @@ public class RiftCatalystRecipeProvider {
 
     public static class RiftCatalystRecipeBuilder {
         private Block baseBlock;
-        private Item catalyst;
         private List<Ingredient> consumedItems;
         private List<SpatialRiftWeight> weights;
 
@@ -185,18 +189,12 @@ public class RiftCatalystRecipeProvider {
                 throw new IllegalArgumentException("No mapping found for catalyst: " + catalyst.getKey());
             }
 
-            builder.catalyst = catalyst.asItem();
             builder.baseBlock = CATALYSTS_TO_BLOCKS.get(catalyst);
             return builder;
         }
 
         public RiftCatalystRecipeBuilder baseBlock(final Block baseBlock) {
             this.baseBlock = baseBlock;
-            return this;
-        }
-
-        public RiftCatalystRecipeBuilder catalyst(final Item catalyst) {
-            this.catalyst = catalyst;
             return this;
         }
 
@@ -240,10 +238,6 @@ public class RiftCatalystRecipeProvider {
                 baseBlockJson.addProperty("block", baseBlock.getRegistryName().toString());
                 json.add("base_block", baseBlockJson);
 
-                final var catalystJson = new JsonObject();
-                catalystJson.addProperty("item", catalyst.getRegistryName().toString());
-                json.add("catalyst", catalystJson);
-
                 final var consumedItemsJson = new JsonArray();
                 consumedItems.forEach(ingredient -> consumedItemsJson.add(ingredient.toJson()));
                 json.add("consumed_items", consumedItemsJson);
@@ -252,7 +246,7 @@ public class RiftCatalystRecipeProvider {
                 weights.forEach(weight -> {
                     final var weightJson = new JsonObject();
                     weightJson.addProperty("block", weight.block().getRegistryName().toString());
-                    weightJson.addProperty("probability", weight.probability());
+                    weightJson.addProperty("value", weight.blockCount());
                     weightsJson.add(weightJson);
                 });
                 json.add("weights", weightsJson);

@@ -7,7 +7,6 @@ import com.tycherin.impen.logic.SpatialRiftWeight;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -21,25 +20,19 @@ public class RiftCatalystRecipe implements Recipe<Container> {
     private final ResourceLocation id;
 
     private final Block baseBlock;
-    private final Item catalyst;
     private final List<Ingredient> consumedItems;
     private final List<SpatialRiftWeight> weights;
 
-    public RiftCatalystRecipe(final ResourceLocation id, final Block baseBlock, final Item catalyst,
-            final List<Ingredient> consumedItems, final List<SpatialRiftWeight> weights) {
+    public RiftCatalystRecipe(final ResourceLocation id, final Block baseBlock, final List<Ingredient> consumedItems,
+            final List<SpatialRiftWeight> weights) {
         this.id = id;
         this.baseBlock = baseBlock;
-        this.catalyst = catalyst;
         this.consumedItems = consumedItems;
         this.weights = weights;
     }
 
     public Block getBaseBlock() {
         return this.baseBlock;
-    }
-
-    public Item getCatalyst() {
-        return this.catalyst;
     }
 
     public List<Ingredient> getConsumedItems() {
@@ -50,10 +43,7 @@ public class RiftCatalystRecipe implements Recipe<Container> {
         return this.weights;
     }
 
-    public boolean matches(final ItemStack catalystStack, final Container container) {
-        if (!catalystStack.getItem().equals(catalyst)) {
-            return false;
-        }
+    public boolean matches(final Container container) {
         for (final var ingredient : consumedItems) {
             boolean matched = false;
             for (int i = 0; i < container.getContainerSize(); i++) {

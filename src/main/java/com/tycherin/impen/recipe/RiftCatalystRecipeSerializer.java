@@ -14,10 +14,8 @@ import com.tycherin.impen.logic.SpatialRiftWeight;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,7 +35,6 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
     public RiftCatalystRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
 
         final Block baseBlock = this.getAsBlock(GsonHelper.getAsJsonObject(json, "base_block"));
-        final Item catalyst = ShapedRecipe.itemFromJson(GsonHelper.getAsJsonObject(json, "catalyst"));
 
         final List<Ingredient> consumedItems = new ArrayList<>();
         final JsonArray consumedItemsJson = GsonHelper.getAsJsonArray(json, "consumed_items");
@@ -56,21 +53,20 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
             }
             final JsonObject weightObj = weightJson.getAsJsonObject();
             final Block weightBlock = this.getAsBlock(weightObj);
-            final Double weightProbability = GsonHelper.getAsDouble(weightObj, "probability");
-            if ((weightProbability > 100) || (weightProbability < 0)) {
-                throw new JsonSyntaxException(String.format("Weights must be between 100 and 0 '%s'", weightProbability));
+            final Integer weightValue = GsonHelper.getAsInt(weightObj, "value");
+            if (weightValue < 0 || weightValue > 100) {
+                throw new JsonSyntaxException(String.format("Weight values must be between 100 and 0 '%s'", weightValue));
             }
-            weights.add(new SpatialRiftWeight(weightBlock, weightProbability));
+            weights.add(new SpatialRiftWeight(weightBlock, weightValue));
         });
         
-        return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);
+        return new RiftCatalystRecipe(recipeId, baseBlock, consumedItems, weights);
     }
 
     @Nullable
     @Override
     public RiftCatalystRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer) {
         final Block baseBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
-        final Item catalyst = buffer.readItem().getItem();
 
         final int consumedItemCount = buffer.readInt();
         final List<Ingredient> consumedItems = new ArrayList<>();
@@ -82,17 +78,16 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
         final List<SpatialRiftWeight> weights = new ArrayList<>();
         for (int i = 0; i < weightCount; i++) {
             final Block weightBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
-            final Double weightValue = buffer.readDouble();
+            final Integer weightValue = buffer.readInt();
             weights.add(new SpatialRiftWeight(weightBlock, weightValue));
         }
 
-        return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);
+        return new RiftCatalystRecipe(recipeId, baseBlock, consumedItems, weights);
     }
 
     @Override
     public void toNetwork(final FriendlyByteBuf buffer, final RiftCatalystRecipe recipe) {
         buffer.writeRegistryId(recipe.getBaseBlock());
-        buffer.writeItem(recipe.getCatalyst().getDefaultInstance());
 
         buffer.writeInt(recipe.getConsumedItems().size());
         recipe.getConsumedItems().forEach(ingredient -> ingredient.toNetwork(buffer));
@@ -100,7 +95,7 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
         buffer.writeInt(recipe.getWeights().size());
         recipe.getWeights().forEach(weight -> {
             buffer.writeRegistryId(weight.block());
-            buffer.writeDouble(weight.probability());
+            buffer.writeInt(weight.blockCount());
         });
     }
 
