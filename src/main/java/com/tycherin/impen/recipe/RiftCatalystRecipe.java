@@ -3,7 +3,7 @@ package com.tycherin.impen.recipe;
 import java.util.List;
 
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.logic.rift.RiftWeight;
+import com.tycherin.impen.logic.SpatialRiftWeight;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -23,10 +23,10 @@ public class RiftCatalystRecipe implements Recipe<Container> {
     private final Block baseBlock;
     private final Item catalyst;
     private final List<Ingredient> consumedItems;
-    private final List<RiftWeight> weights;
+    private final List<SpatialRiftWeight> weights;
 
     public RiftCatalystRecipe(final ResourceLocation id, final Block baseBlock, final Item catalyst,
-            final List<Ingredient> consumedItems, final List<RiftWeight> weights) {
+            final List<Ingredient> consumedItems, final List<SpatialRiftWeight> weights) {
         this.id = id;
         this.baseBlock = baseBlock;
         this.catalyst = catalyst;
@@ -46,7 +46,7 @@ public class RiftCatalystRecipe implements Recipe<Container> {
         return this.consumedItems;
     }
 
-    public List<RiftWeight> getWeights() {
+    public List<SpatialRiftWeight> getWeights() {
         return this.weights;
     }
 

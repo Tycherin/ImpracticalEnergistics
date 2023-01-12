@@ -8,6 +8,7 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.logic.SpatialRiftStabilizerLogic;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
 import appeng.api.inventories.InternalInventory;
@@ -25,10 +26,12 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     
+    // TODO Change the time required for an operation based on the size of the plot
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
     
     private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
     private final MachineOperation op;
+    private final SpatialRiftStabilizerLogic logic;
     
     public SpatialRiftStabilizerBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_STABILIZER, blockPos, blockState);
@@ -36,6 +39,7 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
                 DEFAULT_SPEED_TICKS,
                 this::enableOperation,
                 this::doOperation);
+        this.logic = new SpatialRiftStabilizerLogic(this);
     }
 
     @Override
@@ -71,10 +75,16 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
         
         // TODO Actually mutate blocks
         
-        this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
-        this.invWrapper.getOutput().setItemDirect(0, output);
+        if (logic.addBlocksToPlot(plot, ingredientMap)) {
+            this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
+            this.invWrapper.getOutput().setItemDirect(0, output);
 
-        return true;
+            return true;
+        }
+        else {
+            // TODO What would cause this?
+            return false;
+        }
     }
 
     @Override

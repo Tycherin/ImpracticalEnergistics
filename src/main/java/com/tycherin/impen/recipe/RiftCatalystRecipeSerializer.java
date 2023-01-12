@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.tycherin.impen.logic.rift.RiftWeight;
+import com.tycherin.impen.logic.SpatialRiftWeight;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +45,7 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
             consumedItems.add(Ingredient.fromJson(ingredientJson));
         });
         
-        final List<RiftWeight> weights = new ArrayList<>();
+        final List<SpatialRiftWeight> weights = new ArrayList<>();
         final JsonArray blockWeightsJson = GsonHelper.getAsJsonArray(json, "weights");
         if (blockWeightsJson.size() > MAX_OUTPUTS) {
             throw new JsonSyntaxException(String.format("Too many outputs for '%s'", recipeId));
@@ -60,7 +60,7 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
             if ((weightProbability > 100) || (weightProbability < 0)) {
                 throw new JsonSyntaxException(String.format("Weights must be between 100 and 0 '%s'", weightProbability));
             }
-            weights.add(new RiftWeight(weightBlock, weightProbability));
+            weights.add(new SpatialRiftWeight(weightBlock, weightProbability));
         });
         
         return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);
@@ -79,11 +79,11 @@ public class RiftCatalystRecipeSerializer extends ForgeRegistryEntry<RecipeSeria
         }
 
         final int weightCount = buffer.readInt();
-        final List<RiftWeight> weights = new ArrayList<>();
+        final List<SpatialRiftWeight> weights = new ArrayList<>();
         for (int i = 0; i < weightCount; i++) {
             final Block weightBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
             final Double weightValue = buffer.readDouble();
-            weights.add(new RiftWeight(weightBlock, weightValue));
+            weights.add(new SpatialRiftWeight(weightBlock, weightValue));
         }
 
         return new RiftCatalystRecipe(recipeId, baseBlock, catalyst, consumedItems, weights);

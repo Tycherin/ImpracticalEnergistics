@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.logic.rift.RiftWeight;
+import com.tycherin.impen.logic.SpatialRiftWeight;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
 
 import mezz.jei.api.constants.VanillaTypes;
@@ -100,10 +100,10 @@ public class RiftCatalystRecipeCategory implements IRecipeCategory<RiftCatalystR
 
     @FunctionalInterface
     private static interface OutputBoxOperator {
-        void handleOutputBox(final RiftWeight weight, final int xPos, final int yPos);
+        void handleOutputBox(final SpatialRiftWeight weight, final int xPos, final int yPos);
     }
 
-    private void forEachOutput(final List<RiftWeight> weights, final OutputBoxOperator func) {
+    private void forEachOutput(final List<SpatialRiftWeight> weights, final OutputBoxOperator func) {
         for (int i = 0; i < weights.size(); i++) {
             final int row = i / 3;
             final int col = i % 3;

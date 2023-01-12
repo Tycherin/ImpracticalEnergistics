@@ -9,7 +9,6 @@ import com.tycherin.impen.datagen.ImpenItemTagsProvider;
 import com.tycherin.impen.datagen.ImpenLootProvider;
 import com.tycherin.impen.datagen.ImpenPartModelProvider;
 import com.tycherin.impen.datagen.ImpenRecipeProvider;
-import com.tycherin.impen.logic.rift.RiftService;
 import com.tycherin.impen.part.CapturePlanePart;
 
 import appeng.api.parts.PartModels;
@@ -38,8 +37,6 @@ public class ImpracticalEnergisticsMod {
 
         ImpenRegistry.register(modEventBus);
         
-        RiftService.init();
-
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
         modEventBus.addListener(ImpenRegistry::commonSetup);

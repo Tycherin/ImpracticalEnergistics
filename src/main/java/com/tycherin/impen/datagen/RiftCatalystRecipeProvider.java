@@ -15,7 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpenRegistry.ItemDefinition;
-import com.tycherin.impen.logic.rift.RiftWeight;
+import com.tycherin.impen.logic.SpatialRiftWeight;
 import com.tycherin.impen.recipe.RiftCatalystRecipeSerializer;
 import com.tycherin.impen.util.ImpenIdUtil;
 
@@ -54,7 +54,7 @@ public class RiftCatalystRecipeProvider {
 
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
-
+        
         // Vanilla ores
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_STONE, Blocks.IRON_ORE, Items.IRON_INGOT);
         helper.standardBlock(ImpenRegistry.RIFT_CATALYST_STONE, Blocks.COPPER_ORE, Items.COPPER_INGOT);
@@ -119,7 +119,7 @@ public class RiftCatalystRecipeProvider {
             checkRecipe(block, (recipeName) -> {
                 RiftCatalystRecipeBuilder.of(catalyst)
                         .consumedItems(block.asItem())
-                        .weights(new RiftWeight(block, BASE_PROBABILITY))
+                        .weights(new SpatialRiftWeight(block, BASE_PROBABILITY))
                         .save(consumer, recipeName);
             });
         }
@@ -145,7 +145,7 @@ public class RiftCatalystRecipeProvider {
 
                 RiftCatalystRecipeBuilder.of(catalyst)
                         .consumedItems(item)
-                        .weights(new RiftWeight(block, BASE_PROBABILITY * exchangeRate))
+                        .weights(new SpatialRiftWeight(block, BASE_PROBABILITY * exchangeRate))
                         .save(consumer, recipeName);
             });
         }
@@ -174,7 +174,7 @@ public class RiftCatalystRecipeProvider {
         private Block baseBlock;
         private Item catalyst;
         private List<Ingredient> consumedItems;
-        private List<RiftWeight> weights;
+        private List<SpatialRiftWeight> weights;
 
         private RiftCatalystRecipeBuilder() {
         }
@@ -214,12 +214,12 @@ public class RiftCatalystRecipeProvider {
                     Arrays.asList(consumedItems).stream().map(Ingredient::of).collect(Collectors.toList()));
         }
 
-        public RiftCatalystRecipeBuilder weights(final List<RiftWeight> weights) {
+        public RiftCatalystRecipeBuilder weights(final List<SpatialRiftWeight> weights) {
             this.weights = weights;
             return this;
         }
 
-        public RiftCatalystRecipeBuilder weights(final RiftWeight... weights) {
+        public RiftCatalystRecipeBuilder weights(final SpatialRiftWeight... weights) {
             return this.weights(Arrays.asList(weights));
         }
 

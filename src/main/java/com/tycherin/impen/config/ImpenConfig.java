@@ -99,6 +99,7 @@ public class ImpenConfig {
         private final IntValue bnlRange;
         private final IntValue atmWorkRate;
         private final IntValue psdWorkRate;
+        private final BooleanValue srsOverwrite;
 
         public MachineSettings(final Builder builder) {
             this.bnlRange = builder.comment("Connection range for the Beamed Network Link block")
@@ -107,6 +108,8 @@ public class ImpenConfig {
                     .defineInRange("atmospheric_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
             this.psdWorkRate = builder.comment("Base number of ticks for each Possibility Disintegrator operation")
                     .defineInRange("possibility_disintegrator_work_rate", 40, 1, Integer.MAX_VALUE);
+            this.srsOverwrite = builder.comment("If true, the SpatialRiftStabilizer machine will overwrite existing blocks in spatial storage")
+                    .define("srs_overwrite_blocks", false);
         }
 
         public int beamedNetworkLinkRange() {
@@ -119,6 +122,10 @@ public class ImpenConfig {
 
         public int possibilityDisintegratorWorkRate() {
             return psdWorkRate.get();
+        }
+
+        public boolean riftOverwriteBlocks() {
+            return srsOverwrite.get();
         }
     }
 

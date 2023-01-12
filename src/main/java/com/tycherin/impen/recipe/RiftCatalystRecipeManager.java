@@ -10,6 +10,20 @@ import net.minecraft.world.level.Level;
 
 public class RiftCatalystRecipeManager {
 
+    public static Optional<RiftCatalystRecipe> getRecipe(final Level level, final ItemStack is) {
+        return level.getRecipeManager()
+            .getAllRecipesFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get()).stream()
+            // TODO Decide whether I'm doing multiple inputs per recipe or just one
+            .filter(recipe -> recipe.getConsumedItems().get(0).test(is))
+            .findFirst();
+    }
+    
+    public static boolean hasRecipe(final Level level, final ItemStack is) {
+        return RiftCatalystRecipeManager.getRecipe(level, is).isPresent();
+    }
+    
+    
+    // TODO Delete me, probably?
     public static Optional<RiftCatalystRecipe> getRecipe(final Level level, final ItemStack catalyst,
             final Container container) {
         if (catalyst.isEmpty() || container.isEmpty()) {
