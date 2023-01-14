@@ -3,24 +3,23 @@
   "$schema": "schema.json",
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
-    "texture": "guis/spatial_rift_stabilizer.png",
+    "texture": "guis/spatial_rift_collapser.png",
     "srcRect": [0, 0, 176, 176]
   },
   "slots": {
     "MACHINE_INPUT": {
-        "left": 45,
-        "top": 22,
-        "grid": "BREAK_AFTER_2COLS"
+        "left": 66,
+        "top": 43
     },
-    "PROCESSING_INPUTS": {
-      "left": 103,
-      "top": 31
+    "MACHINE_OUTPUT": {
+        "left": 128,
+        "top": 43
     }
   },
   "text": {
     "dialog_title": {
       "text": {
-        "translate": "gui.impracticalenergistics.spatial_rift_stabilizer"
+        "translate": "gui.impracticalenergistics.spatial_rift_collapser"
       },
       "position": {
         "left": 8,

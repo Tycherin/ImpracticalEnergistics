@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cube_column_horizontal",
   "textures": {
     "end": "impracticalenergistics:block/spatial_rift_machine_end",
-    "side": "impracticalenergistics:block/spatial_rift_spawner_side"
+    "side": "impracticalenergistics:block/spatial_rift_collapser_side"
   }
 }

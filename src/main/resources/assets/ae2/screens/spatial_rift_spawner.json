@@ -1,18 +1,19 @@
+
 {
   "$schema": "schema.json",
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
-    "texture": "guis/spatial_rift_manipulator.png",
-    "srcRect": [0, 0, 176, 197]
+    "texture": "guis/spatial_rift_spawner.png",
+    "srcRect": [0, 0, 176, 176]
   },
   "slots": {
     "MACHINE_INPUT": {
-      "left": 61,
-      "top": 32
+        "left": 66,
+        "top": 43
     },
-    "MACHINE_INPUT": {
-      "left": 61,
-      "top": 54
+    "INSCRIBER_PLATE_TOP": {
+        "left": 27,
+        "top": 43
     },
     "MACHINE_OUTPUT": {
         "left": 128,
@@ -22,7 +23,7 @@
   "text": {
     "dialog_title": {
       "text": {
-        "translate": "gui.impracticalenergistics.spatial_rift_manipulator"
+        "translate": "gui.impracticalenergistics.spatial_rift_spawner"
       },
       "position": {
         "left": 8,
@@ -32,7 +33,7 @@
   },
   "images": {
     "progressBar": {
-      "texture": "guis/spatial_rift_manipulator.png",
+      "texture": "guis/spatial_rift_spawner.png",
       "srcRect": [180, 17, 6, 18]
     }
   },

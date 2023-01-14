@@ -2,7 +2,7 @@
     "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
     "block.impracticalenergistics.spatial_rift_spawner": "Spatial Rift Spawner",
     "block.impracticalenergistics.spatial_rift_manipulator": "Spatial Rift Manipulator",
-    "block.impracticalenergistics.spatial_rift_stabilizer": "Spatial Rift Stabilizer",
+    "block.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",
     "block.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
     "block.impracticalenergistics.ejection_drive": "Ejection Drive",
     "block.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
@@ -45,22 +45,12 @@
     
     "itemGroup.impracticalenergistics.main": "Impractical Energistics",
     
+    "gui.impracticalenergistics.spatial_rift_spawner": "Spatial Rift Spawner",
     "gui.impracticalenergistics.spatial_rift_manipulator": "Spatial Rift Manipulator",
-    "gui.impracticalenergistics.spatial_rift_manipulator.power_text": "Requires %s while running",
-    "gui.impracticalenergistics.spatial_rift_stabilizer": "Spatial Rift Stabilizer",
+    "gui.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",
     "gui.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
     "gui.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
     "gui.impracticalenergistics.possibility_disintegrator.description": "Available Capsules",
-    
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.idle": "Idle",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.ready": "Ready",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.running": "Running",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.output_full": "Blocked - output full",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.missing_channel": "Blocked - device missing channel",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.not_formatted": "Blocked - drive is not formatted",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.no_catalysts": "Blocked - no catalysts available",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.cell_full": "Blocked - cell is full",
-    "gui.impracticalenergistics.spatial_rift_manipulator.status.unknown": "Blocked - unknown issue",
     
     "gui.impracticalenergistics.jei.rift_recipe_title": "Rift Space Manipulation",
     "gui.impracticalenergistics.jei.atmospheric_crystallizer_recipe_title": "Atmospheric Crystallization",
