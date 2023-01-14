@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipeManager;
@@ -36,9 +36,9 @@ public class SpatialRiftStabilizerLogic {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Random RAND = new Random();
 
-    private final SpatialRiftStabilizerBlockEntity be;
+    private final SpatialRiftCollapserBlockEntity be;
 
-    public SpatialRiftStabilizerLogic(final SpatialRiftStabilizerBlockEntity be) {
+    public SpatialRiftStabilizerLogic(final SpatialRiftCollapserBlockEntity be) {
         this.be = be;
     }
 

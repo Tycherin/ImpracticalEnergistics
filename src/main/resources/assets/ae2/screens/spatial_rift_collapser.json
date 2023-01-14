@@ -26,5 +26,17 @@
         "top": 6
       }
     }
+  },
+  "images": {
+    "progressBar": {
+      "texture": "guis/spatial_rift_collapser.png",
+      "srcRect": [180, 17, 6, 18]
+    }
+  },
+  "widgets": {
+    "progressBar": {
+      "left": 151,
+      "top": 43
+    }
   }
 }

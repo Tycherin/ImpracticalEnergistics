@@ -52,7 +52,7 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.RIFT_SHARD_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE_BRICKS.block());
-            this.dropSelf(ImpenRegistry.SPATIAL_RIFT_STABILIZER.block());
+            this.dropSelf(ImpenRegistry.SPATIAL_RIFT_COLLAPSER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_SPAWNER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.block());
             this.dropSelf(ImpenRegistry.EJECTION_DRIVE.block());

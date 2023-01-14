@@ -11,14 +11,14 @@ import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
-import com.tycherin.impen.block.rift.SpatialRiftStabilizerBlock;
+import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
-import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -98,8 +98,8 @@ public class ImpenRegistry {
                 null, (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
         SPATIAL_RIFT_SPAWNER.block().setBlockEntity(SpatialRiftSpawnerBlockEntity.class,
                 SPATIAL_RIFT_SPAWNER.blockEntity(), null, null);
-        SPATIAL_RIFT_STABILIZER.block().setBlockEntity(SpatialRiftStabilizerBlockEntity.class,
-                SPATIAL_RIFT_STABILIZER.blockEntity(), null, null);
+        SPATIAL_RIFT_COLLAPSER.block().setBlockEntity(SpatialRiftCollapserBlockEntity.class,
+                SPATIAL_RIFT_COLLAPSER.blockEntity(), null, null);
         SPATIAL_RIFT_MANIPULATOR.block().setBlockEntity(SpatialRiftManipulatorBlockEntity.class,
                 SPATIAL_RIFT_MANIPULATOR.blockEntity(), null, null);
         ATMOSPHERIC_CRYSTALLIZER.block().setBlockEntity(AtmosphericCrystallizerBlockEntity.class,
@@ -137,8 +137,8 @@ public class ImpenRegistry {
     public static final MachineDefinition<SpatialRiftSpawnerBlock, SpatialRiftSpawnerBlockEntity> SPATIAL_RIFT_SPAWNER =
             makeMachine("spatial_rift_spawner", SpatialRiftSpawnerBlock::new, SpatialRiftSpawnerBlockEntity::new, false);
 
-    public static final MachineDefinition<SpatialRiftStabilizerBlock, SpatialRiftStabilizerBlockEntity> SPATIAL_RIFT_STABILIZER =
-            makeMachine("spatial_rift_stabilizer", SpatialRiftStabilizerBlock::new, SpatialRiftStabilizerBlockEntity::new, false);
+    public static final MachineDefinition<SpatialRiftCollapserBlock, SpatialRiftCollapserBlockEntity> SPATIAL_RIFT_COLLAPSER =
+            makeMachine("spatial_rift_collapser", SpatialRiftCollapserBlock::new, SpatialRiftCollapserBlockEntity::new, false);
 
     public static final MachineDefinition<SpatialRiftManipulatorBlock, SpatialRiftManipulatorBlockEntity> SPATIAL_RIFT_MANIPULATOR =
             makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);

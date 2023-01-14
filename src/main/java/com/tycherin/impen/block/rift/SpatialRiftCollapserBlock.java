@@ -2,7 +2,7 @@ package com.tycherin.impen.block.rift;
 
 import javax.annotation.Nullable;
 
-import com.tycherin.impen.blockentity.rift.SpatialRiftStabilizerBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 
 import appeng.block.AEBaseEntityBlock;
@@ -17,9 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class SpatialRiftStabilizerBlock extends AEBaseEntityBlock<SpatialRiftStabilizerBlockEntity> {
+public class SpatialRiftCollapserBlock extends AEBaseEntityBlock<SpatialRiftCollapserBlockEntity> {
 
-    public SpatialRiftStabilizerBlock(final Properties props) {
+    public SpatialRiftCollapserBlock(final Properties props) {
         super(props);
         props.requiresCorrectToolForDrops();
     }
@@ -28,7 +28,7 @@ public class SpatialRiftStabilizerBlock extends AEBaseEntityBlock<SpatialRiftSta
     public InteractionResult onActivated(final Level level, final BlockPos pos, final Player p,
             final InteractionHand hand, @Nullable final ItemStack heldItem, final BlockHitResult hit) {
         if (!InteractionUtil.isInAlternateUseMode(p)) {
-            final var be = (SpatialRiftStabilizerBlockEntity) level.getBlockEntity(pos);
+            final var be = (SpatialRiftCollapserBlockEntity) level.getBlockEntity(pos);
             if (be != null) {
                 if (!level.isClientSide()) {
                     // TODO Use correct types here

@@ -22,7 +22,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
+public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -33,8 +33,8 @@ public class SpatialRiftStabilizerBlockEntity extends MachineBlockEntity {
     private final MachineOperation op;
     private final SpatialRiftStabilizerLogic logic;
 
-    public SpatialRiftStabilizerBlockEntity(final BlockPos blockPos, final BlockState blockState) {
-        super(ImpenRegistry.SPATIAL_RIFT_STABILIZER, blockPos, blockState);
+    public SpatialRiftCollapserBlockEntity(final BlockPos blockPos, final BlockState blockState) {
+        super(ImpenRegistry.SPATIAL_RIFT_COLLAPSER, blockPos, blockState);
         this.op = new MachineOperation(
                 DEFAULT_SPEED_TICKS,
                 this::enableOperation,
