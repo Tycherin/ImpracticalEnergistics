@@ -46,7 +46,7 @@ public class SpatialRiftCollapserRecipeProvider {
 
         public void add(final ItemLike input, final ItemLike output) {
             final String recipeName = input.asItem().getRegistryName().getPath();
-            final var result = new SrsRecipeBuilder()
+            final var result = new RecipeBuilder()
                     .recipeName(recipeName)
                     .input(Ingredient.of(input))
                     .output(output.asItem().getDefaultInstance())
@@ -55,12 +55,12 @@ public class SpatialRiftCollapserRecipeProvider {
         }
     }
 
-    private static class SrsRecipeBuilder {
+    private static class RecipeBuilder {
         private String recipeName;
         private Ingredient input;
         private ItemStack output;
 
-        public SrsRecipeResult build() {
+        public RecipeResult build() {
             if (recipeName == null) {
                 throw new RuntimeException("Recipe name cannot be null");
             }
@@ -70,25 +70,25 @@ public class SpatialRiftCollapserRecipeProvider {
             if (output == null) {
                 throw new RuntimeException("Output cannot be null");
             }
-            return new SrsRecipeResult();
+            return new RecipeResult();
         }
 
-        public SrsRecipeBuilder recipeName(final String s) {
+        public RecipeBuilder recipeName(final String s) {
             this.recipeName = s;
             return this;
         }
 
-        public SrsRecipeBuilder input(final Ingredient input) {
+        public RecipeBuilder input(final Ingredient input) {
             this.input = input;
             return this;
         }
 
-        public SrsRecipeBuilder output(final ItemStack output) {
+        public RecipeBuilder output(final ItemStack output) {
             this.output = output;
             return this;
         }
 
-        private class SrsRecipeResult implements FinishedRecipe {
+        private class RecipeResult implements FinishedRecipe {
 
             @Override
             public void serializeRecipeData(final JsonObject json) {

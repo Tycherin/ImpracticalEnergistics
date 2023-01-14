@@ -49,7 +49,7 @@ public class SpatialRiftSpawnerRecipeProvider {
 
         public void add(final ItemLike input, final ItemLike output, final int fuelCost) {
             final String recipeName = input.asItem().getRegistryName().getPath();
-            final var result = new SrsRecipeBuilder()
+            final var result = new RecipeBuilder()
                     .recipeName(recipeName)
                     .input(Ingredient.of(input))
                     .output(output.asItem().getDefaultInstance())
@@ -59,13 +59,13 @@ public class SpatialRiftSpawnerRecipeProvider {
         }
     }
 
-    private static class SrsRecipeBuilder {
+    private static class RecipeBuilder {
         private String recipeName;
         private Ingredient input;
         private ItemStack output;
         private int fuelCost = -1;
 
-        public SrsRecipeResult build() {
+        public RecipeResult build() {
             if (recipeName == null) {
                 throw new RuntimeException("Recipe name cannot be null");
             }
@@ -78,30 +78,30 @@ public class SpatialRiftSpawnerRecipeProvider {
             if (fuelCost == -1) {
                 throw new RuntimeException("Fuel cost name cannot be null");
             }
-            return new SrsRecipeResult();
+            return new RecipeResult();
         }
 
-        public SrsRecipeBuilder recipeName(final String s) {
+        public RecipeBuilder recipeName(final String s) {
             this.recipeName = s;
             return this;
         }
 
-        public SrsRecipeBuilder input(final Ingredient input) {
+        public RecipeBuilder input(final Ingredient input) {
             this.input = input;
             return this;
         }
 
-        public SrsRecipeBuilder output(final ItemStack output) {
+        public RecipeBuilder output(final ItemStack output) {
             this.output = output;
             return this;
         }
 
-        public SrsRecipeBuilder fuelCost(final int fuelCost) {
+        public RecipeBuilder fuelCost(final int fuelCost) {
             this.fuelCost = fuelCost;
             return this;
         }
 
-        private class SrsRecipeResult implements FinishedRecipe {
+        private class RecipeResult implements FinishedRecipe {
 
             @Override
             public void serializeRecipeData(final JsonObject json) {

@@ -2,7 +2,7 @@ package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 
 import appeng.core.AppEng;
 import mezz.jei.api.constants.VanillaTypes;
@@ -16,31 +16,33 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-public class SpatialRiftCollapserRecipeCategory implements IRecipeCategory<SpatialRiftCollapserRecipe> {
+public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<SpatialRiftManipulatorRecipe> {
 
-    private static final String TITLE_TRANSLATION_KEY = "gui.impracticalenergistics.jei.src_recipe_title";
+    private static final String TITLE_TRANSLATION_KEY = "gui.impracticalenergistics.jei.srm_recipe_title";
 
     public static final ResourceLocation UID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID,
-            "spatial_rift_collapser");
+            "spatial_rift_manipulator");
 
     private final IDrawable background;
     private final IDrawable icon;
 
-    public SpatialRiftCollapserRecipeCategory(final IGuiHelper guiHelper) {
+    public SpatialRiftManipulatorRecipeCategory(final IGuiHelper guiHelper) {
         final ResourceLocation location = new ResourceLocation(AppEng.MOD_ID,
-                "textures/guis/spatial_rift_collapser.png");
-        this.background = guiHelper.createDrawable(location, 65, 38, 84, 25);
+                "textures/guis/spatial_rift_manipulator.png");
+        this.background = guiHelper.createDrawable(location, 60, 31, 89, 40);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
-                ImpenRegistry.SPATIAL_RIFT_COLLAPSER.asItem().getDefaultInstance());
+                ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.asItem().getDefaultInstance());
     }
 
     @Override
-    public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftCollapserRecipe recipe,
+    public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftManipulatorRecipe recipe,
             final IFocusGroup focusGroup) {
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
-                .addIngredients(recipe.getInput());
-        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
-                .addItemStack(recipe.getResultItem());
+        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                .addItemStack(recipe.getTopInput());
+        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
+                .addIngredients(recipe.getBottomInput());
+        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
+                .addItemStack(recipe.getOutput());
 
         // TODO Special handling for spatial cells
     }
@@ -66,7 +68,7 @@ public class SpatialRiftCollapserRecipeCategory implements IRecipeCategory<Spati
     }
 
     @Override
-    public Class<? extends SpatialRiftCollapserRecipe> getRecipeClass() {
-        return SpatialRiftCollapserRecipe.class;
+    public Class<? extends SpatialRiftManipulatorRecipe> getRecipeClass() {
+        return SpatialRiftManipulatorRecipe.class;
     }
 }

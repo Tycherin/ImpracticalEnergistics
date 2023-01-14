@@ -289,6 +289,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
         new RiftCatalystRecipeProvider().addRecipes(consumer);
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
         new SpatialRiftCollapserRecipeProvider().addRecipes(consumer);
+        new SpatialRiftManipulatorRecipeProvider().addRecipes(consumer);
     }
 
     // These methods shadow or copy vanilla methods because that code assumes the vanilla namespace, and we want it to

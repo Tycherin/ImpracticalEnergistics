@@ -30,6 +30,8 @@ import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipeSerializer;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipeSerializer;
 
@@ -217,6 +219,12 @@ public class ImpenRegistry {
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_COLLAPSER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.getId().getPath(),
                     () -> SpatialRiftCollapserRecipeSerializer.INSTANCE);
+
+    public static final RegistryObject<RecipeType<SpatialRiftManipulatorRecipe>> SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE = ImpenRegistry
+            .<SpatialRiftManipulatorRecipe>makeRecipeType("spatial_rift_manipulator");
+    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_MANIPULATOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.getId().getPath(),
+                    () -> SpatialRiftManipulatorRecipeSerializer.INSTANCE);
 
     // ***
     // Helper methods
