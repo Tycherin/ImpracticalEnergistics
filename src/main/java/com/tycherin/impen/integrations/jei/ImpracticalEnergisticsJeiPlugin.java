@@ -9,6 +9,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
+import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.AEConfig;
 import appeng.core.definitions.AEItems;
@@ -39,6 +40,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             .create(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst", RiftCatalystRecipe.class);
     private static final RecipeType<AtmosphericCrystallizerRecipe> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
+    private static final RecipeType<SpatialRiftSpawnerRecipe> SRS_RECIPE_TYPE = RecipeType
+            .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_rift_spawner", SpatialRiftSpawnerRecipe.class);
     
     private static final List<ItemLike> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
@@ -62,7 +65,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         final var guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(
                 new RiftCatalystRecipeCategory(guiHelper),
-                new AtmosphericCrystallizerRecipeCategory(guiHelper));
+                new AtmosphericCrystallizerRecipeCategory(guiHelper),
+                new SpatialRiftSpawnerRecipeCategory(guiHelper));
     }
 
     @Override
@@ -74,6 +78,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 recipeManager.getAllRecipesFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get()));
         registry.addRecipes(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get()));
+        registry.addRecipes(SRS_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpenRegistry.SRS_RECIPE_TYPE.get()));
 
         final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
         if (AEConfig.instance().isInWorldFluixEnabled()) {

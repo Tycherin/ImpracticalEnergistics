@@ -28,6 +28,8 @@ import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipeSerializer;
+import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
+import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipeSerializer;
 
 import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
@@ -195,11 +197,18 @@ public class ImpenRegistry {
             .<RiftCatalystRecipe>makeRecipeType("rift_catalyst");
     public static final RegistryObject<RecipeSerializer<?>> RIFT_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(RIFT_CATALYST_RECIPE_TYPE.getId().getPath(), () -> RiftCatalystRecipeSerializer.INSTANCE);
+    
     public static final RegistryObject<RecipeType<AtmosphericCrystallizerRecipe>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = ImpenRegistry
             .<AtmosphericCrystallizerRecipe>makeRecipeType("atmospheric_crystallizer");
     public static final RegistryObject<RecipeSerializer<?>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.getId().getPath(),
                     () -> AtmosphericCrystallizerRecipeSerializer.INSTANCE);
+
+    public static final RegistryObject<RecipeType<SpatialRiftSpawnerRecipe>> SRS_RECIPE_TYPE = ImpenRegistry
+            .<SpatialRiftSpawnerRecipe>makeRecipeType("spatial_rift_spawner");
+    public static final RegistryObject<RecipeSerializer<?>> SRS_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register(SRS_RECIPE_TYPE.getId().getPath(),
+                    () -> SpatialRiftSpawnerRecipeSerializer.INSTANCE);
 
     // ***
     // Helper methods

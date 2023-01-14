@@ -285,8 +285,9 @@ public class ImpenRecipeProvider extends RecipeProvider {
         // Stonecutter recipes
         stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICKS, ImpenRegistry.SMOOTH_RIFTSTONE);
         
-        // Rift Catalyst recipes
+        // Custom recipe categories
         new RiftCatalystRecipeProvider().addRecipes(consumer);
+        new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
     }
 
     // These methods shadow or copy vanilla methods because that code assumes the vanilla namespace, and we want it to
