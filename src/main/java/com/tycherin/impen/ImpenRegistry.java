@@ -9,16 +9,16 @@ import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
+import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
-import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
+import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
-import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
@@ -148,15 +148,6 @@ public class ImpenRegistry {
     public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
-
-    // Rift Catalysts
-    public static final ItemDefinition RIFT_CATALYST_BLACKSTONE = makeItem("rift_catalyst_blackstone");
-    public static final ItemDefinition RIFT_CATALYST_DEEPSLATE = makeItem("rift_catalyst_deepslate");
-    public static final ItemDefinition RIFT_CATALYST_DIRT = makeItem("rift_catalyst_dirt");
-    public static final ItemDefinition RIFT_CATALYST_END_STONE = makeItem("rift_catalyst_end_stone");
-    public static final ItemDefinition RIFT_CATALYST_NETHERRACK = makeItem("rift_catalyst_netherrack");
-    public static final ItemDefinition RIFT_CATALYST_STONE = makeItem("rift_catalyst_stone");
-    public static final ItemDefinition RIFT_CATALYST_RIFTSTONE = makeItem("rift_catalyst_riftstone");
 
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
