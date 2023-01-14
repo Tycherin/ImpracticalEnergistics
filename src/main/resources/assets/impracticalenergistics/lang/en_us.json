@@ -55,6 +55,7 @@
     "gui.impracticalenergistics.jei.rift_recipe_title": "Rift Space Manipulation",
     "gui.impracticalenergistics.jei.atmospheric_crystallizer_recipe_title": "Atmospheric Crystallization",
     "gui.impracticalenergistics.jei.srs_recipe_title": "Spatial Rift Spawning",
+    "gui.impracticalenergistics.jei.src_recipe_title": "Spatial Rift Collapsing",
     
     "dimension.minecraft:overworld": "Dimension: Overworld",
     "dimension.minecraft:the_nether": "Dimension: The Nether",

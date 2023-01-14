@@ -9,6 +9,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.RiftCatalystRecipe;
+import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.AEConfig;
@@ -40,9 +41,12 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             .create(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst", RiftCatalystRecipe.class);
     private static final RecipeType<AtmosphericCrystallizerRecipe> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
-    private static final RecipeType<SpatialRiftSpawnerRecipe> SRS_RECIPE_TYPE = RecipeType
+    private static final RecipeType<SpatialRiftSpawnerRecipe> SPATIAL_RIFT_SPAWNER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_rift_spawner", SpatialRiftSpawnerRecipe.class);
+    private static final RecipeType<SpatialRiftCollapserRecipe> SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE = RecipeType
+            .create(ImpracticalEnergisticsMod.MOD_ID, "spatial_rift_collapser", SpatialRiftCollapserRecipe.class);
     
+    // TODO Consider moving some of these to item-level tooltips
     private static final List<ItemLike> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
             ImpenRegistry.BEAMED_NETWORK_LINK,
@@ -66,7 +70,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(
                 new RiftCatalystRecipeCategory(guiHelper),
                 new AtmosphericCrystallizerRecipeCategory(guiHelper),
-                new SpatialRiftSpawnerRecipeCategory(guiHelper));
+                new SpatialRiftSpawnerRecipeCategory(guiHelper),
+                new SpatialRiftCollapserRecipeCategory(guiHelper));
     }
 
     @Override
@@ -78,8 +83,10 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 recipeManager.getAllRecipesFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get()));
         registry.addRecipes(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get()));
-        registry.addRecipes(SRS_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpenRegistry.SRS_RECIPE_TYPE.get()));
+        registry.addRecipes(SPATIAL_RIFT_SPAWNER_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.get()));
+        registry.addRecipes(SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE,
+                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get()));
 
         final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
         if (AEConfig.instance().isInWorldFluixEnabled()) {
@@ -114,6 +121,12 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item().getDefaultInstance(),
                 ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);
+        registry.addRecipeCatalyst(
+                ImpenRegistry.SPATIAL_RIFT_SPAWNER.item().getDefaultInstance(),
+                SPATIAL_RIFT_SPAWNER_RECIPE_TYPE);
+        registry.addRecipeCatalyst(
+                ImpenRegistry.SPATIAL_RIFT_COLLAPSER.item().getDefaultInstance(),
+                SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE);
     }
 
     @Override
