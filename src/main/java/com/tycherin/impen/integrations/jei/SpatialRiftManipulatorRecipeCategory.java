@@ -50,11 +50,12 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
             // TODO Display effects here
-            // TODO Use createFocusLink() to cause the two slots to rotate in unison
-            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+            final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(RiftedSpatialCellItem.getIngredient());
-            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
                     .addIngredients(RiftedSpatialCellItem.getIngredient());
+            // Link these two slots together so they rotate in unison
+            layoutBuilder.createFocusLink(inSlot, outSlot);
         }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);
