@@ -8,6 +8,8 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.logic.RiftCellDataManager;
+import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
 import com.tycherin.impen.logic.SpatialRiftCollapserLogic;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
@@ -57,23 +59,30 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     }
 
     protected boolean doOperation() {
+        // TODO Switch this to progress the operation gradually rather than doing it all at once
+        // (mainly to reduce performance impact)
+
         final ItemStack input = this.invWrapper.getInput().getStackInSlot(0);
         final int plotId = ((RiftedSpatialCellItem)input.getItem()).getPlotId(input);
+        final Optional<RiftCellData> dataOpt = RiftCellDataManager.INSTANCE.getDataForPlot(plotId);
+        if (dataOpt.isEmpty()) {
+            // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying the
+            // operation over and over again with no chance of success
+            LOGGER.warn("Rift cell data not found for {}", plotId);
+            return false;
+        }
+        final RiftCellData data = dataOpt.get();
 
-        final int cellSize = ((RiftedSpatialCellItem)input.getItem()).getOriginalCellSize(input);
-        final ItemStack output = switch (cellSize) {
+        final ItemStack output = switch (data.getOriginalCellSize()) {
         case 2 -> AEItems.SPATIAL_CELL2.stack();
         case 16 -> AEItems.SPATIAL_CELL16.stack();
         case 128 -> AEItems.SPATIAL_CELL128.stack();
-        default -> throw new RuntimeException("Unrecognized cell size: " + cellSize);
+        default -> throw new RuntimeException("Unrecognized cell size: " + data.getOriginalCellSize());
         };
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
 
-        final var recipeMap = ((RiftedSpatialCellItem)input.getItem()).getRecipes(this.getLevel(), input);
-        LOGGER.info("Found recipes: {}", recipeMap);
-
-        logic.addBlocksToPlot(plot, recipeMap);
+        logic.addBlocksToPlot(plot, data.getStoredInputs());
 
         this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
         this.invWrapper.getOutput().setItemDirect(0, output);

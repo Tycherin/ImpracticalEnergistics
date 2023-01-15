@@ -2,7 +2,6 @@ package com.tycherin.impen.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.stream.Stream;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialStorageRecipe;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.spatial.SpatialStoragePlot;
@@ -32,9 +30,9 @@ public class SpatialRiftCollapserLogic {
     public SpatialRiftCollapserLogic() {
     }
 
-    public void addBlocksToPlot(final SpatialStoragePlot plot, final Map<SpatialStorageRecipe, Integer> recipes) {
+    public void addBlocksToPlot(final SpatialStoragePlot plot, final Map<Block, Integer> blockWeights) {
         final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
-        final Supplier<Block> blockReplacer = getBlockReplacer(recipes, blocksToReplace.size());
+        final Supplier<Block> blockReplacer = getBlockReplacer(blockWeights, blocksToReplace.size());
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
         blocksToReplace.forEach(blockPos -> {
@@ -72,16 +70,11 @@ public class SpatialRiftCollapserLogic {
                 .collect(Collectors.toList());
     }
 
-    private Supplier<Block> getBlockReplacer(final Map<SpatialStorageRecipe, Integer> recipes, final int numBlocks) {
-        final Map<Block, Integer> weights = new HashMap<>();
+    private Supplier<Block> getBlockReplacer(final Map<Block, Integer> weights, final int numBlocks) {
         final Set<Block> baseBlocks = new HashSet<>();
         
         // TODO Think about how to re-implement base blocks
         baseBlocks.add(Blocks.STONE);
-
-        recipes.forEach((recipe, count) -> {
-            weights.compute(recipe.getBlock(), (r, oldCount) -> oldCount += recipe.getValue());
-        });
 
         final Block baseBlock;
         final double riftAccidentProbability = switch (baseBlocks.size()) {

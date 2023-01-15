@@ -13,15 +13,8 @@ public class SpatialRiftManipulatorRecipeManager {
             final ItemStack bottomInput) {
         return level.getRecipeManager().getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
                 .stream()
-                .filter(recipe -> recipe.getTopInput().equals(topInput, false)
+                .filter(recipe -> ItemStack.isSame(recipe.getTopInput(), topInput)
                         && recipe.getBottomInput().test(bottomInput))
-                .findFirst();
-    }
-
-    public static Optional<SpatialRiftManipulatorRecipe> getRecipe(final Level level, final String id) {
-        return level.getRecipeManager().getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
-                .stream()
-                .filter(recipe -> recipe.getId().toString().equals(id))
                 .findFirst();
     }
 }

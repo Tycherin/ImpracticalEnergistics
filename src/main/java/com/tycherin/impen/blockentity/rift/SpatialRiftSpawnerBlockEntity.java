@@ -5,6 +5,8 @@ import java.util.Optional;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.logic.RiftCellDataManager;
+import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 import com.tycherin.impen.util.SpatialRiftUtil;
 
@@ -69,7 +71,6 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     }
 
     private ItemStack getOutputForSpatialCell(final ItemStack inputItem, final ISpatialStorageCell cell) {
-        // Step 1: Find the spatial plot for the given cell, and fail if it doesn't exist
         final int plotId = cell.getAllocatedPlotId(inputItem);
         if (plotId == -1) {
             // No plot allocated. This shouldn't happen normally because of the input filter, but in case it does, we
@@ -77,11 +78,12 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             return inputItem;
         }
 
-        // Step 3: Create the new item with the relevant metadata and return it
         final ItemStack is = new ItemStack(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM);
         ((RiftedSpatialCellItem) is.getItem()).setPlotId(is, plotId);
-        ((RiftedSpatialCellItem) is.getItem()).setOriginalCellSize(is,
-                ((SpatialStorageCellItem) inputItem.getItem()).getMaxStoredDim(inputItem));
+        
+        final int originalCellSize = ((SpatialStorageCellItem)inputItem.getItem()).getMaxStoredDim(inputItem);
+        RiftCellDataManager.INSTANCE.putDataForPlot(new RiftCellData(plotId, originalCellSize));
+        
         return is;
     }
 
