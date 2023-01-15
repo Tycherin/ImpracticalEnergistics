@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // MixinGradle - needed for AE2
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.1'
+version = '0.2'
 group = 'com.tycherin.impen'
 archivesBaseName = "${mod_id}"
 
