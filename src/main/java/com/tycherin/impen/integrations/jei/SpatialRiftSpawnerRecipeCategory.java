@@ -2,6 +2,7 @@ package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.item.RiftedSpatialCellItem;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.AppEng;
@@ -12,7 +13,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -46,16 +49,34 @@ public class SpatialRiftSpawnerRecipeCategory implements IRecipeCategory<Spatial
     @Override
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftSpawnerRecipe recipe,
             final IFocusGroup focusGroup) {
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 52, 7)
-                .addIngredients(recipe.getInput());
-        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 114, 7)
-                .addItemStack(recipe.getResultItem());
+
+        if (recipe.getResultItem().getItem() instanceof RiftedSpatialCellItem) {
+            // Spatial cell recipe
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 52, 7)
+                    .addIngredients(recipe.getInput())
+                    .addTooltipCallback((recipeSlotView, tooltip) -> {
+                        tooltip.add(new TextComponent("Must be formatted")
+                                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+                    });
+
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 114, 7)
+                    .addItemStack(recipe.getResultItem())
+                    .addTooltipCallback((recipeSlotView, tooltip) -> {
+                        tooltip.add(new TextComponent("Matches original cell")
+                                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
+                    });
+        }
+        else {
+            // Normal recipe
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 52, 7)
+                    .addIngredients(recipe.getInput());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 114, 7)
+                    .addItemStack(recipe.getResultItem());
+        }
+        
         layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 13, 7)
                 .addIngredients(this.fuelIngredient);
-
-        // TODO Special handling for spatial cells
-        
-        // TODO Display fuel cost
+        // TODO Display fuel cost graphically
     }
 
     @Override

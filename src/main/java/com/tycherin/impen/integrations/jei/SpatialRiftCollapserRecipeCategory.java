@@ -5,6 +5,7 @@ import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 
 import appeng.core.AppEng;
+import appeng.items.storage.SpatialStorageCellItem;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -37,12 +38,20 @@ public class SpatialRiftCollapserRecipeCategory implements IRecipeCategory<Spati
     @Override
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftCollapserRecipe recipe,
             final IFocusGroup focusGroup) {
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
-                .addIngredients(recipe.getInput());
-        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
-                .addItemStack(recipe.getResultItem());
-
-        // TODO Special handling for spatial cells
+        
+        if (recipe.getResultItem().getItem() instanceof SpatialStorageCellItem outputItem) {
+            // TODO Special formatting here
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
+                    .addIngredients(recipe.getInput());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
+                    .addItemStack(recipe.getResultItem());
+        }
+        else {
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
+                    .addIngredients(recipe.getInput());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
+                    .addItemStack(recipe.getResultItem());
+        }
     }
 
     @Override

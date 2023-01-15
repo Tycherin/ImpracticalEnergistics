@@ -1,14 +1,25 @@
 package com.tycherin.impen.item;
 
+import java.util.List;
+import java.util.Locale;
+
 import com.tycherin.impen.ImpenRegistry;
 
+import appeng.core.localization.GuiText;
+import appeng.core.localization.Tooltips;
 import appeng.items.AEBaseItem;
 import appeng.items.storage.SpatialStorageCellItem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class RiftedSpatialCellItem extends AEBaseItem {
@@ -59,5 +70,27 @@ public class RiftedSpatialCellItem extends AEBaseItem {
         else {
             return -1;
         }
+    }
+    
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void appendHoverText(final ItemStack stack, final Level level, final List<Component> lines,
+            final TooltipFlag advancedTooltips) {
+        int plotId = this.getPlotId(stack);
+        if (plotId == -1) {
+            lines.add(Tooltips.of(GuiText.Unformatted).withStyle(ChatFormatting.ITALIC));
+            final int maxDim = ((SpatialStorageCellItem)(this.originalItem.asItem())).getMaxStoredDim(null);
+            lines.add(Tooltips.of(GuiText.SpatialCapacity, maxDim, maxDim, maxDim));
+            return;
+        }
+        else {
+            // AE2 generates this directly within the tooltip code, so we have to imitate it here
+            final String serialNumber = String.format(Locale.ROOT, "SP-%04d", plotId);
+            // TODO Localization goes here
+            lines.add(Tooltips.of(
+                    Tooltips.of("Attuned to: "),
+                    Tooltips.of(serialNumber)));
+        }
+        // TODO Display cell attunement data
     }
 }

@@ -50,6 +50,7 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
             // TODO Display effects here
+            // TODO Use createFocusLink() to cause the two slots to rotate in unison
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(RiftedSpatialCellItem.getIngredient());
             layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
