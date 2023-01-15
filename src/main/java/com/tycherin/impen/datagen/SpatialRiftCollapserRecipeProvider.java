@@ -33,8 +33,9 @@ public class SpatialRiftCollapserRecipeProvider {
         helper.add(Items.GOLDEN_APPLE, Items.AMETHYST_SHARD);
         helper.add(ImpenRegistry.STABILIZED_RIFT_PRISM, ImpenRegistry.RIFT_PRISM);
 
-        // TODO Yeah, I want separate items here
-        helper.add(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM, AEItems.SPATIAL_CELL2);
+        helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM, AEItems.SPATIAL_CELL2);
+        helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM, AEItems.SPATIAL_CELL16);
+        helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, AEItems.SPATIAL_CELL128);
     }
 
     private static class BuilderHelper {

@@ -73,12 +73,8 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         }
         final RiftCellData data = dataOpt.get();
 
-        final ItemStack output = switch (data.getOriginalCellSize()) {
-        case 2 -> AEItems.SPATIAL_CELL2.stack();
-        case 16 -> AEItems.SPATIAL_CELL16.stack();
-        case 128 -> AEItems.SPATIAL_CELL128.stack();
-        default -> throw new RuntimeException("Unrecognized cell size: " + data.getOriginalCellSize());
-        };
+        final ItemStack output = ((RiftedSpatialCellItem)(input.getItem())).getOriginalItem().asItem()
+                .getDefaultInstance();
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
 
@@ -116,7 +112,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem().equals(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem());
+            return slot == 0 && stack.getItem() instanceof RiftedSpatialCellItem;
         }
     }
 }

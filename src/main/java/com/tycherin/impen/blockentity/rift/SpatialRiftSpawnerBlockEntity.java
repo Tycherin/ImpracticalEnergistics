@@ -78,11 +78,10 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             return inputItem;
         }
 
-        final ItemStack is = new ItemStack(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM);
+        final ItemStack is = new ItemStack(
+                RiftedSpatialCellItem.getMatchingCell((SpatialStorageCellItem)inputItem.getItem()));
         ((RiftedSpatialCellItem) is.getItem()).setPlotId(is, plotId);
-        
-        final int originalCellSize = ((SpatialStorageCellItem)inputItem.getItem()).getMaxStoredDim(inputItem);
-        RiftCellDataManager.INSTANCE.putDataForPlot(new RiftCellData(plotId, originalCellSize));
+        RiftCellDataManager.INSTANCE.putDataForPlot(new RiftCellData(plotId));
         
         return is;
     }

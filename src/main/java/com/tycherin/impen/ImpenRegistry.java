@@ -191,8 +191,12 @@ public class ImpenRegistry {
     public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
             () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
 
-    public static final ItemDefinition RIFTED_SPATIAL_CELL_ITEM = makeItem("rifted_spatial_cell",
-            RiftedSpatialCellItem::new);
+    public static final ItemDefinition SPATIAL_RIFT_CELL_2_ITEM = makeRiftCellItem("spatial_rift_cell_2",
+            AEItems.SPATIAL_CELL2);
+    public static final ItemDefinition SPATIAL_RIFT_CELL_16_ITEM = makeRiftCellItem("spatial_rift_cell_16",
+            AEItems.SPATIAL_CELL16);
+    public static final ItemDefinition SPATIAL_RIFT_CELL_128_ITEM = makeRiftCellItem("spatial_rift_cell_128",
+            AEItems.SPATIAL_CELL128);
 
     // Custom recipe types
     public static final RegistryObject<RecipeType<AtmosphericCrystallizerRecipe>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = ImpenRegistry
@@ -275,6 +279,10 @@ public class ImpenRegistry {
         final var def = new ItemDefinition(ITEMS.register(name, sup));
         ImpenRegistry.ITEMS_LIST.add(def);
         return def;
+    }
+
+    public static ItemDefinition makeRiftCellItem(final String name, final ItemLike originalItem) {
+        return makeItem(name, () -> new RiftedSpatialCellItem(getItemProps(), originalItem));
     }
 
     private static <E extends Entity> DroppableItemDefinition<E> makeDroppableItem(final String name,

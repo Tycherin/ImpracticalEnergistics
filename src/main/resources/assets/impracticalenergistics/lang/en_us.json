@@ -23,7 +23,9 @@
     "item.impracticalenergistics.capture_plane": "ME Capture Plane",
     "item.impracticalenergistics.rift_prism": "Rift Prism",
     "item.impracticalenergistics.stabilized_rift_prism": "Stabilized Rift Prism",
-    "item.impracticalenergistics.rifted_spatial_cell": "Rifted Spatial Cell",
+    "item.impracticalenergistics.spatial_rift_cell_2": "2³ Spatial Rift Cell",
+    "item.impracticalenergistics.spatial_rift_cell_16": "16³ Spatial Rift Cell",
+    "item.impracticalenergistics.spatial_rift_cell_128": "128³ Spatial Rift Cell",
     
     "item.impracticalenergistics.aerocrystal": "Aerocrystal",
     "item.impracticalenergistics.blazing_aerocrystal": "Blazing Aerocrystal",

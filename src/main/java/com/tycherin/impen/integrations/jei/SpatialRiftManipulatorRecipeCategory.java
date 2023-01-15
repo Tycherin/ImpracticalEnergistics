@@ -2,6 +2,7 @@ package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
+import com.tycherin.impen.item.RiftedSpatialCellItem;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 
 import appeng.core.AppEng;
@@ -37,14 +38,26 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
     @Override
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftManipulatorRecipe recipe,
             final IFocusGroup focusGroup) {
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addItemStack(recipe.getTopInput());
+
         layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
                 .addIngredients(recipe.getBottomInput());
-        layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
-                .addItemStack(recipe.getOutput());
 
-        // TODO Special handling for spatial cells
+        if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                    .addIngredients(genericRecipe.getTopInput());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
+                    .addItemStack(genericRecipe.getOutput());
+        }
+        else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+            // TODO Display effects here
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                    .addIngredients(RiftedSpatialCellItem.getIngredient());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
+                    .addIngredients(RiftedSpatialCellItem.getIngredient());
+        }
+        else {
+            throw new RuntimeException("Unrecognized recipe type for " + recipe);
+        }
     }
 
     @Override

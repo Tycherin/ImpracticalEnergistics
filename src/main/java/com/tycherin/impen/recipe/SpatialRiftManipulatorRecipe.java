@@ -16,45 +16,31 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
 
     private final ResourceLocation id;
 
-    protected final ItemStack topInput;
     protected final Ingredient bottomInput;
-    protected final ItemStack output;
 
-    public SpatialRiftManipulatorRecipe(final ResourceLocation id, final ItemStack topInput,
-            final Ingredient bottomInput, final ItemStack output) {
+    public SpatialRiftManipulatorRecipe(final ResourceLocation id, final Ingredient bottomInput) {
         this.id = id;
-        this.topInput = topInput;
         this.bottomInput = bottomInput;
-        this.output = output;
     }
 
-    public ItemStack getOutput() {
-        return this.output;
-    }
-
-    public ItemStack getTopInput() {
-        return this.topInput;
-    }
-    
     public Ingredient getBottomInput() {
         return this.bottomInput;
     }
-    
 
     // ***
     // Recipe boilerplate
     // ***
-    
+
     @Override
     public boolean isSpecial() {
         return true;
     }
-    
+
     @Override
     public ItemStack getResultItem() {
         return ItemStack.EMPTY;
     }
-    
+
     @Override
     public boolean matches(Container inv, Level level) {
         return false;
@@ -62,7 +48,7 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
 
     @Override
     public ItemStack assemble(Container inv) {
-        return this.output.copy();
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -85,15 +71,44 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
         return ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get();
     }
 
-    public static class SpatialStorageRecipe extends SpatialRiftManipulatorRecipe {
+    /**
+     * Normal crafting recipe for Spatial Rift Manipulator, one that doesn't operate on Spatial Rift Cells
+     */
+    public static class GenericManipulatorRecipe extends SpatialRiftManipulatorRecipe {
+
+        private final Ingredient topInput;
+        private final ItemStack output;
+
+        public GenericManipulatorRecipe(final ResourceLocation id, final Ingredient topInput,
+                final Ingredient bottomInput, final ItemStack output) {
+            super(id, bottomInput);
+            this.topInput = topInput;
+            this.output = output;
+        }
+
+        public ItemStack getOutput() {
+            return this.output;
+        }
+
+        public Ingredient getTopInput() {
+            return this.topInput;
+        }
+    }
+
+    /**
+     * Recipe that manipulates the values inside a Spatial Rift Cell
+     * <p>
+     * The input for this recipe is always some type of Spatial Rift Cell, and the output is the same cell with modified
+     * properties
+     */
+    public static class SpatialRiftEffectRecipe extends SpatialRiftManipulatorRecipe {
 
         private final Block block;
         private final int value;
 
-        public SpatialStorageRecipe(final ResourceLocation id, final Ingredient bottomInput, final ItemStack output,
-                final Block block, final int value) {
-            super(id, ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem().getDefaultInstance(), bottomInput,
-                    ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem().getDefaultInstance());
+        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block,
+                final int value) {
+            super(id, bottomInput);
             this.block = block;
             this.value = value;
         }

@@ -94,29 +94,22 @@ public class RiftCellDataManager {
 
     public static class RiftCellData {
         private static final String TAG_PLOT_ID = "id";
-        private static final String TAG_ORIGINAL_CELL_SIZE = "size";
         private static final String TAG_INPUTS = "inputs";
 
         private final int plotId;
-        private final int originalCellSize;
         private final Map<Block, Integer> storedInputs;
 
-        public RiftCellData(final int plotId, final int originalCellSize, final Map<Block, Integer> storedInputs) {
+        public RiftCellData(final int plotId, final Map<Block, Integer> storedInputs) {
             this.plotId = plotId;
-            this.originalCellSize = originalCellSize;
             this.storedInputs = storedInputs;
         }
         
-        public RiftCellData(final int plotId, final int originalCellSize) {
-            this(plotId, originalCellSize, new HashMap<>());
+        public RiftCellData(final int plotId) {
+            this(plotId, new HashMap<>());
         }
 
         public int getPlotId() {
             return plotId;
-        }
-
-        public int getOriginalCellSize() {
-            return originalCellSize;
         }
 
         public Map<Block, Integer> getStoredInputs() {
@@ -135,7 +128,6 @@ public class RiftCellDataManager {
         public CompoundTag getAsTag() {
             final CompoundTag tag = new CompoundTag();
             tag.putInt(TAG_PLOT_ID, plotId);
-            tag.putInt(TAG_ORIGINAL_CELL_SIZE, originalCellSize);
             final CompoundTag inputsTag = new CompoundTag();
             tag.put(TAG_INPUTS, inputsTag);
             storedInputs.forEach((block, count) -> {
@@ -146,7 +138,6 @@ public class RiftCellDataManager {
 
         public static RiftCellData fromTag(final CompoundTag tag) {
             final int plotId = tag.getInt(TAG_PLOT_ID);
-            final int originalCellSize = tag.getInt(TAG_ORIGINAL_CELL_SIZE);
             final CompoundTag inputsTag = tag.getCompound(TAG_INPUTS);
             final Map<Block, Integer> storedInputs = new HashMap<>();
             inputsTag.getAllKeys().forEach(blockId -> {
@@ -156,7 +147,7 @@ public class RiftCellDataManager {
                 }
                 storedInputs.put(block, tag.getInt(blockId));
             });
-            return new RiftCellData(plotId, originalCellSize, storedInputs);
+            return new RiftCellData(plotId, storedInputs);
         }
     }
 }

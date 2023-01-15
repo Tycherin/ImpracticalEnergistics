@@ -24,24 +24,26 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
 
     public static final SpatialRiftManipulatorRecipeSerializer INSTANCE = new SpatialRiftManipulatorRecipeSerializer();
 
+    private static final char GENERIC_RECIPE_FLAG = 'g';
+    private static final char SPATIAL_RECIPE_FLAG = 's';
+
     private SpatialRiftManipulatorRecipeSerializer() {
     }
 
     @Override
     public SpatialRiftManipulatorRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
         final Ingredient bottomInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "bottom_input"));
-        final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
 
         if (json.has("spatial_effect")) {
             final JsonObject spatialJson = GsonHelper.getAsJsonObject(json, "spatial_effect");
             final Block block = getAsBlock(spatialJson);
             final int value = GsonHelper.getAsInt(spatialJson, "value");
-
-            return new SpatialRiftManipulatorRecipe.SpatialStorageRecipe(recipeId, bottomInput, output, block, value);
+            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, value);
         }
         else {
-            final ItemStack topInput = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "top_input"));
-            return new SpatialRiftManipulatorRecipe(recipeId, topInput, bottomInput, output);
+            final Ingredient topInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "top_input"));
+            final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
+            return new SpatialRiftManipulatorRecipe.GenericManipulatorRecipe(recipeId, topInput, bottomInput, output);
         }
     }
 
@@ -49,33 +51,37 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
     @Override
     public SpatialRiftManipulatorRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer) {
         final Ingredient bottomInput = Ingredient.fromNetwork(buffer);
-        final ItemStack output = buffer.readItem();
+
         final char typeFlag = buffer.readChar();
 
-        if (typeFlag == 'c') {
+        if (typeFlag == SPATIAL_RECIPE_FLAG) {
             final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
             final int value = buffer.readInt();
-            return new SpatialRiftManipulatorRecipe.SpatialStorageRecipe(recipeId, bottomInput, output, block, value);
+            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, value);
         }
         else {
-            final ItemStack topInput = buffer.readItem();
-            return new SpatialRiftManipulatorRecipe(recipeId, topInput, bottomInput, output);
+            final Ingredient topInput = Ingredient.fromNetwork(buffer);
+            final ItemStack output = buffer.readItem();
+            return new SpatialRiftManipulatorRecipe.GenericManipulatorRecipe(recipeId, topInput, bottomInput, output);
         }
     }
 
     @Override
     public void toNetwork(final FriendlyByteBuf buffer, final SpatialRiftManipulatorRecipe recipe) {
         recipe.getBottomInput().toNetwork(buffer);
-        buffer.writeItemStack(recipe.getResultItem(), true);
 
-        if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialStorageRecipe spatialRecipe) {
-            buffer.writeChar('s');
+        if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+            buffer.writeChar(SPATIAL_RECIPE_FLAG);
             buffer.writeRegistryId(spatialRecipe.getBlock());
             buffer.writeInt(spatialRecipe.getValue());
         }
+        else if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
+            buffer.writeChar(GENERIC_RECIPE_FLAG);
+            genericRecipe.getTopInput().toNetwork(buffer);
+            buffer.writeItemStack(genericRecipe.getOutput(), true);
+        }
         else {
-            buffer.writeChar('n');
-            buffer.writeItemStack(recipe.getTopInput(), true);
+            throw new RuntimeException("Unrecognized recipe type " + recipe);
         }
     }
 

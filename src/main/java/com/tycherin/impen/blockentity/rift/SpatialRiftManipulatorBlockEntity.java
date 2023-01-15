@@ -11,7 +11,8 @@ import com.tycherin.impen.item.RiftedSpatialCellItem;
 import com.tycherin.impen.logic.RiftCellDataManager;
 import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialStorageRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.GenericManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
@@ -59,7 +60,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         // TODO Set up second input slot and use that instead of hardcoding an item
         final ItemStack bottomInput = Items.IRON_INGOT.asItem().getDefaultInstance();
 
-        final Optional<SpatialRiftManipulatorRecipe> recipeOpt = SpatialRiftManipulatorRecipeManager
+        final Optional<? extends SpatialRiftManipulatorRecipe> recipeOpt = SpatialRiftManipulatorRecipeManager
                 .getRecipe(getLevel(), topInput, bottomInput);
         if (recipeOpt.isEmpty()) {
             // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying the
@@ -71,7 +72,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
 
         final boolean didUpdate;
         final ItemStack output;
-        if (recipe instanceof SpatialStorageRecipe storageRecipe) {
+        if (recipe instanceof SpatialRiftEffectRecipe storageRecipe) {
             final int plotId = ((RiftedSpatialCellItem)topInput.getItem()).getPlotId(topInput);
             final Optional<RiftCellData> riftCellDataOpt = RiftCellDataManager.INSTANCE.getDataForPlot(plotId);
             if (riftCellDataOpt.isEmpty()) {
@@ -87,9 +88,12 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
             didUpdate = true;
             output = topInput;
         }
-        else {
+        else if (recipe instanceof GenericManipulatorRecipe genericRecipe) {
             didUpdate = true;
-            output = recipe.getOutput();
+            output = genericRecipe.getOutput();
+        }
+        else {
+            throw new RuntimeException("Unrecognized recipe type for " + recipe);
         }
 
         if (didUpdate) {
@@ -128,7 +132,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem().equals(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem());
+            return slot == 0 && stack.getItem() instanceof RiftedSpatialCellItem;
         }
     }
 

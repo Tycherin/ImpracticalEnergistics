@@ -116,17 +116,9 @@ public class SpatialRiftManipulatorRecipeProvider {
                 if (topInput != null) {
                     json.add("top_input", AE2RecipeProvider.toJson(topInput));
                 }
-                else {
-                    json.add("top_input", AE2RecipeProvider
-                            .toJson(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem().getDefaultInstance()));
-                }
                 json.add("bottom_input", bottomInput.toJson());
                 if (output != null) {
                     json.add("output", AE2RecipeProvider.toJson(output));
-                }
-                else {
-                    json.add("output", AE2RecipeProvider
-                            .toJson(ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM.asItem().getDefaultInstance()));
                 }
                 if (block != null) {
                     final JsonObject spatialJson = new JsonObject();

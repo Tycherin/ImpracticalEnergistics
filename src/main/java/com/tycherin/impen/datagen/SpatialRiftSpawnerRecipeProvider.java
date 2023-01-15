@@ -33,11 +33,9 @@ public class SpatialRiftSpawnerRecipeProvider {
         helper.add(Items.APPLE, Items.GOLDEN_APPLE, 50);
         helper.add(ImpenRegistry.RIFT_PRISM, ImpenRegistry.STABILIZED_RIFT_PRISM, 100);
 
-        // TODO Do I want to differentiate these at the recipe level, or just have special logic?
-        // Related: how do you tell RSCs apart?
-        helper.add(AEItems.SPATIAL_CELL2, ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM, 200);
-        helper.add(AEItems.SPATIAL_CELL16, ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM, 400);
-        helper.add(AEItems.SPATIAL_CELL128, ImpenRegistry.RIFTED_SPATIAL_CELL_ITEM, 800);
+        helper.add(AEItems.SPATIAL_CELL2, ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM, 200);
+        helper.add(AEItems.SPATIAL_CELL16, ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM, 400);
+        helper.add(AEItems.SPATIAL_CELL128, ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, 800);
     }
 
     private static class BuilderHelper {
