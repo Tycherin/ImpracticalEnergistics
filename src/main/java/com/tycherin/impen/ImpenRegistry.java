@@ -26,8 +26,6 @@ import com.tycherin.impen.item.RiftedSpatialCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
-import com.tycherin.impen.recipe.RiftCatalystRecipe;
-import com.tycherin.impen.recipe.RiftCatalystRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
@@ -197,11 +195,6 @@ public class ImpenRegistry {
             RiftedSpatialCellItem::new);
 
     // Custom recipe types
-    public static final RegistryObject<RecipeType<RiftCatalystRecipe>> RIFT_CATALYST_RECIPE_TYPE = ImpenRegistry
-            .<RiftCatalystRecipe>makeRecipeType("rift_catalyst");
-    public static final RegistryObject<RecipeSerializer<?>> RIFT_CATALYST_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(RIFT_CATALYST_RECIPE_TYPE.getId().getPath(), () -> RiftCatalystRecipeSerializer.INSTANCE);
-    
     public static final RegistryObject<RecipeType<AtmosphericCrystallizerRecipe>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = ImpenRegistry
             .<AtmosphericCrystallizerRecipe>makeRecipeType("atmospheric_crystallizer");
     public static final RegistryObject<RecipeSerializer<?>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS

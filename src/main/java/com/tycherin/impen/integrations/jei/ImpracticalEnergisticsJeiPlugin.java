@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
-import com.tycherin.impen.recipe.RiftCatalystRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
@@ -38,8 +37,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
     private static final ResourceLocation PLUGIN_ID = new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, "core");
 
-    private static final RecipeType<RiftCatalystRecipe> RIFT_CATALYST_RECIPE_TYPE = RecipeType
-            .create(ImpracticalEnergisticsMod.MOD_ID, "rift_catalyst", RiftCatalystRecipe.class);
     private static final RecipeType<AtmosphericCrystallizerRecipe> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = RecipeType
             .create(ImpracticalEnergisticsMod.MOD_ID, "atmospheric_crystallizer", AtmosphericCrystallizerRecipe.class);
     private static final RecipeType<SpatialRiftSpawnerRecipe> SPATIAL_RIFT_SPAWNER_RECIPE_TYPE = RecipeType
@@ -71,7 +68,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     public void registerCategories(final IRecipeCategoryRegistration registry) {
         final var guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(
-                new RiftCatalystRecipeCategory(guiHelper),
                 new AtmosphericCrystallizerRecipeCategory(guiHelper),
                 new SpatialRiftSpawnerRecipeCategory(guiHelper),
                 new SpatialRiftCollapserRecipeCategory(guiHelper),
@@ -83,8 +79,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         @SuppressWarnings("resource")
         final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
-        registry.addRecipes(RIFT_CATALYST_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpenRegistry.RIFT_CATALYST_RECIPE_TYPE.get()));
         registry.addRecipes(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get()));
         registry.addRecipes(SPATIAL_RIFT_SPAWNER_RECIPE_TYPE,
@@ -118,12 +112,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(final IRecipeCatalystRegistration registry) {
-        registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_RIFT_SPAWNER.item().getDefaultInstance(),
-                RIFT_CATALYST_RECIPE_TYPE);
-        registry.addRecipeCatalyst(
-                ImpenRegistry.SPATIAL_RIFT_COLLAPSER.item().getDefaultInstance(),
-                RIFT_CATALYST_RECIPE_TYPE);
         registry.addRecipeCatalyst(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item().getDefaultInstance(),
                 ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE);

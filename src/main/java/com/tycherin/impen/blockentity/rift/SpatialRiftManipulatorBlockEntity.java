@@ -5,6 +5,9 @@ import java.util.Optional;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialStorageRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
 import appeng.api.inventories.InternalInventory;
@@ -50,16 +53,28 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         // TODO This should actually be using a whole recipe system & pulling from another input slot... which this
         // should also have
 
-        final boolean didAdd = ((RiftedSpatialCellItem)riftCellIs.getItem()).addIngredient(riftCellIs, Items.APPLE);
+        final SpatialRiftManipulatorRecipe recipe = SpatialRiftManipulatorRecipeManager
+                .getRecipe(getLevel(), riftCellIs, Items.IRON_ORE.asItem().getDefaultInstance()).get();
 
-        if (didAdd) {
+        final boolean didUpdate;
+        final ItemStack output;
+        if (recipe instanceof SpatialStorageRecipe storageRecipe) {
+            didUpdate = ((RiftedSpatialCellItem)riftCellIs.getItem()).addRecipe(riftCellIs, storageRecipe);
+            output = riftCellIs;
+        }
+        else {
+            didUpdate = true;
+            output = recipe.getOutput();
+        }
+
+        if (didUpdate) {
             this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
-            this.invWrapper.getOutput().setItemDirect(0, riftCellIs);
+            this.invWrapper.getOutput().setItemDirect(0, output);
         }
         else {
             // At the moment this does the same thing, but that will change once the happy path consumes items
             this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
-            this.invWrapper.getOutput().setItemDirect(0, riftCellIs);
+            this.invWrapper.getOutput().setItemDirect(0, output);
         }
 
         // Note that even if we fail to add the ingredient, we still mark the operation as successful. That's because if

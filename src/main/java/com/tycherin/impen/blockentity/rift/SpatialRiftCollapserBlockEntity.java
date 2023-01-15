@@ -8,7 +8,7 @@ import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.item.RiftedSpatialCellItem;
-import com.tycherin.impen.logic.SpatialRiftStabilizerLogic;
+import com.tycherin.impen.logic.SpatialRiftCollapserLogic;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
 import appeng.api.inventories.InternalInventory;
@@ -31,7 +31,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
     private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
     private final MachineOperation op;
-    private final SpatialRiftStabilizerLogic logic;
+    private final SpatialRiftCollapserLogic logic;
 
     public SpatialRiftCollapserBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_COLLAPSER, blockPos, blockState);
@@ -39,7 +39,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
                 DEFAULT_SPEED_TICKS,
                 this::enableOperation,
                 this::doOperation);
-        this.logic = new SpatialRiftStabilizerLogic(this);
+        this.logic = new SpatialRiftCollapserLogic();
     }
 
     @Override
@@ -70,10 +70,10 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
 
-        final var ingredientMap = ((RiftedSpatialCellItem)input.getItem()).getIngredients(input);
-        LOGGER.info("Found ingredients: {}", ingredientMap);
+        final var recipeMap = ((RiftedSpatialCellItem)input.getItem()).getRecipes(this.getLevel(), input);
+        LOGGER.info("Found recipes: {}", recipeMap);
 
-        logic.addBlocksToPlot(plot, ingredientMap);
+        logic.addBlocksToPlot(plot, recipeMap);
 
         this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
         this.invWrapper.getOutput().setItemDirect(0, output);

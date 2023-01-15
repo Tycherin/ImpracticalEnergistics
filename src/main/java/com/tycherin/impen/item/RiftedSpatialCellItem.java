@@ -6,18 +6,19 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
 import appeng.items.AEBaseItem;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.level.Level;
 
 public class RiftedSpatialCellItem extends AEBaseItem {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
     
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private static final String TAG_PLOT_ID = "plot_id";
     private static final String TAG_ORIGINAL_CELL_SIZE = "orig_size";
     private static final String TAG_INGREDIENTS = "ingredients";
@@ -55,23 +56,22 @@ public class RiftedSpatialCellItem extends AEBaseItem {
             return -1;
         }
     }
-
-    public boolean addIngredient(final ItemStack is, final Item item) {
+    
+    public boolean addRecipe(final ItemStack is, final SpatialRiftManipulatorRecipe.SpatialStorageRecipe recipe) {
         final CompoundTag c = is.getTag();
         if (!c.contains(TAG_INGREDIENTS)) {
             c.put(TAG_INGREDIENTS, new CompoundTag());
         }
-        
         final CompoundTag ingTag = c.getCompound(TAG_INGREDIENTS);
         
-        if (ingTag.size() >= 16) {
-            // Safety net to avoid NBT overflow problems
+        if (ingTag.size() >= this.getMaxRecipes(is)) {
+            // Safety net, mostly to avoid NBT overflow problems
             return false;
         }
         
-        final String key = item.getRegistryName().toString();
+        final String key = recipe.getId().toString();
         if (ingTag.contains(key)) {
-            final var oldCount = ingTag.getInt(key);
+            final int oldCount = ingTag.getInt(key);
             ingTag.putInt(key, oldCount + 1);
         }
         else {
@@ -80,20 +80,28 @@ public class RiftedSpatialCellItem extends AEBaseItem {
         
         return true;
     }
-
-    public Map<Item, Integer> getIngredients(final ItemStack is) {
-        final Map<Item, Integer> ingMap = new HashMap<>();
+    
+    public int getMaxRecipes(final ItemStack is) {
+        // TODO Adjust based on size
+        return 16;
+    }
+    
+    public Map<SpatialRiftManipulatorRecipe.SpatialStorageRecipe, Integer> getRecipes(final Level level,
+            final ItemStack is) {
+        final Map<SpatialRiftManipulatorRecipe.SpatialStorageRecipe, Integer> ingMap = new HashMap<>();
         final CompoundTag c = is.getTag();
 
         if (c.contains(TAG_INGREDIENTS)) {
             final CompoundTag ingTag = c.getCompound(TAG_INGREDIENTS);
 
-            ingTag.getAllKeys().forEach(itemName -> {
-                ForgeRegistries.ITEMS.getHolder(new ResourceLocation(itemName))
-                        .ifPresentOrElse(
-                                holder -> ingMap.put(holder.value(), ingTag.getInt(itemName)),
-                                () -> LOGGER.warn("No registry entry found for {}, ignoring stored ingredient",
-                                        itemName));
+            ingTag.getAllKeys().forEach(recipeName -> {
+                SpatialRiftManipulatorRecipeManager.getRecipe(level, recipeName)
+                        .filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.SpatialStorageRecipe))
+                        .ifPresentOrElse(recipe -> {
+                            ingMap.compute((SpatialRiftManipulatorRecipe.SpatialStorageRecipe)recipe,
+                                    (r, count) -> count + 1);
+                        },
+                                () -> LOGGER.warn("No recipe found for key {}; input will be ignored", recipeName));
             });
         }
 

@@ -286,7 +286,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
         stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICKS, ImpenRegistry.SMOOTH_RIFTSTONE);
         
         // Custom recipe categories
-        new RiftCatalystRecipeProvider().addRecipes(consumer);
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
         new SpatialRiftCollapserRecipeProvider().addRecipes(consumer);
         new SpatialRiftManipulatorRecipeProvider().addRecipes(consumer);

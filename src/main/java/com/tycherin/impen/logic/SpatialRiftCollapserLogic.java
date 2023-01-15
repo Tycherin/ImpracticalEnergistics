@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,37 +13,28 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.recipe.RiftCatalystRecipe;
-import com.tycherin.impen.recipe.RiftCatalystRecipeManager;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialStorageRecipe;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SpatialRiftStabilizerLogic {
+public class SpatialRiftCollapserLogic {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Random RAND = new Random();
 
-    private final SpatialRiftCollapserBlockEntity be;
-
-    public SpatialRiftStabilizerLogic(final SpatialRiftCollapserBlockEntity be) {
-        this.be = be;
+    public SpatialRiftCollapserLogic() {
     }
 
-    public void addBlocksToPlot(final SpatialStoragePlot plot, final Map<Item, Integer> ingredients) {
+    public void addBlocksToPlot(final SpatialStoragePlot plot, final Map<SpatialStorageRecipe, Integer> recipes) {
         final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
-        final Supplier<Block> blockReplacer = getBlockReplacer(ingredients, blocksToReplace.size());
+        final Supplier<Block> blockReplacer = getBlockReplacer(recipes, blocksToReplace.size());
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
         blocksToReplace.forEach(blockPos -> {
@@ -82,23 +72,15 @@ public class SpatialRiftStabilizerLogic {
                 .collect(Collectors.toList());
     }
 
-    private Supplier<Block> getBlockReplacer(final Map<Item, Integer> ingredients, final int numBlocks) {
+    private Supplier<Block> getBlockReplacer(final Map<SpatialStorageRecipe, Integer> recipes, final int numBlocks) {
         final Map<Block, Integer> weights = new HashMap<>();
         final Set<Block> baseBlocks = new HashSet<>();
+        
+        // TODO Think about how to re-implement base blocks
+        baseBlocks.add(Blocks.STONE);
 
-        ingredients.forEach((item, count) -> {
-            final Optional<RiftCatalystRecipe> recipeOpt = RiftCatalystRecipeManager.getRecipe(be.getLevel(),
-                    item.getDefaultInstance());
-            if (recipeOpt.isEmpty()) {
-                LOGGER.warn("No recipe found for stored item {}; item will be discarded", item);
-            }
-            else {
-                final RiftCatalystRecipe recipe = recipeOpt.get();
-                recipe.getWeights().forEach(weight -> {
-                    weights.merge(weight.block(), weight.blockCount() * count, Integer::sum);
-                });
-                baseBlocks.add(recipe.getBaseBlock());
-            }
+        recipes.forEach((recipe, count) -> {
+            weights.compute(recipe.getBlock(), (r, oldCount) -> oldCount += recipe.getValue());
         });
 
         final Block baseBlock;
