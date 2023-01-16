@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Sets;
+import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 
@@ -68,13 +70,25 @@ public class SpatialRiftCollapserLogic {
     }
 
     private Supplier<Block> getBlockReplacer(final SpatialRiftCellData data, final int numBlocks) {
-        // TODO Change these to be dynamic
-        final Block baseBlock = Blocks.STONE;
-        final double precision = 0.5;
+        final Set<Block> replacementBlocks;
+        final Block baseBlock;
+        final int effectivePrecision;
+        if (data.getInputs().size() > 0) {
+            replacementBlocks = data.getInputs();
+            baseBlock = data.getBaseBlock()
+                    // This shouldn't happen, I'm just being paranoid
+                    .orElseGet(() -> Blocks.MOSSY_COBBLESTONE);
+            effectivePrecision = data.getPrecision();
+        }
+        else {
+            // Special case: there are no inputs configured in the cell, so we get to simulate random rift space
+            // TODO Add Unstable Riftstone in second position
+            replacementBlocks = Sets.newHashSet(ImpenRegistry.RIFT_SHARD_ORE.asBlock(), Blocks.END_STONE);
+            baseBlock = ImpenRegistry.RIFTSTONE.asBlock();
+            effectivePrecision = 20;
+        }
 
-        final Set<Block> replacementBlocks = data.getStoredInputs();
-        final double replacementRatio = precision / replacementBlocks.size();
-
+        final double replacementRatio = effectivePrecision / 100.0;
         final List<Block> replacements = new ArrayList<>();
         for (final Block replacementBlock : replacementBlocks) {
             final double randFactor = .2 - RAND.nextDouble(0.2);

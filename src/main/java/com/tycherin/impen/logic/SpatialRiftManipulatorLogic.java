@@ -19,14 +19,16 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class SpatialRiftManipulatorLogic {
-    
+
     private static final Logger LOGGER = LogUtils.getLogger();
-    
+
     private static final Item MODIFIER_ITEM_CLEAR = Items.GLASS;
     private static final Item MODIFIER_ITEM_BOOST = Items.BOW;
     private static final Set<Item> SPECIAL_MODIFIERS = ImmutableSet.of(
             MODIFIER_ITEM_CLEAR, MODIFIER_ITEM_BOOST);
-    
+
+    private static final int MODIFIER_BOOST_AMOUNT = 20;
+
     private final Level level = SpatialStoragePlotManager.INSTANCE.getLevel();
 
     public boolean isValidInput(final ItemStack topSlot, final ItemStack bottomSlot) {
@@ -37,7 +39,7 @@ public class SpatialRiftManipulatorLogic {
             return getRecipeInput(topSlot, bottomSlot).isPresent();
         }
     }
-    
+
     private boolean isValidSpatialCellInput(final ItemStack spatialCellIs, final ItemStack modifierIs) {
         final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForCell(spatialCellIs);
         if (dataOpt.isEmpty()) {
@@ -52,7 +54,7 @@ public class SpatialRiftManipulatorLogic {
             return true;
         }
         else if (dataOpt.get().getRemainingSlots() > 0) {
-            // TODO I should just split out the recipe managers at this point
+            // I should just split out the recipe managers at this point
             return getRecipeInput(spatialCellIs, modifierIs).isPresent();
         }
         else {
@@ -60,11 +62,12 @@ public class SpatialRiftManipulatorLogic {
             return false;
         }
     }
-    
-    private Optional<? extends SpatialRiftManipulatorRecipe> getRecipeInput(final ItemStack topSlot, final ItemStack bottomSlot) {
+
+    private Optional<? extends SpatialRiftManipulatorRecipe> getRecipeInput(final ItemStack topSlot,
+            final ItemStack bottomSlot) {
         return SpatialRiftManipulatorRecipeManager.getRecipe(level, topSlot, bottomSlot);
     }
-    
+
     public ItemStack processInputs(final ItemStack topSlot, final ItemStack bottomSlot) {
         if (topSlot.getItem() instanceof SpatialRiftCellItem) {
             return processInputsSpatialCell(topSlot, bottomSlot);
@@ -73,7 +76,7 @@ public class SpatialRiftManipulatorLogic {
             return processInputsRecipe(topSlot, bottomSlot);
         }
     }
-    
+
     private ItemStack processInputsSpatialCell(final ItemStack spatialCellIs, final ItemStack modifierIs) {
         final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForCell(spatialCellIs);
         if (dataOpt.isEmpty()) {
@@ -81,27 +84,28 @@ public class SpatialRiftManipulatorLogic {
             return ItemStack.EMPTY;
         }
         final SpatialRiftCellData data = dataOpt.get();
-        
+
         if (modifierIs.getItem().equals(MODIFIER_ITEM_CLEAR)) {
-            data.addModifierClear();
+            data.clearInputs();
             return spatialCellIs;
         }
         else if (modifierIs.getItem().equals(MODIFIER_ITEM_BOOST)) {
-            data.addModifierBoost();
+            data.addPrecisionBoost(MODIFIER_BOOST_AMOUNT);
             return spatialCellIs;
         }
         else {
-            final var recipe = (SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe) (getRecipeInput(spatialCellIs, modifierIs).get());
+            final var recipe = (SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe)(getRecipeInput(spatialCellIs,
+                    modifierIs).get());
             // TODO How to handle the situation where the modifier already exists?
-            data.addModifier(recipe.getBlock());
+            data.addInput(recipe.getBlock());
             return spatialCellIs;
         }
     }
-    
+
     private ItemStack processInputsRecipe(final ItemStack topSlot, final ItemStack bottomSlot) {
         return getRecipeInput(topSlot, bottomSlot)
                 .filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe))
-                .map(recipe -> (SpatialRiftManipulatorRecipe.GenericManipulatorRecipe) recipe)
+                .map(recipe -> (SpatialRiftManipulatorRecipe.GenericManipulatorRecipe)recipe)
                 .map(SpatialRiftManipulatorRecipe.GenericManipulatorRecipe::getOutput)
                 .orElse(ItemStack.EMPTY);
     }

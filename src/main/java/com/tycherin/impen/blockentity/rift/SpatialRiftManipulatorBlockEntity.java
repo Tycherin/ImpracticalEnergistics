@@ -65,8 +65,15 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
             return false;
         }
         else {
-            this.inv.setItemDirect(Slots.TOP, ItemStack.EMPTY);
-            this.inv.setItemDirect(Slots.BOTTOM, ItemStack.EMPTY);
+            if (topInput.equals(output)) {
+                // Spatial cell recipe - move to output without modifying the stack
+                this.inv.setItemDirect(Slots.TOP, ItemStack.EMPTY);
+            }
+            else {
+                // Regular crafting recipe - consume input
+                topInput.setCount(topInput.getCount() - 1);
+            }
+            bottomInput.setCount(bottomInput.getCount() - 1);
             this.inv.setItemDirect(Slots.OUTPUT, output);
             return true;
         }
@@ -91,10 +98,12 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             if (slot == Slots.TOP) {
-                return logic.isValidInput(stack, inv.getStackInSlot(Slots.BOTTOM));
+                return inv.getStackInSlot(Slots.TOP).isEmpty() && 
+                        logic.isValidInput(stack, inv.getStackInSlot(Slots.BOTTOM));
             }
             else if (slot == Slots.BOTTOM) {
-                return logic.isValidInput(inv.getStackInSlot(Slots.TOP), stack);
+                return inv.getStackInSlot(Slots.BOTTOM).isEmpty() &&
+                        logic.isValidInput(inv.getStackInSlot(Slots.TOP), stack);
             }
             else {
                 return false;

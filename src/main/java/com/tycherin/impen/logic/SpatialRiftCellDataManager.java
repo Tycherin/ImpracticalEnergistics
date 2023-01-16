@@ -108,9 +108,15 @@ public class SpatialRiftCellDataManager {
     public static class SpatialRiftCellData {
         private static final String TAG_PLOT_ID = "id";
         private static final String TAG_INPUTS = "inputs";
+        private static final String TAG_BONUS_PRECISION = "bonus_prec";
 
         private final int plotId;
         private final Set<Block> storedInputs;
+        private int bonusPrecision = 0;
+
+        // Convenience fields - not persisted
+        private int precision = 0;
+        private Optional<Block> baseBlock = Optional.empty();
 
         public SpatialRiftCellData(final int plotId, final Set<Block> storedInputs) {
             this.plotId = plotId;
@@ -129,7 +135,7 @@ public class SpatialRiftCellDataManager {
             return SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         }
 
-        public Set<Block> getStoredInputs() {
+        public Set<Block> getInputs() {
             return storedInputs;
         }
 
@@ -145,6 +151,7 @@ public class SpatialRiftCellDataManager {
             storedInputs.forEach(block -> {
                 inputsTag.add(StringTag.valueOf(block.getRegistryName().toString()));
             });
+            tag.putInt(TAG_BONUS_PRECISION, bonusPrecision);
             return tag;
         }
 
@@ -160,33 +167,78 @@ public class SpatialRiftCellDataManager {
                 }
                 storedInputs.add(block);
             });
-            return new SpatialRiftCellData(plotId, storedInputs);
+            final var data = new SpatialRiftCellData(plotId, storedInputs);
+            data.bonusPrecision = tag.getInt(TAG_BONUS_PRECISION);
+            data.recalculateInputs();
+            return data;
         }
 
-        public void addModifierClear() {
+        public void clearInputs() {
             this.storedInputs.clear();
-            // TODO Mess with precision here
+            this.recalculateInputs();
         }
 
-        public void addModifierBoost() {
-            // TODO Add bonus precision
+        public int getPrecision() {
+            return this.precision + this.bonusPrecision;
         }
 
-        public void addModifier(final Block block) {
+        public int getBonusPrecision() {
+            return this.bonusPrecision;
+        }
+
+        public Optional<Block> getBaseBlock() {
+            return this.baseBlock;
+        }
+
+        private void recalculateInputs() {
+            final var result = SpatialRiftCellCalculator.INSTANCE.calculate(this);
+            this.precision = result.precision();
+            this.baseBlock = result.baseBlock();
+        }
+
+        public void addPrecisionBoost(final int bonusPrecision) {
+            this.bonusPrecision += bonusPrecision;
+        }
+
+        public void addInput(final Block block) {
             this.storedInputs.add(block);
+            this.recalculateInputs();
         }
 
         public int getRemainingSlots() {
-            return getMaxMarkerCount() - this.storedInputs.size();
+            return getMaxInputCount() - this.storedInputs.size();
         }
 
-        public final int getMaxMarkerCount() {
+        public int getMaxInputCount() {
             final SpatialStoragePlot plot = getPlot();
             final int blockCount = plot.getSize().getX()
                     * plot.getSize().getY()
                     * plot.getSize().getZ();
 
-            return Math.max(((int)Math.sqrt(blockCount)) - 1, 1);
+            // This seemed like a better way of doing things rather than doing cube root shenanigans
+            final int maxInputs;
+            if (blockCount <= (2 * 2 * 2)) {
+                maxInputs = 1;
+            }
+            else if (blockCount <= (4 * 4 * 4)) {
+                maxInputs = 2;
+            }
+            else if (blockCount <= (6 * 6 * 6)) {
+                maxInputs = 3;
+            }
+            else if (blockCount <= (8 * 8 * 8)) {
+                maxInputs = 5;
+            }
+            else if (blockCount <= (10 * 10 * 10)) {
+                maxInputs = 6;
+            }
+            else if (blockCount <= (12 * 12 * 12)) {
+                maxInputs = 7;
+            }
+            else {
+                maxInputs = 8;
+            }
+            return maxInputs;
         }
     }
 }
