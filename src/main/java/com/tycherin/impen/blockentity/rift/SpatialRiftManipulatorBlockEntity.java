@@ -2,43 +2,33 @@ package com.tycherin.impen.blockentity.rift;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
-import com.tycherin.impen.item.SpatialRiftCellItem;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager.RiftCellData;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.GenericManipulatorRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
-import com.tycherin.impen.util.FilteredInventoryWrapper;
+import com.tycherin.impen.logic.SpatialRiftManipulatorLogic;
 
 import appeng.api.inventories.InternalInventory;
+import appeng.util.inv.AppEngInternalInventory;
+import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     private static final int DEFAULT_SPEED_TICKS = 20 * 1; // 1s
 
-    private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
-    private final MachineOperation op;
+    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 3);
+    private final InternalInventory invExt = new FilteredInternalInventory(inv, new InventoryItemFilter());
+    private final MachineOperation op = new MachineOperation(
+            DEFAULT_SPEED_TICKS,
+            this::enableOperation,
+            this::doOperation);
+    private final SpatialRiftManipulatorLogic logic = new SpatialRiftManipulatorLogic();
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR, pos, blockState);
-        this.op = new MachineOperation(
-                DEFAULT_SPEED_TICKS,
-                this::enableOperation,
-                this::doOperation);
     }
 
     @Override
@@ -51,88 +41,64 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         }
     }
 
+    private static class Slots {
+        public static final int TOP = 0;
+        public static final int BOTTOM = 1;
+        public static final int OUTPUT = 2;
+    }
+
     private boolean enableOperation() {
-        return !this.invWrapper.getInput().isEmpty() && this.invWrapper.getOutput().isEmpty();
+        return !this.inv.getStackInSlot(Slots.TOP).isEmpty()
+                && !this.inv.getStackInSlot(Slots.BOTTOM).isEmpty()
+                && this.inv.getStackInSlot(Slots.OUTPUT).isEmpty();
     }
 
     protected boolean doOperation() {
-        final ItemStack topInput = this.invWrapper.getInput().getStackInSlot(0);
-        // TODO Set up second input slot and use that instead of hardcoding an item
-        final ItemStack bottomInput = Items.IRON_INGOT.asItem().getDefaultInstance();
+        final ItemStack topInput = this.inv.getStackInSlot(Slots.TOP);
+        final ItemStack bottomInput = this.inv.getStackInSlot(Slots.BOTTOM);
 
-        final Optional<? extends SpatialRiftManipulatorRecipe> recipeOpt = SpatialRiftManipulatorRecipeManager
-                .getRecipe(getLevel(), topInput, bottomInput);
-        if (recipeOpt.isEmpty()) {
-            // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying the
-            // operation over and over again with no chance of success
-            LOGGER.warn("No recipe found for {}, {}", topInput, bottomInput);
+        final ItemStack output = logic.processInputs(topInput, bottomInput);
+
+        if (output.isEmpty()) {
+            // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying
+            // the operation over and over again with no chance of success
             return false;
         }
-        final SpatialRiftManipulatorRecipe recipe = recipeOpt.get();
-
-        final boolean didUpdate;
-        final ItemStack output;
-        if (recipe instanceof SpatialRiftEffectRecipe storageRecipe) {
-            final int plotId = ((SpatialRiftCellItem)topInput.getItem()).getPlotId(topInput);
-            final Optional<RiftCellData> riftCellDataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId);
-            if (riftCellDataOpt.isEmpty()) {
-                // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying
-                // the operation over and over again with no chance of success
-                LOGGER.warn("Rift cell data not found for {}", plotId);
-                return false;
-            }
-            final RiftCellData riftCellData = riftCellDataOpt.get();
-
-            riftCellData.addOrIncrementBlock(storageRecipe.getBlock());
-
-            didUpdate = true;
-            output = topInput;
-        }
-        else if (recipe instanceof GenericManipulatorRecipe genericRecipe) {
-            didUpdate = true;
-            output = genericRecipe.getOutput();
-        }
         else {
-            throw new RuntimeException("Unrecognized recipe type for " + recipe);
+            this.inv.setItemDirect(Slots.TOP, ItemStack.EMPTY);
+            this.inv.setItemDirect(Slots.BOTTOM, ItemStack.EMPTY);
+            this.inv.setItemDirect(Slots.OUTPUT, output);
+            return true;
         }
-
-        if (didUpdate) {
-            this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
-            this.invWrapper.getOutput().setItemDirect(0, output);
-        }
-        else {
-            // At the moment this does the same thing, but that will change once the happy path consumes items
-            this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
-            this.invWrapper.getOutput().setItemDirect(0, output);
-        }
-
-        // Note that even if we fail to add the ingredient, we still mark the operation as successful. That's because if
-        // we left it unsuccessful, it would keep retrying it, which is pointless because the operation won't succeed
-        // without modification.
-        return true;
     }
 
     @Override
     protected InternalInventory getExposedInventoryForSide(final Direction side) {
-        return this.invWrapper.getExternal();
+        return this.invExt;
     }
 
     @Override
     public InternalInventory getInternalInventory() {
-        return this.invWrapper.getInternal();
+        return this.inv;
     }
 
-    // TODO Ideally this shouldn't hardcode slot numbers & should integrate with FilteredInventoryWrapper instead...
-    // somehow
-    private static class InventoryItemFilter implements IAEItemFilter {
+    private class InventoryItemFilter implements IAEItemFilter {
         @Override
         public boolean allowExtract(final InternalInventory inv, final int slot, final int amount) {
-            return slot == 1;
+            return slot == Slots.OUTPUT;
         }
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem() instanceof SpatialRiftCellItem;
+            if (slot == Slots.TOP) {
+                return logic.isValidInput(stack, inv.getStackInSlot(Slots.BOTTOM));
+            }
+            else if (slot == Slots.BOTTOM) {
+                return logic.isValidInput(inv.getStackInSlot(Slots.TOP), stack);
+            }
+            else {
+                return false;
+            }
         }
     }
 

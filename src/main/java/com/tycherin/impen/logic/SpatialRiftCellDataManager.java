@@ -1,20 +1,23 @@
 package com.tycherin.impen.logic;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+import com.tycherin.impen.item.SpatialRiftCellItem;
 
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,11 +31,20 @@ public class SpatialRiftCellDataManager {
     private SpatialRiftCellDataManager() {
     }
 
-    public Optional<RiftCellData> getDataForPlot(final int plotId) {
+    public Optional<SpatialRiftCellData> getDataForPlot(final int plotId) {
         return getData().get(plotId);
     }
 
-    public void putDataForPlot(final RiftCellData data) {
+    public Optional<SpatialRiftCellData> getDataForCell(final ItemStack is) {
+        if (is.getItem() instanceof SpatialRiftCellItem item) {
+            return getDataForPlot(item.getPlotId(is));
+        }
+        else {
+            return Optional.empty();
+        }
+    }
+
+    public void putDataForPlot(final SpatialRiftCellData data) {
         getData().put(data.getPlotId(), data);
     }
 
@@ -51,13 +63,13 @@ public class SpatialRiftCellDataManager {
         private static final String ID = "impen_rift_cell_storage";
         private static final String TAG_PLOTS = "plots";
 
-        private final Int2ObjectLinkedOpenHashMap<RiftCellData> entries;
+        private final Int2ObjectLinkedOpenHashMap<SpatialRiftCellData> entries;
 
         public RiftCellWorldData() {
             entries = new Int2ObjectLinkedOpenHashMap<>();
         }
 
-        public void put(final int plotId, final RiftCellData data) {
+        public void put(final int plotId, final SpatialRiftCellData data) {
             entries.put(plotId, data);
             this.setDirty();
         }
@@ -67,7 +79,7 @@ public class SpatialRiftCellDataManager {
             this.setDirty();
         }
 
-        public Optional<RiftCellData> get(final int plotId) {
+        public Optional<SpatialRiftCellData> get(final int plotId) {
             return Optional.ofNullable(entries.get(plotId));
         }
 
@@ -85,7 +97,7 @@ public class SpatialRiftCellDataManager {
             final RiftCellWorldData worldData = new RiftCellWorldData();
             final ListTag plots = tag.getList(TAG_PLOTS, Tag.TAG_COMPOUND);
             plots.forEach(entryTag -> {
-                final RiftCellData cellData = RiftCellData.fromTag((CompoundTag)entryTag);
+                final SpatialRiftCellData cellData = SpatialRiftCellData.fromTag((CompoundTag)entryTag);
                 worldData.put(cellData.getPlotId(), cellData);
             });
             LOGGER.info("Loaded rift cell data for {} plots", plots.size());
@@ -93,20 +105,20 @@ public class SpatialRiftCellDataManager {
         }
     }
 
-    public static class RiftCellData {
+    public static class SpatialRiftCellData {
         private static final String TAG_PLOT_ID = "id";
         private static final String TAG_INPUTS = "inputs";
 
         private final int plotId;
-        private final Map<Block, Integer> storedInputs;
+        private final Set<Block> storedInputs;
 
-        public RiftCellData(final int plotId, final Map<Block, Integer> storedInputs) {
+        public SpatialRiftCellData(final int plotId, final Set<Block> storedInputs) {
             this.plotId = plotId;
             this.storedInputs = storedInputs;
         }
-        
-        public RiftCellData(final int plotId) {
-            this(plotId, new HashMap<>());
+
+        public SpatialRiftCellData(final int plotId) {
+            this(plotId, new HashSet<>());
         }
 
         public int getPlotId() {
@@ -117,42 +129,64 @@ public class SpatialRiftCellDataManager {
             return SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         }
 
-        public Map<Block, Integer> getStoredInputs() {
+        public Set<Block> getStoredInputs() {
             return storedInputs;
         }
 
-        public void addOrIncrementBlock(final Block block) {
-            if (storedInputs.containsKey(block)) {
-                storedInputs.put(block, storedInputs.get(block) + 1);
-            }
-            else {
-                storedInputs.put(block, 1);
-            }
+        public boolean addBlock(final Block block) {
+            return storedInputs.add(block);
         }
 
         public CompoundTag getAsTag() {
             final CompoundTag tag = new CompoundTag();
             tag.putInt(TAG_PLOT_ID, plotId);
-            final CompoundTag inputsTag = new CompoundTag();
+            final ListTag inputsTag = new ListTag();
             tag.put(TAG_INPUTS, inputsTag);
-            storedInputs.forEach((block, count) -> {
-                inputsTag.putInt(block.getRegistryName().toString(), count);
+            storedInputs.forEach(block -> {
+                inputsTag.add(StringTag.valueOf(block.getRegistryName().toString()));
             });
             return tag;
         }
 
-        public static RiftCellData fromTag(final CompoundTag tag) {
+        public static SpatialRiftCellData fromTag(final CompoundTag tag) {
             final int plotId = tag.getInt(TAG_PLOT_ID);
-            final CompoundTag inputsTag = tag.getCompound(TAG_INPUTS);
-            final Map<Block, Integer> storedInputs = new HashMap<>();
-            inputsTag.getAllKeys().forEach(blockId -> {
+            final ListTag inputsTag = tag.getList(TAG_INPUTS, Tag.TAG_STRING);
+            final Set<Block> storedInputs = new HashSet<>();
+            inputsTag.forEach(blockIdTag -> {
+                final String blockId = ((StringTag)blockIdTag).getAsString();
                 final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockId));
                 if (block == null) {
                     LOGGER.warn("Block {} missing from registry; value will be ignored", blockId);
                 }
-                storedInputs.put(block, tag.getInt(blockId));
+                storedInputs.add(block);
             });
-            return new RiftCellData(plotId, storedInputs);
+            return new SpatialRiftCellData(plotId, storedInputs);
+        }
+
+        public void addModifierClear() {
+            this.storedInputs.clear();
+            // TODO Mess with precision here
+        }
+
+        public void addModifierBoost() {
+            // TODO Add bonus precision
+        }
+
+        public void addModifier(final Block block) {
+            this.storedInputs.add(block);
+        }
+
+        public int getRemainingSlots() {
+            return getMaxMarkerCount() - this.storedInputs.size();
+        }
+
+        public final int getMaxMarkerCount() {
+            final SpatialStoragePlot plot = getPlot();
+            final int blockCount = plot.getSize().getX()
+                    * plot.getSize().getY()
+                    * plot.getSize().getZ();
+
+            return Math.max(((int)Math.sqrt(blockCount)) - 1, 1);
         }
     }
 }
