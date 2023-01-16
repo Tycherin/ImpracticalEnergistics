@@ -3,7 +3,7 @@ package com.tycherin.impen.recipe;
 import java.util.Optional;
 
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.item.SpatialRiftCellItem;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,7 +15,7 @@ public class SpatialRiftManipulatorRecipeManager {
         var stream = level.getRecipeManager().getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
                 .stream();
 
-        if (topInput.getItem() instanceof RiftedSpatialCellItem) {
+        if (topInput.getItem() instanceof SpatialRiftCellItem) {
             return stream.filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe))
                     .map(recipe -> (SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe)recipe)
                     .filter(recipe -> recipe.getBottomInput().test(bottomInput))

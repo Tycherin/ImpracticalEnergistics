@@ -2,7 +2,7 @@ package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 
 import appeng.core.AppEng;
@@ -51,9 +51,9 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
             // TODO Display effects here
             final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                    .addIngredients(RiftedSpatialCellItem.getIngredient());
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
             final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
-                    .addIngredients(RiftedSpatialCellItem.getIngredient());
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
             // Link these two slots together so they rotate in unison
             layoutBuilder.createFocusLink(inSlot, outSlot);
         }

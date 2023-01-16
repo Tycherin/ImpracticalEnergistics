@@ -22,7 +22,7 @@ import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
 import com.tycherin.impen.entity.RiftPrismEntity;
 import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
@@ -282,7 +282,7 @@ public class ImpenRegistry {
     }
 
     public static ItemDefinition makeRiftCellItem(final String name, final ItemLike originalItem) {
-        return makeItem(name, () -> new RiftedSpatialCellItem(getItemProps(), originalItem));
+        return makeItem(name, () -> new SpatialRiftCellItem(getItemProps(), originalItem));
     }
 
     private static <E extends Entity> DroppableItemDefinition<E> makeDroppableItem(final String name,

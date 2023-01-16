@@ -22,7 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class RiftedSpatialCellItem extends AEBaseItem {
+public class SpatialRiftCellItem extends AEBaseItem {
     
     private static final String TAG_PLOT_ID = "plot_id";
     private static final LazyOptional<Ingredient> INGREDIENT = LazyOptional.of(
@@ -35,7 +35,7 @@ public class RiftedSpatialCellItem extends AEBaseItem {
         return INGREDIENT.orElseThrow(() -> new RuntimeException("Problem creating rift cell ingredient"));
     }
 
-    public static final RiftedSpatialCellItem getMatchingCell(final SpatialStorageCellItem spatialCell) {
+    public static final SpatialRiftCellItem getMatchingCell(final SpatialStorageCellItem spatialCell) {
         final Item item = (switch (spatialCell.getMaxStoredDim(null)) {
         case 2 -> ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM;
         case 16 -> ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM;
@@ -43,12 +43,12 @@ public class RiftedSpatialCellItem extends AEBaseItem {
         default -> throw new RuntimeException("Unrecognized cell size for " + spatialCell);
         }).asItem();
         // Theoretically I should change ItemDefinition to track the actual item type to avoid the cast here, but ehhh
-        return (RiftedSpatialCellItem)item;
+        return (SpatialRiftCellItem)item;
     }
     
     private final ItemLike originalItem;
 
-    public RiftedSpatialCellItem(final Item.Properties props, final ItemLike originalItem) {
+    public SpatialRiftCellItem(final Item.Properties props, final ItemLike originalItem) {
         super(props);
         this.originalItem = originalItem;
     }

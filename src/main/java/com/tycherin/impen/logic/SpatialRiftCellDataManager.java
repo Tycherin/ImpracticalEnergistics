@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
@@ -18,13 +19,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class RiftCellDataManager {
+public class SpatialRiftCellDataManager {
 
-    public static final RiftCellDataManager INSTANCE = new RiftCellDataManager();
+    public static final SpatialRiftCellDataManager INSTANCE = new SpatialRiftCellDataManager();
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    private RiftCellDataManager() {
+    private SpatialRiftCellDataManager() {
     }
 
     public Optional<RiftCellData> getDataForPlot(final int plotId) {
@@ -110,6 +111,10 @@ public class RiftCellDataManager {
 
         public int getPlotId() {
             return plotId;
+        }
+
+        public SpatialStoragePlot getPlot() {
+            return SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         }
 
         public Map<Block, Integer> getStoredInputs() {

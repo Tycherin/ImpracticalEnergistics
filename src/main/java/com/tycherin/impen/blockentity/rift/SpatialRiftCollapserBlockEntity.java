@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
-import com.tycherin.impen.logic.RiftCellDataManager;
-import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
+import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager.RiftCellData;
 import com.tycherin.impen.logic.SpatialRiftCollapserLogic;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 
@@ -63,8 +63,8 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         // (mainly to reduce performance impact)
 
         final ItemStack input = this.invWrapper.getInput().getStackInSlot(0);
-        final int plotId = ((RiftedSpatialCellItem)input.getItem()).getPlotId(input);
-        final Optional<RiftCellData> dataOpt = RiftCellDataManager.INSTANCE.getDataForPlot(plotId);
+        final int plotId = ((SpatialRiftCellItem)input.getItem()).getPlotId(input);
+        final Optional<RiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId);
         if (dataOpt.isEmpty()) {
             // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying the
             // operation over and over again with no chance of success
@@ -73,7 +73,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         }
         final RiftCellData data = dataOpt.get();
 
-        final ItemStack output = ((RiftedSpatialCellItem)(input.getItem())).getOriginalItem().asItem()
+        final ItemStack output = ((SpatialRiftCellItem)(input.getItem())).getOriginalItem().asItem()
                 .getDefaultInstance();
         final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
         ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
@@ -112,7 +112,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem() instanceof RiftedSpatialCellItem;
+            return slot == 0 && stack.getItem() instanceof SpatialRiftCellItem;
         }
     }
 }

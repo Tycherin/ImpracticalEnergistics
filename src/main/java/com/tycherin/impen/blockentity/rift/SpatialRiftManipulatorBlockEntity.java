@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
-import com.tycherin.impen.logic.RiftCellDataManager;
-import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
+import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager.RiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.GenericManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe;
@@ -73,8 +73,8 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         final boolean didUpdate;
         final ItemStack output;
         if (recipe instanceof SpatialRiftEffectRecipe storageRecipe) {
-            final int plotId = ((RiftedSpatialCellItem)topInput.getItem()).getPlotId(topInput);
-            final Optional<RiftCellData> riftCellDataOpt = RiftCellDataManager.INSTANCE.getDataForPlot(plotId);
+            final int plotId = ((SpatialRiftCellItem)topInput.getItem()).getPlotId(topInput);
+            final Optional<RiftCellData> riftCellDataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId);
             if (riftCellDataOpt.isEmpty()) {
                 // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying
                 // the operation over and over again with no chance of success
@@ -132,7 +132,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem() instanceof RiftedSpatialCellItem;
+            return slot == 0 && stack.getItem() instanceof SpatialRiftCellItem;
         }
     }
 

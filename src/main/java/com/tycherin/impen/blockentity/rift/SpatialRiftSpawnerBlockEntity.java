@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
-import com.tycherin.impen.logic.RiftCellDataManager;
-import com.tycherin.impen.logic.RiftCellDataManager.RiftCellData;
+import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager.RiftCellData;
 import com.tycherin.impen.util.FilteredInventoryWrapper;
 import com.tycherin.impen.util.SpatialRiftUtil;
 
@@ -79,9 +79,9 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         }
 
         final ItemStack is = new ItemStack(
-                RiftedSpatialCellItem.getMatchingCell((SpatialStorageCellItem)inputItem.getItem()));
-        ((RiftedSpatialCellItem) is.getItem()).setPlotId(is, plotId);
-        RiftCellDataManager.INSTANCE.putDataForPlot(new RiftCellData(plotId));
+                SpatialRiftCellItem.getMatchingCell((SpatialStorageCellItem)inputItem.getItem()));
+        ((SpatialRiftCellItem) is.getItem()).setPlotId(is, plotId);
+        SpatialRiftCellDataManager.INSTANCE.putDataForPlot(new RiftCellData(plotId));
         
         return is;
     }

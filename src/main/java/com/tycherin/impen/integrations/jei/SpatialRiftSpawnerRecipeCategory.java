@@ -2,7 +2,7 @@ package com.tycherin.impen.integrations.jei;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
-import com.tycherin.impen.item.RiftedSpatialCellItem;
+import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.AppEng;
@@ -50,7 +50,7 @@ public class SpatialRiftSpawnerRecipeCategory implements IRecipeCategory<Spatial
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftSpawnerRecipe recipe,
             final IFocusGroup focusGroup) {
 
-        if (recipe.getResultItem().getItem() instanceof RiftedSpatialCellItem) {
+        if (recipe.getResultItem().getItem() instanceof SpatialRiftCellItem) {
             // Spatial cell recipe
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 52, 7)
                     .addIngredients(recipe.getInput())
