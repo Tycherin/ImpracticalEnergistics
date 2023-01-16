@@ -62,7 +62,7 @@ public class SpatialRiftSpawnerRecipeCategory implements IRecipeCategory<Spatial
             layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 114, 7)
                     .addItemStack(recipe.getResultItem())
                     .addTooltipCallback((recipeSlotView, tooltip) -> {
-                        tooltip.add(new TextComponent("Matches original cell")
+                        tooltip.add(new TextComponent("Formatted to input cell")
                                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
                     });
         }

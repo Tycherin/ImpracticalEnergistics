@@ -13,7 +13,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -40,16 +42,19 @@ public class SpatialRiftCollapserRecipeCategory implements IRecipeCategory<Spati
             final IFocusGroup focusGroup) {
         
         if (recipe.getResultItem().getItem() instanceof SpatialStorageCellItem outputItem) {
-            // TODO Special formatting here
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
                     .addIngredients(recipe.getInput());
-            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
-                    .addItemStack(recipe.getResultItem());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 63, 5)
+                    .addItemStack(recipe.getResultItem())
+                    .addTooltipCallback((recipeSlotView, tooltip) -> {
+                        tooltip.add(new TextComponent("Populated with blocks matching inputs")
+                                .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
+                    });
         }
         else {
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 5)
                     .addIngredients(recipe.getInput());
-            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 65, 5)
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 63, 5)
                     .addItemStack(recipe.getResultItem());
         }
     }

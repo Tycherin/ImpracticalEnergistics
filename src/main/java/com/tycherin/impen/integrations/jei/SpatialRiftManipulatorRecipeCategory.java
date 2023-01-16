@@ -13,7 +13,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -45,17 +47,26 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
         if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(genericRecipe.getTopInput());
-            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
                     .addItemStack(genericRecipe.getOutput());
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
-            // TODO Display effects here
             final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
-            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 10)
-                    .addIngredients(SpatialRiftCellItem.getIngredient());
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
+                    .addIngredients(SpatialRiftCellItem.getIngredient())
+                    .addTooltipCallback((recipeSlotView, tooltip) -> {
+                        tooltip.add(new TextComponent("Targeting: "
+                                + spatialRecipe.getBlock().asItem().getDefaultInstance().getHoverName().getString())
+                                .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
+                    });
+
             // Link these two slots together so they rotate in unison
             layoutBuilder.createFocusLink(inSlot, outSlot);
+
+            // Add the matching block as a "shadow" output so that JEI can search on it
+            layoutBuilder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                    .addItemStack(spatialRecipe.getBlock().asItem().getDefaultInstance());
         }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);

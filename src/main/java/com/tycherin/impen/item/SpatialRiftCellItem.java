@@ -2,14 +2,18 @@ package com.tycherin.impen.item;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager;
+import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 
 import appeng.core.localization.GuiText;
 import appeng.core.localization.Tooltips;
 import appeng.items.AEBaseItem;
 import appeng.items.storage.SpatialStorageCellItem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -23,7 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class SpatialRiftCellItem extends AEBaseItem {
-    
+
     private static final String TAG_PLOT_ID = "plot_id";
     private static final LazyOptional<Ingredient> INGREDIENT = LazyOptional.of(
             () -> Ingredient.of(
@@ -45,7 +49,7 @@ public class SpatialRiftCellItem extends AEBaseItem {
         // Theoretically I should change ItemDefinition to track the actual item type to avoid the cast here, but ehhh
         return (SpatialRiftCellItem)item;
     }
-    
+
     private final ItemLike originalItem;
 
     public SpatialRiftCellItem(final Item.Properties props, final ItemLike originalItem) {
@@ -71,7 +75,7 @@ public class SpatialRiftCellItem extends AEBaseItem {
             return -1;
         }
     }
-    
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(final ItemStack stack, final Level level, final List<Component> lines,
@@ -87,10 +91,21 @@ public class SpatialRiftCellItem extends AEBaseItem {
             // AE2 generates this directly within the tooltip code, so we have to imitate it here
             final String serialNumber = String.format(Locale.ROOT, "SP-%04d", plotId);
             // TODO Localization goes here
-            lines.add(Tooltips.of(
-                    Tooltips.of("Attuned to: "),
-                    Tooltips.of(serialNumber)));
+            lines.add(Tooltips.of("Attuned to: " + serialNumber));
+
+            final SpatialRiftCellData data = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId).get();
+            final BlockPos size = data.getPlot().getSize();
+            lines.add(Tooltips.of(GuiText.StoredSize, size.getX(), size.getY(), size.getZ()));
+
+            if (data.getInputs().isEmpty()) {
+                lines.add(Tooltips.of("No inputs added"));
+            }
+            else {
+                lines.add(Tooltips.of("Precision: " + data.getPrecision() + "%"));
+                lines.add(Tooltips.of("Targeting: " + data.getInputs().stream()
+                        .map(block -> block.asItem().getDefaultInstance().getHoverName().getString())
+                        .collect(Collectors.joining(", "))));
+            }
         }
-        // TODO Display cell attunement data
     }
 }
