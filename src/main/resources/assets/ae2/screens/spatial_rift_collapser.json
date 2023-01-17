@@ -4,7 +4,7 @@
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
     "texture": "guis/spatial_rift_collapser.png",
-    "srcRect": [0, 0, 176, 176]
+    "srcRect": [0, 0, 176, 197]
   },
   "slots": {
     "MACHINE_INPUT": {
@@ -35,8 +35,8 @@
   },
   "widgets": {
     "progressBar": {
-      "left": 151,
-      "top": 43
+      "left": 150,
+      "top": 42
     }
   }
 }

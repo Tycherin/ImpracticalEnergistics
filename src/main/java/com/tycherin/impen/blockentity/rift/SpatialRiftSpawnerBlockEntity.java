@@ -17,15 +17,17 @@ import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
 
-    private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
+    private final FilteredInventoryWrapper invWrapper;
     private final int baseSpeedTicks;
     private final MachineOperation op;
+    private final IAEItemFilter filter;
 
     public SpatialRiftSpawnerBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_SPAWNER, pos, blockState);
@@ -34,6 +36,8 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
                 this.baseSpeedTicks,
                 this::enableOperation,
                 this::doOperation);
+        this.filter = new InventoryItemFilter();
+        this.invWrapper = new FilteredInventoryWrapper(this, this.filter);
     }
 
     @Override
@@ -66,7 +70,8 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             return getOutputForSpatialCell(input, spatialCellOpt.get());
         }
         else {
-            throw new RuntimeException("Doesn't yet support non-spatial cell items");
+            // Not yet implemented
+            return Items.ACACIA_BOAT.getDefaultInstance();
         }
     }
 
@@ -80,9 +85,9 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
         final ItemStack is = new ItemStack(
                 SpatialRiftCellItem.getMatchingCell((SpatialStorageCellItem)inputItem.getItem()));
-        ((SpatialRiftCellItem) is.getItem()).setPlotId(is, plotId);
+        ((SpatialRiftCellItem)is.getItem()).setPlotId(is, plotId);
         SpatialRiftCellDataManager.INSTANCE.putDataForPlot(new SpatialRiftCellData(plotId));
-        
+
         return is;
     }
 
@@ -108,6 +113,7 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             // Only allow spatial cells that have allocated plots already
             return slot == 0
+                    && inv.getStackInSlot(0).isEmpty()
                     && SpatialRiftUtil.getPlotId(stack).isPresent();
         }
     }
@@ -115,5 +121,14 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     @Override
     protected int progressOperation() {
         return 1;
+    }
+
+    public int getMaxProgress() {
+        return baseSpeedTicks;
+    }
+
+    @Override
+    public IAEItemFilter getInventoryFilter() {
+        return this.filter;
     }
 }

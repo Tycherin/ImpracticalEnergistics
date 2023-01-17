@@ -3,7 +3,7 @@ package com.tycherin.impen.block.rift;
 import javax.annotation.Nullable;
 
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
-import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
+import com.tycherin.impen.client.gui.SpatialRiftSpawnerMenu;
 
 import appeng.block.AEBaseEntityBlock;
 import appeng.menu.MenuOpener;
@@ -31,8 +31,7 @@ public class SpatialRiftSpawnerBlock extends AEBaseEntityBlock<SpatialRiftSpawne
             final var be = (SpatialRiftSpawnerBlockEntity) level.getBlockEntity(pos);
             if (be != null) {
                 if (!level.isClientSide()) {
-                    // TODO Use correct types here
-                    MenuOpener.open(PossibilityDisintegratorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
+                    MenuOpener.open(SpatialRiftSpawnerMenu.TYPE, p, MenuLocators.forBlockEntity(be));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }

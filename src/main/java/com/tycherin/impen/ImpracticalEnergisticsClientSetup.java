@@ -7,6 +7,12 @@ import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
+import com.tycherin.impen.client.gui.SpatialRiftCollapserMenu;
+import com.tycherin.impen.client.gui.SpatialRiftCollapserScreen;
+import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
+import com.tycherin.impen.client.gui.SpatialRiftManipulatorScreen;
+import com.tycherin.impen.client.gui.SpatialRiftSpawnerMenu;
+import com.tycherin.impen.client.gui.SpatialRiftSpawnerScreen;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
 import appeng.blockentity.AEBaseBlockEntity;
@@ -83,8 +89,26 @@ public class ImpracticalEnergisticsClientSetup {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/possibility_disintegrator.json");
                     return new PossibilityDisintegratorScreen(menu, playerInv, title, style);
                 });
+        MenuScreens.<SpatialRiftSpawnerMenu, SpatialRiftSpawnerScreen>register(
+                SpatialRiftSpawnerMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_spawner.json");
+                    return new SpatialRiftSpawnerScreen(menu, playerInv, title, style);
+                });
+        MenuScreens.<SpatialRiftManipulatorMenu, SpatialRiftManipulatorScreen>register(
+                SpatialRiftManipulatorMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_manipulator.json");
+                    return new SpatialRiftManipulatorScreen(menu, playerInv, title, style);
+                });
+        MenuScreens.<SpatialRiftCollapserMenu, SpatialRiftCollapserScreen>register(
+                SpatialRiftCollapserMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/spatial_rift_collapser.json");
+                    return new SpatialRiftCollapserScreen(menu, playerInv, title, style);
+                });
     }
-    
+
     public static void setupBlockEntityRepresentations() {
         // AE2 needs to be told which item icon to use when representing each BE in the network display. This needs to
         // happen before BEs are instantiated, or else AE2 will explode.

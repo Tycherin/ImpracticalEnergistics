@@ -31,9 +31,10 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     // TODO Change the time required for an operation based on the size of the plot
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
 
-    private final FilteredInventoryWrapper invWrapper = new FilteredInventoryWrapper(this, new InventoryItemFilter());
+    private final FilteredInventoryWrapper invWrapper;
     private final MachineOperation op;
     private final SpatialRiftCollapserLogic logic;
+    private final IAEItemFilter filter;
 
     public SpatialRiftCollapserBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_COLLAPSER, blockPos, blockState);
@@ -42,6 +43,8 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
                 this::enableOperation,
                 this::doOperation);
         this.logic = new SpatialRiftCollapserLogic();
+        this.filter = new InventoryItemFilter();
+        this.invWrapper = new FilteredInventoryWrapper(this, this.filter);
     }
 
     @Override
@@ -102,6 +105,10 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         return this.invWrapper.getInternal();
     }
 
+    public int getMaxProgress() {
+        return DEFAULT_SPEED_TICKS;
+    }
+
     // TODO Ideally this shouldn't hardcode slot numbers & should integrate with FilteredInventoryWrapper instead...
     // somehow
     private static class InventoryItemFilter implements IAEItemFilter {
@@ -112,7 +119,14 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && stack.getItem() instanceof SpatialRiftCellItem;
+            return slot == 0
+                    && inv.getStackInSlot(0).isEmpty()
+                    && stack.getItem() instanceof SpatialRiftCellItem;
         }
+    }
+
+    @Override
+    public IAEItemFilter getInventoryFilter() {
+        return this.filter;
     }
 }

@@ -20,15 +20,18 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     private static final int DEFAULT_SPEED_TICKS = 20 * 1; // 1s
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 3);
-    private final InternalInventory invExt = new FilteredInternalInventory(inv, new InventoryItemFilter());
+    private final InternalInventory invExt;
     private final MachineOperation op = new MachineOperation(
             DEFAULT_SPEED_TICKS,
             this::enableOperation,
             this::doOperation);
     private final SpatialRiftManipulatorLogic logic = new SpatialRiftManipulatorLogic();
+    private final IAEItemFilter filter;
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR, pos, blockState);
+        this.filter = new InventoryItemFilter();
+        this.invExt = new FilteredInternalInventory(inv, this.filter);
     }
 
     @Override
@@ -98,7 +101,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             if (slot == Slots.TOP) {
-                return inv.getStackInSlot(Slots.TOP).isEmpty() && 
+                return inv.getStackInSlot(Slots.TOP).isEmpty() &&
                         logic.isValidInput(stack, inv.getStackInSlot(Slots.BOTTOM));
             }
             else if (slot == Slots.BOTTOM) {
@@ -114,5 +117,14 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     @Override
     protected int progressOperation() {
         return 1;
+    }
+
+    public int getMaxProgress() {
+        return DEFAULT_SPEED_TICKS;
+    }
+
+    @Override
+    public IAEItemFilter getInventoryFilter() {
+        return this.filter;
     }
 }
