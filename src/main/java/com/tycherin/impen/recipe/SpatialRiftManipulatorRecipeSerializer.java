@@ -37,8 +37,7 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
         if (json.has("spatial_effect")) {
             final JsonObject spatialJson = GsonHelper.getAsJsonObject(json, "spatial_effect");
             final Block block = getAsBlock(spatialJson);
-            final int value = GsonHelper.getAsInt(spatialJson, "value");
-            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, value);
+            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
         }
         else {
             final Ingredient topInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "top_input"));
@@ -56,8 +55,7 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
 
         if (typeFlag == SPATIAL_RECIPE_FLAG) {
             final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
-            final int value = buffer.readInt();
-            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, value);
+            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
         }
         else {
             final Ingredient topInput = Ingredient.fromNetwork(buffer);
@@ -73,7 +71,6 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
         if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
             buffer.writeChar(SPATIAL_RECIPE_FLAG);
             buffer.writeRegistryId(spatialRecipe.getBlock());
-            buffer.writeInt(spatialRecipe.getValue());
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
             buffer.writeChar(GENERIC_RECIPE_FLAG);

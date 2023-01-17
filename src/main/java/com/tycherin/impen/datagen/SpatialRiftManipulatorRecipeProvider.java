@@ -9,6 +9,8 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeSerializer;
 import com.tycherin.impen.util.ImpenIdUtil;
 
+import appeng.core.definitions.AEBlocks;
+import appeng.core.definitions.AEItems;
 import appeng.datagen.providers.recipes.AE2RecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -30,11 +32,64 @@ public class SpatialRiftManipulatorRecipeProvider {
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
 
+        // TODO Add in special spatial recipes:
+        // Clear precision
+        // Boost precision
+
         // TODO Placeholder recipes for now
         helper.addNormal(ImpenRegistry.RIFT_SHARD_ORE, Items.TNT, ImpenRegistry.RIFT_SHARD_BLOCK);
 
-        helper.addSpatial(Items.IRON_INGOT, Blocks.IRON_ORE, 5);
-        helper.addSpatial(Items.IRON_BLOCK, Blocks.IRON_ORE, 25);
+        helper.addSpatial(Items.IRON_PICKAXE, Blocks.IRON_ORE);
+        helper.addSpatial(Items.IRON_ORE, Blocks.IRON_ORE);
+        helper.addSpatial(Items.IRON_BLOCK, Blocks.IRON_ORE);
+        helper.addSpatial(Items.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_IRON_ORE);
+
+        helper.addSpatial(Items.LIGHTNING_ROD, Blocks.COPPER_ORE);
+        helper.addSpatial(Items.COPPER_ORE, Blocks.COPPER_ORE);
+        helper.addSpatial(Items.COPPER_BLOCK, Blocks.COPPER_ORE);
+        helper.addSpatial(Items.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE);
+
+        helper.addSpatial(Items.CAMPFIRE, Blocks.COAL_ORE);
+        helper.addSpatial(Items.COAL_ORE, Blocks.COAL_ORE);
+        helper.addSpatial(Items.COAL_BLOCK, Blocks.COAL_ORE);
+        helper.addSpatial(Items.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
+
+        helper.addSpatial(Items.GOLDEN_PICKAXE, Blocks.DEEPSLATE_GOLD_ORE);
+        helper.addSpatial(Items.GOLD_ORE, Blocks.GOLD_ORE);
+        helper.addSpatial(Items.GOLD_BLOCK, Blocks.DEEPSLATE_GOLD_ORE);
+        helper.addSpatial(Items.GOLDEN_SWORD, Blocks.NETHER_GOLD_ORE);
+
+        helper.addSpatial(Items.DIAMOND_PICKAXE, Blocks.DEEPSLATE_DIAMOND_ORE);
+        helper.addSpatial(Items.DIAMOND_ORE, Blocks.DIAMOND_ORE);
+        helper.addSpatial(Items.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE);
+        helper.addSpatial(Items.DIAMOND_BLOCK, Blocks.DEEPSLATE_DIAMOND_ORE);
+
+        helper.addSpatial(Items.QUARTZ_BLOCK, Blocks.NETHER_QUARTZ_ORE);
+        helper.addSpatial(Items.DAYLIGHT_DETECTOR, Blocks.NETHER_QUARTZ_ORE);
+
+        helper.addSpatial(Items.COMPARATOR, Blocks.REDSTONE_ORE);
+        helper.addSpatial(Items.REDSTONE_ORE, Blocks.REDSTONE_ORE);
+        helper.addSpatial(Items.DEEPSLATE_REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
+
+        helper.addSpatial(Items.LAPIS_BLOCK, Blocks.DEEPSLATE_LAPIS_ORE);
+        helper.addSpatial(Items.LAPIS_ORE, Blocks.LAPIS_ORE);
+        helper.addSpatial(Items.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_LAPIS_ORE);
+
+        helper.addSpatial(AEBlocks.QUARTZ_ORE.asItem(), AEBlocks.QUARTZ_ORE.block());
+        helper.addSpatial(AEBlocks.DEEPSLATE_QUARTZ_ORE.asItem(), AEBlocks.DEEPSLATE_QUARTZ_ORE.block());
+        helper.addSpatial(AEItems.CERTUS_QUARTZ_WRENCH, AEBlocks.QUARTZ_ORE.block());
+
+        helper.addSpatial(ImpenRegistry.RIFT_SHARD_BLOCK, ImpenRegistry.RIFT_SHARD_ORE.asBlock());
+        helper.addSpatial(ImpenRegistry.RIFT_GLASS, ImpenRegistry.RIFT_SHARD_ORE.asBlock());
+
+        helper.addSpatial(Items.OBSIDIAN, Blocks.OBSIDIAN);
+
+        // TODO Add custom netherite ore
+        // TODO Add custom glowstone ore
+        // TODO Add custom End Amethyst ore
+        // TODO Add custom mushroom-infested dirt
+
+        // TODO Figure out how to generate recipes for modded ores
     }
 
     private static class BuilderHelper {
@@ -55,12 +110,12 @@ public class SpatialRiftManipulatorRecipeProvider {
             consumer.accept(result);
         }
 
-        public void addSpatial(final ItemLike bottomInput, final Block block, final int value) {
+        public void addSpatial(final ItemLike bottomInput, final Block block) {
             final String recipeName = "spatial_" + bottomInput.asItem().getRegistryName().getPath();
             final var result = new RecipeBuilder()
                     .recipeName(recipeName)
                     .bottomInput(Ingredient.of(bottomInput))
-                    .spatialEffect(block, value)
+                    .spatialEffect(block)
                     .build();
             consumer.accept(result);
         }
@@ -74,7 +129,6 @@ public class SpatialRiftManipulatorRecipeProvider {
         private ItemStack output;
 
         private Block block;
-        private int value;
 
         public RecipeResult build() {
             if (recipeName == null) {
@@ -103,9 +157,8 @@ public class SpatialRiftManipulatorRecipeProvider {
             return this;
         }
 
-        public RecipeBuilder spatialEffect(final Block block, final int value) {
+        public RecipeBuilder spatialEffect(final Block block) {
             this.block = block;
-            this.value = value;
             return this;
         }
 
@@ -123,7 +176,6 @@ public class SpatialRiftManipulatorRecipeProvider {
                 if (block != null) {
                     final JsonObject spatialJson = new JsonObject();
                     spatialJson.addProperty("block", block.getRegistryName().toString());
-                    spatialJson.addProperty("value", value);
                     json.add("spatial_effect", spatialJson);
                 }
             }

@@ -104,21 +104,14 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
     public static class SpatialRiftEffectRecipe extends SpatialRiftManipulatorRecipe {
 
         private final Block block;
-        private final int value;
 
-        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block,
-                final int value) {
+        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block) {
             super(id, bottomInput);
             this.block = block;
-            this.value = value;
         }
 
         public Block getBlock() {
             return block;
-        }
-
-        public int getValue() {
-            return value;
         }
     }
 }
