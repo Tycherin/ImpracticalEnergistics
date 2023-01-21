@@ -6,7 +6,7 @@ import com.tycherin.impen.client.gui.SpatialRiftCollapserMenu;
 import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftSpawnerMenu;
 import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.datagen.ImpenBlockModelProvider;
+import com.tycherin.impen.datagen.ImpenBlockStateProvider;
 import com.tycherin.impen.datagen.ImpenBlockTagsProvider;
 import com.tycherin.impen.datagen.ImpenItemModelProvider;
 import com.tycherin.impen.datagen.ImpenItemTagsProvider;
@@ -74,7 +74,7 @@ public class ImpracticalEnergisticsMod {
         gen.addProvider(new ImpenItemTagsProvider(gen, blockTagsProvider, MOD_ID, efh));
         // Note that ordering is important here - item models refer to block models, so the block models need to be
         // generated first 
-        gen.addProvider(new ImpenBlockModelProvider(gen, MOD_ID, efh));
+        gen.addProvider(new ImpenBlockStateProvider(gen, MOD_ID, efh));
         gen.addProvider(new ImpenItemModelProvider(gen, MOD_ID, efh));
     }
 }
