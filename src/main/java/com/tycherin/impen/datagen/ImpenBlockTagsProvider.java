@@ -1,9 +1,14 @@
 package com.tycherin.impen.datagen;
 
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.ImpenRegistry;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -33,6 +38,8 @@ public class ImpenBlockTagsProvider extends BlockTagsProvider {
                 .add(ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK.block())
                 .add(ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK.block())
                 .add(ImpenRegistry.RIFT_SHARD_BLOCK.block());
+        
+        addEffectiveTags();
     }
 
     private void addSingularOre(final Block block) {
@@ -47,5 +54,21 @@ public class ImpenBlockTagsProvider extends BlockTagsProvider {
                 .add(block);
         this.tag(Tags.Blocks.ORE_RATES_DENSE)
                 .add(block);
+    }
+    
+    private void addEffectiveTags() {
+        final Map<Block, TagKey<Block>> overrides = ImmutableMap.of(
+                ImpenRegistry.MUSHROOM_DIRT.asBlock(), BlockTags.MINEABLE_WITH_SHOVEL);
+        final TagKey<Block> defaultTag = BlockTags.MINEABLE_WITH_PICKAXE;
+        
+        ImpenRegistry.getRegisteredBlocks().forEach(blockLike -> {
+            final Block block = blockLike.asBlock();
+            if (overrides.containsKey(block)) {
+                tag(overrides.get(block)).add(block);
+            }
+            else {
+                tag(defaultTag).add(block);
+            }
+        });
     }
 }

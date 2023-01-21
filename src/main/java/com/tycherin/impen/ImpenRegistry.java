@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
+import com.tycherin.impen.block.OreBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
@@ -53,7 +54,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.GlassBlock;
-import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -118,6 +119,19 @@ public class ImpenRegistry {
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
     }
+    
+    private static final BlockBehaviour.Properties MACHINE_BLOCK_PROPS = BlockBehaviour.Properties.of(Material.METAL)
+            .strength(3f, 10f)
+            .sound(SoundType.METAL)
+            .requiresCorrectToolForDrops();
+    private static final BlockBehaviour.Properties ORE_BLOCK_PROPS = BlockBehaviour.Properties.of(Material.STONE)
+            .strength(3f, 5f)
+            .sound(SoundType.STONE)
+            .requiresCorrectToolForDrops();
+    private static final BlockBehaviour.Properties RIFTSTONE_BLOCK_PROPS = BlockBehaviour.Properties.of(Material.STONE)
+            .strength(6f, 30f)
+            .sound(SoundType.STONE)
+            .requiresCorrectToolForDrops();
 
     // ***
     // Actual registry objects
@@ -165,11 +179,10 @@ public class ImpenRegistry {
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
 
     // Basic Blocks
-    // TODO I have no idea if these are the right materials to use
-    public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", Material.STONE);
-    public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore", Material.STONE);
-    public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", Material.STONE);
-    public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", Material.STONE);
+    public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", RIFTSTONE_BLOCK_PROPS);
+    public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore");
+    public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
+    public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFT_GLASS = makeCustomBlock("rift_glass",
             () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_STAINED_GLASS)));
     public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
@@ -179,10 +192,10 @@ public class ImpenRegistry {
             Material.AMETHYST);
     public static final BlockDefinition RIFT_SHARD_BLOCK = makeBasicBlock("rift_shard_block", Material.AMETHYST);
 
-    public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore", Material.STONE);
-    public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore", Material.STONE);
-    public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore", Material.STONE);
-    public static final BlockDefinition MUSHROOM_DIRT = makeOreBlock("mushroom_dirt", Material.DIRT);
+    public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore");
+    public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore");
+    public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore");
+    public static final BlockDefinition MUSHROOM_DIRT = makeBasicBlock("mushroom_dirt", Material.DIRT);
     
     // Droppable items
     public static final DroppableItemDefinition<RiftPrismEntity> RIFT_PRISM = makeDroppableItem(
@@ -242,9 +255,8 @@ public class ImpenRegistry {
             final Function<BlockBehaviour.Properties, B> blockSupplier,
             final BlockEntityType.BlockEntitySupplier<E> blockEntitySupplier, final boolean orientable,
             final Function<BlockBehaviour.Properties, BlockBehaviour.Properties> propsModifier) {
-        final var blockProps = BlockBehaviour.Properties.of(Material.METAL);
         return ImpenRegistry.makeMachine(name, blockSupplier, blockEntitySupplier, orientable,
-                propsModifier.apply(blockProps));
+                propsModifier.apply(MACHINE_BLOCK_PROPS));
     }
 
     private static <B extends Block, E extends BlockEntity> MachineDefinition<B, E> makeMachine(final String name,
@@ -323,16 +335,16 @@ public class ImpenRegistry {
     }
 
     private static BlockDefinition makeBasicBlock(final String name, final Material mat) {
-        return ImpenRegistry.makeBasicBlock(name, BlockBehaviour.Properties.of(mat));
+        return ImpenRegistry.makeBasicBlock(name, BlockBehaviour.Properties.of(mat)
+                .strength(1f, 2f));
     }
     
     private static BlockDefinition makeBasicBlock(final String name, final BlockBehaviour.Properties props) {
         return ImpenRegistry.makeCustomBlock(name, () -> new Block(props));
     }
 
-    private static BlockDefinition makeOreBlock(final String name, final Material mat) {
-        // TODO This is very broken for some reason
-        return ImpenRegistry.makeCustomBlock(name, () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
+    private static BlockDefinition makeOreBlock(final String name) {
+        return ImpenRegistry.makeCustomBlock(name, () -> new OreBlock(ORE_BLOCK_PROPS));
     }
 
     private static Item.Properties getItemProps() {

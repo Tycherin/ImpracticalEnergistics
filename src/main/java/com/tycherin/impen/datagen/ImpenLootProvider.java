@@ -61,15 +61,19 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropWhenSilkTouch(ImpenRegistry.RIFT_GLASS.block());
 
             this.add(ImpenRegistry.RIFT_SHARD_ORE.block(), (block) -> {
+                // TODO This should drop more
                 return createOreDrop(block, ImpenRegistry.RIFT_SHARD.asItem());
             });
             this.add(ImpenRegistry.NETHER_GLOWSTONE_ORE.block(), (block) -> {
+                // TODO This should probably be... different
                 return createOreDrop(block, Items.GLOWSTONE_DUST);
             });
             this.add(ImpenRegistry.NETHER_DEBRIS_ORE.block(), (block) -> {
-                return createOreDrop(block, Items.ANCIENT_DEBRIS);
+                // TODO This should probably be nerfed
+                return createOreDrop(block, Items.NETHERITE_SCRAP);
             });
             this.add(ImpenRegistry.END_AMETHYST_ORE.block(), (block) -> {
+                // TODO This should probably be buffed?
                 return createOreDrop(block, Items.AMETHYST_SHARD);
             });
 
