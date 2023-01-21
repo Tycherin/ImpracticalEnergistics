@@ -47,9 +47,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -176,10 +174,6 @@ public class ImpenRegistry {
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
-
-    // TODO Add Rift Alloy tools
-    // TODO Add unbreakable Rift Alloy wrench
-    // TODO Add unbreakable Rift Alloy knife
     
     // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
@@ -188,10 +182,6 @@ public class ImpenRegistry {
     public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", RIFTSTONE_BLOCK_PROPS);
-    public static final BlockDefinition RIFT_GLASS = makeCustomBlock("rift_glass",
-            () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_STAINED_GLASS)));
-    // TODO Riftstone Slab
-    // TODO Riftstone Stairs
     
     public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
     public static final BlockDefinition BLAZING_AEROCRYSTAL_BLOCK = makeBasicBlock("blazing_aerocrystal_block",

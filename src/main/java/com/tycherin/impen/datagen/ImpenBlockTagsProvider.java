@@ -21,9 +21,6 @@ public class ImpenBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags() {
-        this.tag(Tags.Blocks.GLASS)
-                .add(ImpenRegistry.RIFT_GLASS.block());
-
         addDenseOre(ImpenRegistry.RIFT_SHARD_ORE.asBlock());
         addSingularOre(ImpenRegistry.NETHER_GLOWSTONE_ORE.asBlock());
         addSingularOre(ImpenRegistry.NETHER_DEBRIS_ORE.asBlock());

@@ -145,15 +145,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('#', ImpenRegistry.SMOOTH_RIFTSTONE)
                 .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
                 .save(consumer);
-        // Rift Glass
-        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFT_GLASS, 4)
-                .pattern(" G ")
-                .pattern("GRG")
-                .pattern(" G ")
-                .define('G', Blocks.GLASS)
-                .define('R', ImpenRegistry.SMOOTH_RIFTSTONE)
-                .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
-                .save(consumer);
         // Lunchbox Cell
         ShapedRecipeBuilder.shaped(ImpenRegistry.LUNCHBOX_CELL_ITEM)
                 .pattern("ICI")

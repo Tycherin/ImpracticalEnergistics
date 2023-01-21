@@ -88,7 +88,6 @@ public class SpatialRiftManipulatorRecipeProvider {
         helper.addSpatial(AEItems.CERTUS_QUARTZ_WRENCH, AEBlocks.QUARTZ_ORE.block());
 
         helper.addSpatial(ImpenRegistry.RIFT_SHARD_BLOCK, ImpenRegistry.RIFT_SHARD_ORE.asBlock());
-        helper.addSpatial(ImpenRegistry.RIFT_GLASS, ImpenRegistry.RIFT_SHARD_ORE.asBlock());
 
         helper.addSpatial(Items.OBSIDIAN, Blocks.OBSIDIAN);
 

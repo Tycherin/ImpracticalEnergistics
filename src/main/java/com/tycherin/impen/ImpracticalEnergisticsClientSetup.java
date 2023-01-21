@@ -22,8 +22,6 @@ import appeng.client.render.SimpleModelLoader;
 import appeng.core.AppEng;
 import appeng.parts.automation.PlaneModel;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -69,9 +67,6 @@ public class ImpracticalEnergisticsClientSetup {
         event.enqueueWork(() -> {
             ImpracticalEnergisticsClientSetup.setupScreens();
             ImpracticalEnergisticsClientSetup.setupBlockEntityRepresentations();
-
-            ItemBlockRenderTypes.setRenderLayer(ImpenRegistry.RIFT_GLASS.block(),
-                    RenderType.translucent());
         });
     }
 
