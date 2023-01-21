@@ -20,8 +20,6 @@ import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
-import com.tycherin.impen.entity.RiftPrismEntity;
-import com.tycherin.impen.entity.StabilizedRiftPrismEntity;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
@@ -38,12 +36,10 @@ import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.core.definitions.AEItems;
-import appeng.items.materials.CustomEntityItem;
 import appeng.items.parts.PartItem;
 import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
@@ -162,7 +158,7 @@ public class ImpenRegistry {
             makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
     //@formatter:on
 
-    // Materials
+    // Basic items
     public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
@@ -174,6 +170,8 @@ public class ImpenRegistry {
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
 
     public static final ItemDefinition RIFT_SHARD = makeItem("rift_shard");
+    public static final ItemDefinition RIFT_PRISM = makeItem("rift_prism");
+    public static final ItemDefinition STABILIZED_RIFT_PRISM = makeItem("stabilized_rift_prism");
 
     // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
@@ -197,13 +195,7 @@ public class ImpenRegistry {
     public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore");
     public static final BlockDefinition MUSHROOM_DIRT = makeBasicBlock("mushroom_dirt", Material.DIRT);
     
-    // Droppable items
-    public static final DroppableItemDefinition<RiftPrismEntity> RIFT_PRISM = makeDroppableItem(
-            "rift_prism", RiftPrismEntity::new, RiftPrismEntity::new);
-    public static final DroppableItemDefinition<StabilizedRiftPrismEntity> STABILIZED_RIFT_PRISM = makeDroppableItem(
-            "stabilized_rift_prism", StabilizedRiftPrismEntity::new, StabilizedRiftPrismEntity::new);
-
-    // Misc items
+    // Special items
     public static final ItemDefinition LUNCHBOX_CELL_ITEM = makeItem("lunchbox_cell", LunchboxCellItem::new);
 
     public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
@@ -300,19 +292,6 @@ public class ImpenRegistry {
 
     public static ItemDefinition makeRiftCellItem(final String name, final ItemLike originalItem) {
         return makeItem(name, () -> new SpatialRiftCellItem(getItemProps(), originalItem));
-    }
-
-    private static <E extends Entity> DroppableItemDefinition<E> makeDroppableItem(final String name,
-            final EntityType.EntityFactory<E> entityFunc, final CustomEntityItem.EntityFactory entityFuncAgain) {
-        final var itemHolder = ITEMS.register(name,
-                () -> new CustomEntityItem(getItemProps(), entityFuncAgain));
-        final var entityHolder = ENTITIES
-                .register(itemHolder.getId().getPath(), () -> EntityType.Builder
-                        .<E>of(entityFunc, MobCategory.MISC).sized(0.25F, 0.25F)
-                        .clientTrackingRange(6).updateInterval(20).build(ImpracticalEnergisticsMod.MOD_ID));
-        final var def = new DroppableItemDefinition<E>(itemHolder, entityHolder);
-        ImpenRegistry.ITEMS_LIST.add(def);
-        return def;
     }
 
     private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {

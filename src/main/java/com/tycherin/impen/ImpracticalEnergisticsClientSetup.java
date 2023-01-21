@@ -25,7 +25,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -123,8 +122,5 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ImpenRegistry.RIFT_PRISM.entity(), ItemEntityRenderer::new);
-        event.registerEntityRenderer(ImpenRegistry.STABILIZED_RIFT_PRISM.entity(),
-                ItemEntityRenderer::new);
     }
 }

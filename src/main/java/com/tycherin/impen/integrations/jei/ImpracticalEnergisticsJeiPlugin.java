@@ -1,6 +1,5 @@
 package com.tycherin.impen.integrations.jei;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,10 +11,6 @@ import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
-import appeng.core.AEConfig;
-import appeng.core.definitions.AEItems;
-import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterCategory;
-import appeng.integration.modules.jei.throwinginwater.ThrowingInWaterDisplay;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -27,8 +22,6 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
 
@@ -87,19 +80,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get()));
         registry.addRecipes(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get()));
-
-        final List<ThrowingInWaterDisplay> waterRecipes = new ArrayList<>();
-        if (AEConfig.instance().isInWorldFluixEnabled()) {
-            waterRecipes.add(new ThrowingInWaterDisplay(
-                    List.of(
-                            Ingredient.of(Items.REDSTONE),
-                            Ingredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED),
-                            Ingredient.of(ImpenRegistry.RIFT_PRISM)),
-                    AEItems.FLUIX_DUST.stack(4),
-                    false));
-        }
-
-        registry.addRecipes(ThrowingInWaterCategory.RECIPE_TYPE, waterRecipes);
 
         // TODO Change this call the bulk insert version
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
