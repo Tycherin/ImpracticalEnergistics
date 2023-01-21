@@ -179,6 +179,11 @@ public class ImpenRegistry {
             Material.AMETHYST);
     public static final BlockDefinition RIFT_SHARD_BLOCK = makeBasicBlock("rift_shard_block", Material.AMETHYST);
 
+    public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore", Material.STONE);
+    public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore", Material.STONE);
+    public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore", Material.STONE);
+    public static final BlockDefinition MUSHROOM_DIRT = makeOreBlock("mushroom_dirt", Material.DIRT);
+    
     // Droppable items
     public static final DroppableItemDefinition<RiftPrismEntity> RIFT_PRISM = makeDroppableItem(
             "rift_prism", RiftPrismEntity::new, RiftPrismEntity::new);
@@ -326,6 +331,7 @@ public class ImpenRegistry {
     }
 
     private static BlockDefinition makeOreBlock(final String name, final Material mat) {
+        // TODO This is very broken for some reason
         return ImpenRegistry.makeCustomBlock(name, () -> new OreBlock(BlockBehaviour.Properties.copy(Blocks.IRON_ORE)));
     }
 

@@ -84,10 +84,10 @@ public class SpatialRiftManipulatorRecipeProvider {
 
         helper.addSpatial(Items.OBSIDIAN, Blocks.OBSIDIAN);
 
-        // TODO Add custom netherite ore
-        // TODO Add custom glowstone ore
-        // TODO Add custom End Amethyst ore
-        // TODO Add custom mushroom-infested dirt
+        helper.addSpatial(Items.GLOWSTONE, ImpenRegistry.NETHER_GLOWSTONE_ORE.asBlock());
+        helper.addSpatial(Items.NETHERITE_INGOT, ImpenRegistry.NETHER_DEBRIS_ORE.asBlock());
+        helper.addSpatial(Items.AMETHYST_BLOCK, ImpenRegistry.END_AMETHYST_ORE.asBlock());
+        helper.addSpatial(Items.MUSHROOM_STEW, ImpenRegistry.MUSHROOM_DIRT.asBlock());
 
         // TODO Figure out how to generate recipes for modded ores
     }

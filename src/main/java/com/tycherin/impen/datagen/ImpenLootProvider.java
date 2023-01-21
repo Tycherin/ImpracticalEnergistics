@@ -16,6 +16,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
@@ -61,6 +62,15 @@ public class ImpenLootProvider extends LootTableProvider {
 
             this.add(ImpenRegistry.RIFT_SHARD_ORE.block(), (block) -> {
                 return createOreDrop(block, ImpenRegistry.RIFT_SHARD.asItem());
+            });
+            this.add(ImpenRegistry.NETHER_GLOWSTONE_ORE.block(), (block) -> {
+                return createOreDrop(block, Items.GLOWSTONE_DUST);
+            });
+            this.add(ImpenRegistry.NETHER_DEBRIS_ORE.block(), (block) -> {
+                return createOreDrop(block, Items.ANCIENT_DEBRIS);
+            });
+            this.add(ImpenRegistry.END_AMETHYST_ORE.block(), (block) -> {
+                return createOreDrop(block, Items.AMETHYST_SHARD);
             });
 
             this.add(ImpenRegistry.SMOOTH_RIFTSTONE.block(), (block) -> {
