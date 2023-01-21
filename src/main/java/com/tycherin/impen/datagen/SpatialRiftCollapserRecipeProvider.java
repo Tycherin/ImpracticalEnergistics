@@ -14,7 +14,6 @@ import appeng.datagen.providers.recipes.AE2RecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
@@ -29,9 +28,7 @@ public class SpatialRiftCollapserRecipeProvider {
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
 
-        // TODO These are just here for testing, get rid of them later
-        helper.add(Items.GOLDEN_APPLE, Items.AMETHYST_SHARD);
-        helper.add(ImpenRegistry.STABILIZED_RIFT_PRISM, ImpenRegistry.RIFT_PRISM);
+        helper.add(ImpenRegistry.RIFT_PRISM, ImpenRegistry.STABILIZED_RIFT_PRISM);
 
         helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM, AEItems.SPATIAL_CELL2);
         helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM, AEItems.SPATIAL_CELL16);

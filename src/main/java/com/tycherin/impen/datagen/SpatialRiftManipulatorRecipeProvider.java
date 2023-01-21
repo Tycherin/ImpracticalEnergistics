@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe.SpecialSpatialRecipeType;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeSerializer;
 import com.tycherin.impen.util.ImpenIdUtil;
 
@@ -21,6 +22,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 
 public class SpatialRiftManipulatorRecipeProvider {
 
@@ -31,13 +33,19 @@ public class SpatialRiftManipulatorRecipeProvider {
 
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
+        
+        consumer.accept(new RecipeBuilder()
+                .recipeName("spatial_clear_precision")
+                .bottomInput(Ingredient.of(Tags.Items.GLASS))
+                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.BOOST_PRECISION)
+                .build());
+        consumer.accept(new RecipeBuilder()
+                .recipeName("spatial_boost_precision")
+                .bottomInput(Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM))
+                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.BOOST_PRECISION)
+                .build());
 
-        // TODO Add in special spatial recipes:
-        // Clear precision
-        // Boost precision
-
-        // TODO Placeholder recipes for now
-        helper.addNormal(ImpenRegistry.RIFT_SHARD_ORE, Items.TNT, ImpenRegistry.RIFT_SHARD_BLOCK);
+        helper.addNormal(ImpenRegistry.RIFTSTONE, Items.IRON_PICKAXE, ImpenRegistry.RIFTSTONE_DUST);
 
         helper.addSpatial(Items.IRON_PICKAXE, Blocks.IRON_ORE);
         helper.addSpatial(Items.IRON_ORE, Blocks.IRON_ORE);
@@ -129,12 +137,18 @@ public class SpatialRiftManipulatorRecipeProvider {
         private ItemStack output;
 
         private Block block;
+        private SpecialSpatialRecipeType specialType;
 
         public RecipeResult build() {
             if (recipeName == null) {
                 throw new RuntimeException("Recipe name cannot be null");
             }
             return new RecipeResult();
+        }
+
+        public RecipeBuilder hasSpecialSpatialEffect(final SpecialSpatialRecipeType specialType) {
+            this.specialType = specialType;
+            return this;
         }
 
         public RecipeBuilder recipeName(final String s) {
@@ -161,7 +175,7 @@ public class SpatialRiftManipulatorRecipeProvider {
             this.block = block;
             return this;
         }
-
+        
         private class RecipeResult implements FinishedRecipe {
 
             @Override
@@ -176,6 +190,11 @@ public class SpatialRiftManipulatorRecipeProvider {
                 if (block != null) {
                     final JsonObject spatialJson = new JsonObject();
                     spatialJson.addProperty("block", block.getRegistryName().toString());
+                    json.add("spatial_effect", spatialJson);
+                }
+                else if (specialType != null) {
+                    final JsonObject spatialJson = new JsonObject();
+                    spatialJson.addProperty("special_effect", specialType.toString());
                     json.add("spatial_effect", spatialJson);
                 }
             }

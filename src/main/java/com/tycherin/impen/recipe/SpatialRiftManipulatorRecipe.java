@@ -114,4 +114,28 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
             return block;
         }
     }
+    
+    /**
+     * There are a couple of recipes that manipulate rift cells, but don't have an associated block, and therefore need
+     * special handling
+     */
+    public static class SpecialSpatialRecipe extends SpatialRiftManipulatorRecipe {
+
+        public static enum SpecialSpatialRecipeType {
+            CLEAR_PRECISION,
+            BOOST_PRECISION
+        }
+
+        private final SpecialSpatialRecipeType specialType;
+
+        public SpecialSpatialRecipe(final ResourceLocation id, final Ingredient bottomInput,
+                final SpecialSpatialRecipeType specialType) {
+            super(id, bottomInput);
+            this.specialType = specialType;
+        }
+
+        public SpecialSpatialRecipeType getSpecialType() {
+            return specialType;
+        }
+    }
 }

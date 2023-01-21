@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe.SpecialSpatialRecipeType;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -36,8 +37,17 @@ public class SpatialRiftManipulatorRecipeSerializer extends ForgeRegistryEntry<R
 
         if (json.has("spatial_effect")) {
             final JsonObject spatialJson = GsonHelper.getAsJsonObject(json, "spatial_effect");
-            final Block block = getAsBlock(spatialJson);
-            return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
+            if (spatialJson.has("block")) {
+                final Block block = getAsBlock(spatialJson);
+                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);                
+            }
+            else if (spatialJson.has("special_effect")) {
+                final var type = SpecialSpatialRecipeType.valueOf(spatialJson.get("special_effect").getAsString());
+                return new SpatialRiftManipulatorRecipe.SpecialSpatialRecipe(recipeId, bottomInput, type);
+            }
+            else {
+                throw new RuntimeException("Unknown spatial effect type for " + recipeId);
+            }
         }
         else {
             final Ingredient topInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "top_input"));

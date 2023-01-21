@@ -84,21 +84,23 @@ public class SpatialRiftManipulatorLogic {
             return ItemStack.EMPTY;
         }
         final SpatialRiftCellData data = dataOpt.get();
-
-        if (modifierIs.getItem().equals(MODIFIER_ITEM_CLEAR)) {
-            data.clearInputs();
+        final var recipe = getRecipeInput(spatialCellIs,
+                modifierIs).get();
+        
+        if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+            // TODO How to handle the situation where the modifier already exists?
+            data.addInput(spatialRecipe.getBlock());
             return spatialCellIs;
         }
-        else if (modifierIs.getItem().equals(MODIFIER_ITEM_BOOST)) {
-            data.addPrecisionBoost(MODIFIER_BOOST_AMOUNT);
+        else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
+            switch (specialRecipe.getSpecialType()) {
+            case BOOST_PRECISION -> data.addPrecisionBoost(MODIFIER_BOOST_AMOUNT);
+            case CLEAR_PRECISION -> data.clearInputs();
+            }
             return spatialCellIs;
         }
         else {
-            final var recipe = (SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe)(getRecipeInput(spatialCellIs,
-                    modifierIs).get());
-            // TODO How to handle the situation where the modifier already exists?
-            data.addInput(recipe.getBlock());
-            return spatialCellIs;
+            throw new RuntimeException("Unhandled recipe subtype for " + recipe.getId());
         }
     }
 
