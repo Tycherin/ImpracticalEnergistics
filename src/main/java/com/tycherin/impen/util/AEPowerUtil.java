@@ -13,6 +13,8 @@ public class AEPowerUtil {
             return true;
         }
 
+        // TODO I don't love the fact that you can't tell how much power individual machines are consuming
+
         final var energySvc = be.getMainNode().getGrid().getEnergyService();
         final var projectedPowerDraw = energySvc.extractAEPower(powerToDraw, Actionable.SIMULATE,
                 PowerMultiplier.CONFIG);

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
@@ -47,6 +48,7 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     private final SpatialRiftSpawnerFuelHelper fuelHelper = new SpatialRiftSpawnerFuelHelper();
     /** Convenience field just so we don't have to build this every time we want to scan it */
     private final Container inputContainer;
+    private final double powerPerTick;
 
     private int storedFuel = 0;
 
@@ -60,6 +62,7 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         this.filter = new InventoryItemFilter();
         this.invExt = new FilteredInternalInventory(inv, this.filter);
         this.inputContainer = this.inv.getSubInventory(Slots.INPUT, Slots.INPUT + 1).toContainer();
+        this.powerPerTick = ImpenConfig.POWER.spatialRiftSpawnerCost();
     }
 
     // ***
@@ -268,5 +271,10 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
     public int getStoredFuel() {
         return this.storedFuel;
+    }
+
+    @Override
+    protected double getPowerDraw() {
+        return this.powerPerTick;
     }
 }

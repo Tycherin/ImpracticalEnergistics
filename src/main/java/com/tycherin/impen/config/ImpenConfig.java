@@ -52,10 +52,12 @@ public class ImpenConfig {
     public static class PowerValues {
         private final DoubleValue globalModifier;
         private final IntValue bnl;
-        private final IntValue srm;
         private final IntValue psdTick;
         private final IntValue psdOp;
         private final IntValue atm;
+        private final IntValue srs;
+        private final IntValue srm;
+        private final IntValue src;
 
         public PowerValues(final Builder builder) {
             this.globalModifier = builder.comment("Global power consumption modifier for all machines")
@@ -64,8 +66,12 @@ public class ImpenConfig {
             builder.comment("Power consumption for various machines are defined below. Units are AE.");
             this.bnl = builder.comment("Beamed Network Link consumption per tick while active")
                     .defineInRange("beamed_network_link", 10, 0, Integer.MAX_VALUE);
-            this.srm = builder.comment("Spatial Rift Manipulator consumption per block modified")
-                    .defineInRange("spatial_rift_manipulator", 80, 0, Integer.MAX_VALUE);
+            this.srs = builder.comment("Spatial Rift Spawner consumption per tick")
+                    .defineInRange("spatial_rift_spawner", 40, 0, Integer.MAX_VALUE);
+            this.srm = builder.comment("Spatial Rift Manipulator consumption per tick")
+                    .defineInRange("spatial_rift_manipulator", 40, 0, Integer.MAX_VALUE);
+            this.src = builder.comment("Spatial Rift Collapser consumption per tick")
+                    .defineInRange("spatial_rift_collapser", 40, 0, Integer.MAX_VALUE);
             this.psdTick = builder.comment("Possibility Disintegrator consumption per tick")
                     .defineInRange("possibility_disintegrator_tick", 10, 0, Integer.MAX_VALUE);
             this.psdOp = builder.comment("Possibility Disintegrator consumption per operation")
@@ -78,8 +84,16 @@ public class ImpenConfig {
             return bnl.get() * globalModifier.get();
         }
 
+        public double spatialRiftSpawnerCost() {
+            return srs.get() * globalModifier.get();
+        }
+
         public double spatialRiftManipulatorCost() {
             return srm.get() * globalModifier.get();
+        }
+
+        public double spatialRiftCollapserCost() {
+            return src.get() * globalModifier.get();
         }
 
         public double possibilityDisintegratorCostTick() {

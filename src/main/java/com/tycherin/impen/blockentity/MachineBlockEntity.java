@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 import com.tycherin.impen.ImpenRegistry.MachineDefinition;
+import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
@@ -75,6 +76,7 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
             final var op = this.activeOperation.get();
 
             if (!op.shouldRunFunc.getAsBoolean()) {
+                // Operation should stop
                 this.runningTicks = -1;
                 this.activeOperation = Optional.empty();
                 return TickRateModulation.SAME;
@@ -84,7 +86,10 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
                 this.startOperation();
                 this.runningTicks = 0;
             }
-            this.runningTicks += this.progressOperation();
+            
+            if (AEPowerUtil.drawPower(this, getPowerDraw())) {
+                this.runningTicks += this.progressOperation();
+            }
 
             if (this.runningTicks >= op.ticksRequired) {
                 if (op.executeOperationFunc.getAsBoolean()) {
@@ -130,4 +135,8 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
     protected abstract int progressOperation();
 
     public abstract IAEItemFilter getInventoryFilter();
+
+    protected double getPowerDraw() {
+        return 0.0;
+    }
 }

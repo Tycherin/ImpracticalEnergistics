@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.SpatialRiftManipulatorLogic;
 
 import appeng.api.inventories.InternalInventory;
@@ -27,11 +28,13 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
             this::doOperation);
     private final SpatialRiftManipulatorLogic logic = new SpatialRiftManipulatorLogic();
     private final IAEItemFilter filter;
+    private final double powerPerTick;
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR, pos, blockState);
         this.filter = new InventoryItemFilter();
         this.invExt = new FilteredInternalInventory(inv, this.filter);
+        this.powerPerTick = ImpenConfig.POWER.spatialRiftManipulatorCost();
     }
 
     @Override
@@ -126,5 +129,10 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     @Override
     public IAEItemFilter getInventoryFilter() {
         return this.filter;
+    }
+
+    @Override
+    protected double getPowerDraw() {
+        return this.powerPerTick;
     }
 }

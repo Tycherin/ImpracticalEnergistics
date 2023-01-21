@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
@@ -35,6 +36,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     private final MachineOperation op;
     private final SpatialRiftCollapserLogic logic;
     private final IAEItemFilter filter;
+    private final double powerPerTick;
 
     public SpatialRiftCollapserBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_COLLAPSER, blockPos, blockState);
@@ -45,6 +47,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         this.logic = new SpatialRiftCollapserLogic();
         this.filter = new InventoryItemFilter();
         this.invWrapper = new FilteredInventoryWrapper(this, this.filter);
+        this.powerPerTick = ImpenConfig.POWER.spatialRiftCollapserCost();
     }
 
     @Override
@@ -64,6 +67,8 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     protected boolean doOperation() {
         // TODO Switch this to progress the operation gradually rather than doing it all at once
         // (mainly to reduce performance impact)
+
+        // TODO Handle inputs other than rift cells
 
         final ItemStack input = this.invWrapper.getInput().getStackInSlot(0);
         final int plotId = ((SpatialRiftCellItem)input.getItem()).getPlotId(input);
@@ -91,7 +96,6 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
     @Override
     protected int progressOperation() {
-        // TODO Power draw
         return 1;
     }
 
@@ -128,5 +132,10 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     @Override
     public IAEItemFilter getInventoryFilter() {
         return this.filter;
+    }
+
+    @Override
+    protected double getPowerDraw() {
+        return this.powerPerTick;
     }
 }
