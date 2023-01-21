@@ -81,6 +81,7 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
             }
 
             if (this.runningTicks == -1) {
+                this.startOperation();
                 this.runningTicks = 0;
             }
             this.runningTicks += this.progressOperation();
@@ -117,6 +118,10 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
             int ticksRequired,
             BooleanSupplier shouldRunFunc,
             BooleanSupplier executeOperationFunc) {
+    }
+    
+    protected void startOperation() {
+        // To be extended by implementing classes
     }
 
     protected abstract Optional<MachineOperation> getOperation();

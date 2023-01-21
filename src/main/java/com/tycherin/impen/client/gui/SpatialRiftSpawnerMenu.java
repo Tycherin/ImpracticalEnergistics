@@ -28,7 +28,10 @@ public class SpatialRiftSpawnerMenu extends AEBaseMenu implements IProgressProvi
                 SlotSemantics.MACHINE_INPUT);
         this.addSlot(new FilteredInputSlot(be.getInventoryFilter(), be.getInternalInventory(), 1),
                 SlotSemantics.MACHINE_OUTPUT);
-        // TODO Implement fuel
+        this.addSlot(new FilteredInputSlot(be.getInventoryFilter(), be.getInternalInventory(), 2),
+                SlotSemantics.INSCRIBER_PLATE_TOP /* i.e. fuel slot */);
+        
+        // TODO Display fuel level
 
         this.maxProgress = be.getMaxProgress();
 

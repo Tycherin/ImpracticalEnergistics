@@ -31,11 +31,11 @@ public class SpatialRiftSpawnerRecipeProvider {
 
         // TODO These are just here for testing, get rid of them later
         helper.add(Items.APPLE, Items.GOLDEN_APPLE, 50);
-        helper.add(ImpenRegistry.RIFT_PRISM, ImpenRegistry.STABILIZED_RIFT_PRISM, 100);
+        helper.add(ImpenRegistry.RIFT_PRISM, ImpenRegistry.STABILIZED_RIFT_PRISM, 10);
 
-        helper.add(AEItems.SPATIAL_CELL2, ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM, 200);
-        helper.add(AEItems.SPATIAL_CELL16, ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM, 400);
-        helper.add(AEItems.SPATIAL_CELL128, ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, 800);
+        helper.add(AEItems.SPATIAL_CELL2, ImpenRegistry.SPATIAL_RIFT_CELL_2_ITEM, 20);
+        helper.add(AEItems.SPATIAL_CELL16, ImpenRegistry.SPATIAL_RIFT_CELL_16_ITEM, 40);
+        helper.add(AEItems.SPATIAL_CELL128, ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, 80);
     }
 
     private static class BuilderHelper {
