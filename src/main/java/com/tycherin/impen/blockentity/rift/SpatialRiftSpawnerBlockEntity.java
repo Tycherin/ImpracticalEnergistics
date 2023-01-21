@@ -261,4 +261,12 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
         return ret;
     }
+
+    public int getMaxFuel() {
+        return MAX_STORED_FUEL_AMOUNT;
+    }
+
+    public int getStoredFuel() {
+        return this.storedFuel;
+    }
 }

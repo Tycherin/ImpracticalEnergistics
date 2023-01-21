@@ -11,13 +11,16 @@ import net.minecraft.world.entity.player.Inventory;
 public class SpatialRiftSpawnerScreen extends AEBaseScreen<SpatialRiftSpawnerMenu> {
 
     private final ProgressBar prog;
+    private final FuelBarWidget fuel;
 
     public SpatialRiftSpawnerScreen(final SpatialRiftSpawnerMenu menu, final Inventory playerInventory,
             final Component title, final ScreenStyle style) {
         super(menu, playerInventory, title, style);
 
         this.prog = new ProgressBar(this.menu, style.getImage("progressBar"), Direction.VERTICAL);
+        this.fuel = new FuelBarWidget(this.menu, style.getImage("fuelBar"), Direction.VERTICAL);
         this.widgets.add("progressBar", prog);
+        this.widgets.add("fuelBar", fuel);
     }
 
     @Override
@@ -26,5 +29,6 @@ public class SpatialRiftSpawnerScreen extends AEBaseScreen<SpatialRiftSpawnerMen
 
         final int progress = this.menu.getCurrentProgress() * 100 / this.menu.getMaxProgress();
         this.prog.setFullMsg(new TextComponent(progress + "%"));
+        this.fuel.setFullMsg(new TextComponent(this.menu.getCurrentFuel() + " Aerofuel"));
     }
 }

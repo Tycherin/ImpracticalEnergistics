@@ -35,11 +35,19 @@
     "progressBar": {
       "texture": "guis/spatial_rift_spawner.png",
       "srcRect": [180, 17, 6, 18]
+    },
+    "fuelBar": {
+      "texture": "guis/spatial_rift_spawner.png",
+      "srcRect": [192, 17, 6, 18]
     }
   },
   "widgets": {
     "progressBar": {
       "left": 150,
+      "top": 42
+    },
+    "fuelBar": {
+      "left": 19,
       "top": 42
     }
   }
