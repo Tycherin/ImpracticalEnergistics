@@ -356,11 +356,6 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         this.recalculateDisintegrationDelay();
     }
 
-    @Override
-    protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.POSSIBILITY_DISINTEGRATOR.item();
-    }
-
     public double getPowerPerOperation() {
         return this.basePowerPerOperation;
     }

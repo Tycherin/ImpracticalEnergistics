@@ -81,7 +81,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         registry.addRecipes(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get()));
 
-        // TODO Change this call the bulk insert version
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
             final String translationKey = "jei.impracticalenergistics.description."
                     + item.asItem().getRegistryName().getPath();

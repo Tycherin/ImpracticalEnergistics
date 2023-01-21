@@ -28,7 +28,6 @@ import appeng.me.helpers.BlockEntityNodeListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -125,11 +124,6 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     public void forceUpdate() {
         this.setDirtyBit();
         this.ticksUntilNextCheck = 0;
-    }
-
-    @Override
-    protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.BEAMED_NETWORK_LINK.item();
     }
 
     // ***

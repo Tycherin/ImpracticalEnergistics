@@ -12,7 +12,6 @@ import appeng.me.cells.BasicCellInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -205,10 +204,5 @@ public class EjectionDriveBlockEntity extends ChestBlockEntity {
 
         // And finally remove the existing cell
         this.setCell(ItemStack.EMPTY);
-    }
-
-    @Override
-    protected Item getItemFromBlockEntity() {
-        return ImpenRegistry.EJECTION_DRIVE.item();
     }
 }

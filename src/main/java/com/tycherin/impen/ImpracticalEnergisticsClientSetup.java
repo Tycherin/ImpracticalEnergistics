@@ -112,7 +112,10 @@ public class ImpracticalEnergisticsClientSetup {
         // AE2 needs to be told which item icon to use when representing each BE in the network display. This needs to
         // happen before BEs are instantiated, or else AE2 will explode.
         Arrays.asList(
-                // TODO Add everything else
+                ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
+                ImpenRegistry.BEAMED_NETWORK_LINK,
+                ImpenRegistry.EJECTION_DRIVE,
+                ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
                 ImpenRegistry.SPATIAL_RIFT_COLLAPSER)
