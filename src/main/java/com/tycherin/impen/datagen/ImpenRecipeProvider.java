@@ -267,6 +267,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
         nineBlockStorageRecipes(consumer, ImpenRegistry.BLAZING_AEROCRYSTAL, ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK);
         nineBlockStorageRecipes(consumer, ImpenRegistry.EXOTIC_AEROCRYSTAL, ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK);
         nineBlockStorageRecipes(consumer, ImpenRegistry.RIFT_SHARD, ImpenRegistry.RIFT_SHARD_BLOCK);
+//        nineBlockStorageRecipes(consumer, ImpenRegistry.RIFT_ALLOY_INGOT, ImpenRegistry.RIFT_ALLOY_BLOCK);
 
         // ***
         // Other Recipe Types

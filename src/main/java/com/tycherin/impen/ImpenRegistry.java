@@ -162,34 +162,46 @@ public class ImpenRegistry {
     public static final ItemDefinition AEROCRYSTAL = makeItem("aerocrystal");
     public static final ItemDefinition BLAZING_AEROCRYSTAL = makeItem("blazing_aerocrystal");
     public static final ItemDefinition EXOTIC_AEROCRYSTAL = makeItem("exotic_aerocrystal");
-
+    public static final ItemDefinition RIFT_SHARD = makeItem("rift_shard");
+    public static final ItemDefinition RIFT_PRISM = makeItem("rift_prism");
+    public static final ItemDefinition STABILIZED_RIFT_PRISM = makeItem("stabilized_rift_prism");
+    public static final ItemDefinition AEROCRYSTAL_ASSEMBLY = makeItem("aerocrystal_assembly");
+    public static final ItemDefinition AEROCRYSTAL_PRISM = makeItem("aerocrystal_prism");
+    public static final ItemDefinition SPATIAL_MACHINE_CORE = makeItem("spatial_machine_core");
+    public static final ItemDefinition RIFTSTONE_DUST = makeItem("riftstone_dust");
+    public static final ItemDefinition RIFT_ALLOY_INGOT = makeItem("rift_alloy_ingot");
+    
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
 
-    public static final ItemDefinition RIFT_SHARD = makeItem("rift_shard");
-    public static final ItemDefinition RIFT_PRISM = makeItem("rift_prism");
-    public static final ItemDefinition STABILIZED_RIFT_PRISM = makeItem("stabilized_rift_prism");
-
+    // TODO Add Rift Alloy tools
+    // TODO Add unbreakable Rift Alloy wrench
+    // TODO Add unbreakable Rift Alloy knife
+    
     // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
 
     // Basic Blocks
     public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", RIFTSTONE_BLOCK_PROPS);
-    public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore");
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFT_GLASS = makeCustomBlock("rift_glass",
             () -> new GlassBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_STAINED_GLASS)));
+    // TODO Riftstone Slab
+    // TODO Riftstone Stairs
+    
     public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
     public static final BlockDefinition BLAZING_AEROCRYSTAL_BLOCK = makeBasicBlock("blazing_aerocrystal_block",
             Material.AMETHYST);
     public static final BlockDefinition EXOTIC_AEROCRYSTAL_BLOCK = makeBasicBlock("exotic_aerocrystal_block",
             Material.AMETHYST);
     public static final BlockDefinition RIFT_SHARD_BLOCK = makeBasicBlock("rift_shard_block", Material.AMETHYST);
+    public static final BlockDefinition RIFT_ALLOY_BLOCK = makeBasicBlock("rift_alloy_block", Material.METAL);
 
+    public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore");
     public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore");
     public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore");
     public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore");
