@@ -75,8 +75,11 @@ public class SpatialRiftSpawnerRecipeCategory implements IRecipeCategory<Spatial
         }
         
         layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 13, 7)
-                .addIngredients(this.fuelIngredient);
-        // TODO Display fuel cost graphically
+                .addIngredients(this.fuelIngredient)
+                .addTooltipCallback((recipeSlotView, tooltip) -> {
+                    tooltip.add(new TextComponent("Requires " + recipe.getFuelCost() + " Aerofuel")
+                            .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+                });
     }
 
     @Override
