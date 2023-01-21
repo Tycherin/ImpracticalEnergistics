@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "impracticalenergistics:block/rift_shard_ore"
-  }
-}

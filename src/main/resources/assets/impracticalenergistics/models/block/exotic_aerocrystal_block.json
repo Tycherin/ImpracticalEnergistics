@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "impracticalenergistics:block/exotic_aerocrystal_block"
-  }
-}
