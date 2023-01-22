@@ -2,12 +2,21 @@ package com.tycherin.impen.part;
 
 import java.util.List;
 
+import org.jline.utils.Log;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
+import com.tycherin.impen.util.MobUtil;
+
+import appeng.api.behaviors.PickupStrategy;
+import appeng.api.config.Actionable;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.parts.IPartCollisionHelper;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.IPartModel;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
 import appeng.api.storage.StorageHelper;
 import appeng.api.util.AECableType;
 import appeng.blockentity.networking.CableBusBlockEntity;
@@ -18,8 +27,14 @@ import appeng.parts.automation.PlaneConnectionHelper;
 import appeng.parts.automation.PlaneModelData;
 import appeng.parts.automation.PlaneModels;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.LargeFireball;
@@ -34,9 +49,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 
 public class CapturePlanePart extends BasicStatePart {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final PlaneModels MODELS = new PlaneModels("part/capture_plane",
             "part/capture_plane_on");
@@ -81,6 +99,27 @@ public class CapturePlanePart extends BasicStatePart {
     @Override
     public float getCableConnectionLength(final AECableType cable) {
         return 1;
+    }
+
+    @Override
+    public void onEntityCollision(final Entity entity) {
+        if (!entity.isAlive() || isClientSide() || !this.getMainNode().isActive()) {
+            return;
+        }
+
+        var grid = getMainNode().getGrid();
+        if (grid == null) {
+            return;
+        }
+
+        if (entity instanceof Mob mob && MobUtil.canBeCaptured(mob)) {
+            final var spawnEgg = ForgeSpawnEggItem.fromEntityType(mob.getType());
+            if (spawnEgg != null
+                    && this.insertIntoGrid(AEItemKey.of(spawnEgg), 1, Actionable.MODULATE) > 0) {
+                mob.remove(RemovalReason.DISCARDED);
+                // TODO Play sound effect or particle effect or something here
+            }
+        }
     }
 
     public void onHit(final ProjectileImpactEvent event) {
@@ -150,5 +189,14 @@ public class CapturePlanePart extends BasicStatePart {
                 cpp.onHit(event);
             }
         }
+    }
+
+    private long insertIntoGrid(final AEKey what, final long amount, final Actionable mode) {
+        var grid = getMainNode().getGrid();
+        if (grid == null) {
+            return 0;
+        }
+        return StorageHelper.poweredInsert(grid.getEnergyService(), grid.getStorageService().getInventory(),
+                what, amount, this.actionSource, mode);
     }
 }

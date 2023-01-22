@@ -12,6 +12,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpenRegistry.ItemDefinition;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.util.AEPowerUtil;
+import com.tycherin.impen.util.MobUtil;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
@@ -36,8 +37,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -105,18 +104,8 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         }
 
         if (entity instanceof Mob mob && !targets.containsKey(mob)) {
-            if (mob.isBaby() || mob instanceof WitherBoss || mob instanceof EnderDragon) {
-                // TODO Forge 1.19 adds a tag to see if a mob is a boss or not, we should denylist those instead of
-                // hardcoding vanilla mob classes
-                return;
-            }
-            else if (mob.isPassenger()) {
-                return;
-            }
-            else if (mob.getControllingPassenger() != null && mob.getControllingPassenger() instanceof Player) {
-                return;
-            }
-            else if (this.targets.size() <= this.getMaxTargets()) {
+            if (MobUtil.canBeCaptured(mob)
+                    && this.targets.size() <= this.getMaxTargets()) {
                 this.lockTarget(mob);
                 targets.put(mob, new TargetStats());
             }
