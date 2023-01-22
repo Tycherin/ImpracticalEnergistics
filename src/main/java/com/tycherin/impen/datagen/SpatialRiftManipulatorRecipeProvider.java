@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe.SpecialSpatialRecipeType;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeSerializer;
 import com.tycherin.impen.util.ImpenIdUtil;
@@ -23,6 +24,8 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
 public class SpatialRiftManipulatorRecipeProvider {
 
@@ -96,7 +99,88 @@ public class SpatialRiftManipulatorRecipeProvider {
         helper.addSpatial(Items.AMETHYST_BLOCK, ImpenRegistry.END_AMETHYST_ORE.asBlock());
         helper.addSpatial(Items.MUSHROOM_STEW, ImpenRegistry.MUSHROOM_DIRT.asBlock());
 
-        // TODO Figure out how to generate recipes for modded ores
+        // And now, a big pile of recipes for modded compatibility
+        // The fact that this works is kind of impressive
+        
+        // Thermal Foundation
+        final String THERMAL_MOD_ID = "thermal";
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "apatite_ore", "apatite_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_apatite_ore", "deepslate_apatite_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "apatite_block", "apatite_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "cinnabar_ore", "cinnabar_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_cinnabar_ore", "deepslate_cinnabar_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "cinnabar_block", "cinnabar_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "niter_ore", "niter_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_niter_ore", "deepslate_niter_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "niter_block", "niter_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "sulfur_ore", "sulfur_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_sulfur_ore", "deepslate_sulfur_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "sulfur_block", "sulfur_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "tin_ore", "tin_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_tin_ore", "deepslate_tin_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "tin_block", "tin_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "tin_gear", "tin_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "lead_ore", "lead_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_lead_ore", "deepslate_lead_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "lead_block", "deepslate_lead_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "lead_gear", "deepslate_lead_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "silver_ore", "silver_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_silver_ore", "deepslate_silver_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "silver_block", "deepslate_silver_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "silver_gear", "deepslate_silver_ore");
+        
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "nickel_ore", "nickel_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "deepslate_nickel_ore", "deepslate_nickel_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "nickel_block", "nickel_ore");
+        helper.addSpatialForAnotherMod(THERMAL_MOD_ID, "nickel_gear", "nickel_ore");
+        
+        // Mekanism
+        final String MEKANISM_MOD_ID = "mekanism";
+        // Mekanism Tools is a separate mod from Mekanism, so I don't feel like making the recipe generation more
+        // complex right now
+        
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "osmium_ore", "osmium_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "deepslate_osmium_ore", "deepslate_osmium_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "osmium_block", "osmium_ore");
+        
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "uranium_ore", "uranium_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "deepslate_uranium_ore", "deepslate_uranium_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "uranium_block", "deepslate_uranium_ore");
+        
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "fluorite_ore", "fluorite_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "deepslate_fluorite_ore", "deepslate_fluorite_ore");
+        helper.addSpatialForAnotherMod(MEKANISM_MOD_ID, "fluorite_block", "deepslate_fluorite_ore");
+        
+        // Mystical Agriculture
+        final String MYSTICAL_AGRICULTURE_MOD_ID = "mysticalagriculture";
+        
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "prosperity_ore", "prosperity_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "deepslate_prosperity_ore", "deepslate_prosperity_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "prosperity_block", "deepslate_prosperity_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "prosperity_gemstone", "deepslate_prosperity_ore");
+        
+        
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "inferium_ore", "inferium_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "deepslate_inferium_ore", "deepslate_inferium_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "inferium_block", "inferium_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "inferium_gemstone", "inferium_ore");
+        
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "soulium_ore", "soulium_ore");
+        helper.addSpatialForAnotherMod(MYSTICAL_AGRICULTURE_MOD_ID, "soulium_gemstone", "soulium_ore");
+        
+        // Create
+        final String CREATE_MOD_ID = "create";
+        
+        helper.addSpatialForAnotherMod(CREATE_MOD_ID, "zinc_ore", "zinc_ore");
+        helper.addSpatialForAnotherMod(CREATE_MOD_ID, "deepslate_zinc_ore", "deepslate_zinc_ore");
+        helper.addSpatialForAnotherMod(CREATE_MOD_ID, "zinc_block", "deepslate_zinc_ore");
     }
 
     private static class BuilderHelper {
@@ -125,6 +209,16 @@ public class SpatialRiftManipulatorRecipeProvider {
                     .spatialEffect(block)
                     .build();
             consumer.accept(result);
+        }
+
+        // In this thread: hacks piled on top of hacks, but it's Officially Recommended so it's okay
+        public void addSpatialForAnotherMod(final String otherModId, final String itemRegistryName,
+                final String blockRegistryName) {
+            final var finishedRecipe = new CustomSpatialRecipeResult(otherModId, itemRegistryName, blockRegistryName);
+            ConditionalRecipe.builder()
+                    .addCondition(new ModLoadedCondition(otherModId))
+                    .addRecipe(finishedRecipe)
+                    .build(consumer, ImpracticalEnergisticsMod.MOD_ID, finishedRecipe.recipeName);
         }
     }
 
@@ -220,5 +314,53 @@ public class SpatialRiftManipulatorRecipeProvider {
                 return null;
             }
         }
+    }
+    
+    private static class CustomSpatialRecipeResult implements FinishedRecipe {
+        private final String recipeName;
+        private final String otherModId;
+        private final String itemRegistryName;
+        private final String blockRegistryName;
+        
+        public CustomSpatialRecipeResult(final String otherModId,
+                final String itemRegistryName, final String blockRegistryName) {
+            this.recipeName = "spatial_" + itemRegistryName;
+            this.otherModId = otherModId;
+            this.itemRegistryName = itemRegistryName;
+            this.blockRegistryName = blockRegistryName;
+        }
+
+        @Override
+        public void serializeRecipeData(final JsonObject json) {
+            // There is almost certainly a more elegant way to do this, but here we are
+            final var bottomInput = new JsonObject();
+            bottomInput.addProperty("item", String.format("%s:%s", otherModId, itemRegistryName));
+            json.add("bottom_input", bottomInput);
+
+            final JsonObject spatialJson = new JsonObject();
+            spatialJson.addProperty("block", String.format("%s:%s", otherModId, blockRegistryName));
+            json.add("spatial_effect", spatialJson);
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return ImpenIdUtil.makeId(RECIPE_TYPE_NAME + "/" + recipeName);
+        }
+
+        @Override
+        public RecipeSerializer<?> getType() {
+            return SpatialRiftManipulatorRecipeSerializer.INSTANCE;
+        }
+
+        @Override
+        public JsonObject serializeAdvancement() {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getAdvancementId() {
+            return null;
+        }
+        
     }
 }

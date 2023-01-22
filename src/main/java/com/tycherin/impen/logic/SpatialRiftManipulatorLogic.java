@@ -22,6 +22,7 @@ public class SpatialRiftManipulatorLogic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    // TODO Get rid of this set and depend on the special recipe type instead
     private static final Item MODIFIER_ITEM_CLEAR = Items.GLASS;
     private static final Item MODIFIER_ITEM_BOOST = Items.BOW;
     private static final Set<Item> SPECIAL_MODIFIERS = ImmutableSet.of(
@@ -46,16 +47,15 @@ public class SpatialRiftManipulatorLogic {
             // If the rift cell isn't formatted, then it isn't valid
             return false;
         }
+        else if (dataOpt.get().getRemainingSlots() > 0) {
+            return getRecipeInput(spatialCellIs, modifierIs).isPresent();
+        }
         else if (modifierIs.isEmpty()) {
             // If the modifier slot is empty, then this is okay
             return true;
         }
         else if (SPECIAL_MODIFIERS.contains(modifierIs.getItem())) {
             return true;
-        }
-        else if (dataOpt.get().getRemainingSlots() > 0) {
-            // I should just split out the recipe managers at this point
-            return getRecipeInput(spatialCellIs, modifierIs).isPresent();
         }
         else {
             // Otherwise, it's an item that won't work

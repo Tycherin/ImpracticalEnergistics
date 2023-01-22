@@ -68,6 +68,9 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
             layoutBuilder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
                     .addItemStack(spatialRecipe.getBlock().asItem().getDefaultInstance());
         }
+        else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
+            // TODO Implement me
+        }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);
         }

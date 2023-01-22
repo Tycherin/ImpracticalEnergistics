@@ -330,6 +330,8 @@ public class ImpenRecipeProvider extends RecipeProvider {
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
         new SpatialRiftCollapserRecipeProvider().addRecipes(consumer);
         new SpatialRiftManipulatorRecipeProvider().addRecipes(consumer);
+
+        // TODO Add compatibility recipes with other mods (particularly Rift Alloy)
     }
 
     // These methods shadow or copy vanilla methods because that code assumes the vanilla namespace, and we want it to
