@@ -2,13 +2,8 @@ package com.tycherin.impen.part;
 
 import java.util.List;
 
-import org.jline.utils.Log;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.util.MobUtil;
 
-import appeng.api.behaviors.PickupStrategy;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionSource;
@@ -27,14 +22,15 @@ import appeng.parts.automation.PlaneConnectionHelper;
 import appeng.parts.automation.PlaneModelData;
 import appeng.parts.automation.PlaneModels;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.LargeFireball;
@@ -53,8 +49,6 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 
 public class CapturePlanePart extends BasicStatePart {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final PlaneModels MODELS = new PlaneModels("part/capture_plane",
             "part/capture_plane_on");
@@ -116,8 +110,19 @@ public class CapturePlanePart extends BasicStatePart {
             final var spawnEgg = ForgeSpawnEggItem.fromEntityType(mob.getType());
             if (spawnEgg != null
                     && this.insertIntoGrid(AEItemKey.of(spawnEgg), 1, Actionable.MODULATE) > 0) {
+                // This check is technically unnecessary - in order for insertIntoGrid() to work, we must be on the
+                // server anyway, since the AE network doesn't exist on the client
+                if (this.getLevel() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.PORTAL, mob.getX(), mob.getY(), mob.getZ(),
+                            // Particle count - spawn more particles for bigger mobs
+                            // This doesn't actually work very well because all the particles spawn in the same place
+                            (int)Math.ceil(mob.getBoundingBox().getSize() * 3),
+                            // These params are ignored
+                            0, 0, 0, 0);
+                    serverLevel.playSound(null, this.getBlockEntity().getBlockPos(), SoundEvents.ENDERMAN_TELEPORT,
+                            SoundSource.BLOCKS, 1.0f, 1.0f);
+                }
                 mob.remove(RemovalReason.DISCARDED);
-                // TODO Play sound effect or particle effect or something here
             }
         }
     }
