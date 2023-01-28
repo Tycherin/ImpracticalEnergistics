@@ -139,11 +139,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
         // === Materials ===
 
         // Riftstone Brick
-        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFTSTONE_BRICKS, 4)
+        ShapedRecipeBuilder.shaped(ImpenRegistry.RIFTSTONE_BRICK, 4)
                 .pattern("##")
                 .pattern("##")
-                .define('#', ImpenRegistry.SMOOTH_RIFTSTONE)
-                .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
+                .define('#', ImpenRegistry.RIFTSTONE)
+                .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
         // Lunchbox Cell
         ShapedRecipeBuilder.shaped(ImpenRegistry.LUNCHBOX_CELL_ITEM)
@@ -187,6 +187,26 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('G', Items.GOLD_INGOT)
                 .define('A', ImpenRegistry.AEROCRYSTAL_ASSEMBLY)
                 .unlockedBy("has_aerocrystal_assembly", has(ImpenRegistry.AEROCRYSTAL_ASSEMBLY))
+                .save(consumer);
+        
+        stairBuilder(ImpenRegistry.RIFTSTONE_STAIRS, Ingredient.of(ImpenRegistry.RIFTSTONE))
+                .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
+                .save(consumer);
+        stairBuilder(ImpenRegistry.RIFTSTONE_BRICK_STAIRS, Ingredient.of(ImpenRegistry.RIFTSTONE_BRICK))
+                .unlockedBy("has_riftstone_brick", has(ImpenRegistry.RIFTSTONE_BRICK))
+                .save(consumer);
+        stairBuilder(ImpenRegistry.SMOOTH_RIFTSTONE_STAIRS, Ingredient.of(ImpenRegistry.SMOOTH_RIFTSTONE))
+                .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
+                .save(consumer);
+        
+        slabBuilder(ImpenRegistry.RIFTSTONE_SLAB, Ingredient.of(ImpenRegistry.RIFTSTONE))
+                .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
+                .save(consumer);
+        slabBuilder(ImpenRegistry.RIFTSTONE_BRICK_SLAB, Ingredient.of(ImpenRegistry.RIFTSTONE_BRICK))
+                .unlockedBy("has_riftstone_brick", has(ImpenRegistry.RIFTSTONE_BRICK))
+                .save(consumer);
+        slabBuilder(ImpenRegistry.SMOOTH_RIFTSTONE_SLAB, Ingredient.of(ImpenRegistry.SMOOTH_RIFTSTONE))
+                .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
                 .save(consumer);
 
         // === Disintegrator Capsules ===
@@ -324,7 +344,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
         addOreRecipes(consumer, ImpenRegistry.STABILIZED_RIFT_PRISM, ImpenRegistry.RIFT_SHARD);
 
         // Stonecutter recipes
-        stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICKS, ImpenRegistry.SMOOTH_RIFTSTONE);
+        stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICK, ImpenRegistry.SMOOTH_RIFTSTONE);
 
         // Custom recipe categories
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);

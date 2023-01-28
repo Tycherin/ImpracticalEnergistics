@@ -52,11 +52,18 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.POSSIBILITY_DISINTEGRATOR.block());
             this.dropSelf(ImpenRegistry.RIFT_SHARD_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE.block());
-            this.dropSelf(ImpenRegistry.RIFTSTONE_BRICKS.block());
+            this.dropSelf(ImpenRegistry.RIFTSTONE_STAIRS.block());
+            this.dropSelf(ImpenRegistry.RIFTSTONE_BRICK.block());
+            this.dropSelf(ImpenRegistry.RIFTSTONE_BRICK_STAIRS.block());
+            this.dropSelf(ImpenRegistry.SMOOTH_RIFTSTONE_STAIRS.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_COLLAPSER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_SPAWNER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.block());
             this.dropSelf(ImpenRegistry.EJECTION_DRIVE.block());
+
+            this.add(ImpenRegistry.RIFTSTONE_SLAB.asBlock(), BlockLoot::createSlabItemTable);
+            this.add(ImpenRegistry.RIFTSTONE_BRICK_SLAB.asBlock(), BlockLoot::createSlabItemTable);
+            this.add(ImpenRegistry.SMOOTH_RIFTSTONE_SLAB.asBlock(), BlockLoot::createSlabItemTable);
 
             this.add(ImpenRegistry.RIFT_SHARD_ORE.block(), (block) -> {
                 // TODO This should drop more

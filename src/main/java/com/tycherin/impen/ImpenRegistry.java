@@ -52,7 +52,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -187,9 +189,23 @@ public class ImpenRegistry {
 
     // Basic Blocks
     public static final BlockDefinition RIFTSTONE = makeBasicBlock("riftstone", RIFTSTONE_BLOCK_PROPS);
-    public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
-    public static final BlockDefinition RIFTSTONE_BRICKS = makeBasicBlock("riftstone_bricks", RIFTSTONE_BLOCK_PROPS);
+    public static final BlockDefinition RIFTSTONE_STAIRS = makeCustomBlock("riftstone_stairs",
+            () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
+    public static final BlockDefinition RIFTSTONE_SLAB = makeCustomBlock("riftstone_slab",
+            () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
     
+    public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
+    public static final BlockDefinition SMOOTH_RIFTSTONE_STAIRS = makeCustomBlock("smooth_riftstone_stairs",
+            () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
+    public static final BlockDefinition SMOOTH_RIFTSTONE_SLAB = makeCustomBlock("smooth_riftstone_slab",
+            () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
+    
+    public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", RIFTSTONE_BLOCK_PROPS);
+    public static final BlockDefinition RIFTSTONE_BRICK_STAIRS = makeCustomBlock("riftstone_brick_stairs",
+            () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
+    public static final BlockDefinition RIFTSTONE_BRICK_SLAB = makeCustomBlock("riftstone_brick_slab",
+            () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
+
     public static final BlockDefinition AEROCRYSTAL_BLOCK = makeBasicBlock("aerocrystal_block", Material.AMETHYST);
     public static final BlockDefinition BLAZING_AEROCRYSTAL_BLOCK = makeBasicBlock("blazing_aerocrystal_block",
             Material.AMETHYST);

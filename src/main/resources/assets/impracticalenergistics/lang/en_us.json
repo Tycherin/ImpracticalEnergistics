@@ -8,9 +8,16 @@
     "block.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
     
     "block.impracticalenergistics.riftstone": "Riftstone",
+    "block.impracticalenergistics.riftstone_stairs": "Riftstone Stairs",
+    "block.impracticalenergistics.riftstone_slab": "Riftstone Slab",
+    "block.impracticalenergistics.smooth_riftstone": "Riftstone Tile",
+    "block.impracticalenergistics.smooth_riftstone_stairs": "Riftstone Tile Stairs",
+    "block.impracticalenergistics.smooth_riftstone_slab": "Riftstone Tile Slab",
+    "block.impracticalenergistics.riftstone_brick": "Riftstone Brick",
+    "block.impracticalenergistics.riftstone_brick_stairs": "Riftstone Brick Stairs",
+    "block.impracticalenergistics.riftstone_brick_slab": "Riftstone Brick Slab",
+    
     "block.impracticalenergistics.rift_shard_ore": "Rift Shard Ore",
-    "block.impracticalenergistics.smooth_riftstone": "Smooth Riftstone",
-    "block.impracticalenergistics.riftstone_bricks": "Riftstone Bricks",
     "block.impracticalenergistics.rift_glass": "Rift Glass",
     "block.impracticalenergistics.aerocrystal_block": "Aerocrystal Block",
     "block.impracticalenergistics.blazing_aerocrystal_block": "Blazing Aerocrystal Block",
