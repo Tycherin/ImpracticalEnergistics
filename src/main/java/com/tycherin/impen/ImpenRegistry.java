@@ -20,6 +20,8 @@ import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
+import com.tycherin.impen.client.particle.DisintegratorDamageParticle;
+import com.tycherin.impen.client.particle.DisintegratorLockParticle;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
@@ -38,6 +40,8 @@ import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.items.parts.PartItem;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -77,6 +81,8 @@ public class ImpenRegistry {
             .create(ForgeRegistries.BLOCK_ENTITIES, ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES,
             ImpracticalEnergisticsMod.MOD_ID);
+    public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister
+            .create(ForgeRegistries.PARTICLE_TYPES, ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
             .create(Registry.RECIPE_TYPE_REGISTRY, ImpracticalEnergisticsMod.MOD_ID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister
@@ -87,6 +93,7 @@ public class ImpenRegistry {
         BLOCKS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         ENTITIES.register(modEventBus);
+        PARTICLES.register(modEventBus);
         RECIPE_TYPES.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
     }
@@ -235,6 +242,12 @@ public class ImpenRegistry {
             .register(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.getId().getPath(),
                     () -> SpatialRiftManipulatorRecipeSerializer.INSTANCE);
 
+    // Particles
+    public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_DAMAGE_PARTICLE = PARTICLES
+            .register("disintegrator_damage_particle", () -> DisintegratorDamageParticle.TYPE);
+    public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_LOCK_PARTICLE = PARTICLES
+            .register("disintegrator_lock_particle", () -> DisintegratorLockParticle.TYPE);
+    
     // ***
     // Helper methods
     // ***

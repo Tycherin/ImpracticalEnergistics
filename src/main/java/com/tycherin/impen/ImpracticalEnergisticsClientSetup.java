@@ -13,6 +13,8 @@ import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftManipulatorScreen;
 import com.tycherin.impen.client.gui.SpatialRiftSpawnerMenu;
 import com.tycherin.impen.client.gui.SpatialRiftSpawnerScreen;
+import com.tycherin.impen.client.particle.DisintegratorDamageParticle;
+import com.tycherin.impen.client.particle.DisintegratorLockParticle;
 import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
 import appeng.blockentity.AEBaseBlockEntity;
@@ -21,6 +23,7 @@ import appeng.client.gui.style.StyleManager;
 import appeng.client.render.SimpleModelLoader;
 import appeng.core.AppEng;
 import appeng.parts.automation.PlaneModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,6 +45,7 @@ public class ImpracticalEnergisticsClientSetup {
         modEventBus.addListener(ImpracticalEnergisticsClientSetup::modelRegistryEvent);
         modEventBus.addListener(ImpracticalEnergisticsClientSetup::clientSetupEvent);
         modEventBus.addListener(ImpracticalEnergisticsClientSetup::registerEntityRenderers);
+        modEventBus.addListener(ImpracticalEnergisticsClientSetup::registerParticleProviders);
     }
 
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
@@ -120,5 +125,15 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void registerEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+    }
+
+    @SuppressWarnings("resource")
+    public static void registerParticleProviders(final ParticleFactoryRegisterEvent event) {
+        // The event doesn't actually do anything here, it's just a timing hint
+        final var particleEngine = Minecraft.getInstance().particleEngine;
+        particleEngine.register(ImpenRegistry.DISINTEGRATOR_DAMAGE_PARTICLE.get(),
+                new DisintegratorDamageParticle.ProviderFactory());
+        particleEngine.register(ImpenRegistry.DISINTEGRATOR_LOCK_PARTICLE.get(),
+                new DisintegratorLockParticle.ProviderFactory());
     }
 }

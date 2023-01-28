@@ -10,6 +10,8 @@ import java.util.Random;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpenRegistry.ItemDefinition;
+import com.tycherin.impen.client.particle.DisintegratorDamageParticle;
+import com.tycherin.impen.client.particle.DisintegratorLockParticle;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.util.AEPowerUtil;
 import com.tycherin.impen.util.MobUtil;
@@ -70,7 +72,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     private final int baseTicksPerOperation;
     private final double basePowerPerOperation;
     // Lazy load these two since the level isn't available during instantiation
-    private final Lazy<Player> fakePlayer = Lazy.of(() -> FakePlayerFactory.getMinecraft((ServerLevel) this.level));
+    private final Lazy<Player> fakePlayer = Lazy.of(() -> FakePlayerFactory.getMinecraft((ServerLevel)this.level));
     private final Lazy<DamageSource> playerDamageSource = Lazy
             .of(() -> new EntityDamageSource("possibility_disintegrator", fakePlayer.get()));
 
@@ -114,7 +116,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
-        return new TickingRequest(10, 10, false, false);
+        return new TickingRequest(4, 4, false, false);
     }
 
     @Override
@@ -128,6 +130,8 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         else if (this.targets.isEmpty()) {
             return TickRateModulation.SLEEP;
         }
+
+        this.addLockParticles(ticksSinceLastCall);
 
         // TODO Check for Shulkers
 
@@ -148,6 +152,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 if (stats.disintegrationDelay >= this.disintegrationDelay) {
                     if (AEPowerUtil.drawPower(this, this.getPowerPerOperation())) {
                         this.disintegrate(target, stats);
+                        this.addDamageParticles(target);
                         if (target.isAlive()) {
                             stats.disintegrationDelay = 0;
                         }
@@ -164,6 +169,42 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         }
         else {
             return TickRateModulation.SAME;
+        }
+    }
+
+    private void addLockParticles(final int ticksSinceLastCall) {
+        if (this.level instanceof ServerLevel serverLevel) {
+            // Spawn at the center of the block above
+            final double xPos = this.getBlockPos().getX() + 0.5;
+            final double yPos = this.getBlockPos().getY() + 1.5;
+            final double zPos = this.getBlockPos().getZ() + 0.5;
+            serverLevel.sendParticles(DisintegratorLockParticle.TYPE,
+                    xPos, yPos, zPos, 1, 0d, 0d, 0d, 0d);
+        }
+    }
+
+    private void addDamageParticles(final Mob target) {
+        if (this.level instanceof ServerLevel serverLevel) {
+            final double bbSize = target.getBoundingBox().getSize();
+            final int particleCount;
+            if (bbSize > 2) {
+                particleCount = 4;
+            }
+            else if (bbSize > 1.5) {
+                particleCount = 3;
+            }
+            else if (bbSize > 1.0) {
+                particleCount = 2;
+            }
+            else {
+                particleCount = 1;
+            }
+
+            final double xPos = target.getEyePosition().x;
+            final double yPos = target.getEyePosition().y;
+            final double zPos = target.getEyePosition().z;
+            serverLevel.sendParticles(DisintegratorDamageParticle.TYPE,
+                    xPos, yPos, zPos, particleCount, 0d, 0d, 0d, 0d);
         }
     }
 
@@ -206,8 +247,8 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
     private void recalculateDisintegrationDelay() {
         final int delay = switch (this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) {
         case 0 -> this.baseTicksPerOperation;
-        case 1 -> (int) (this.baseTicksPerOperation * .6);
-        case 2 -> (int) (this.baseTicksPerOperation * .4);
+        case 1 -> (int)(this.baseTicksPerOperation * .6);
+        case 2 -> (int)(this.baseTicksPerOperation * .4);
         default -> this.baseTicksPerOperation;
         };
         this.disintegrationDelay = Math.max(1, delay);
@@ -281,7 +322,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
                 // blocks held by Enderman - no dupe glitches for you)
                 final ResourceLocation resourcelocation = target.getLootTable();
                 final LootTable loottable = this.level.getServer().getLootTables().get(resourcelocation);
-                final var ctxBuilder = new LootContext.Builder((ServerLevel) this.level)
+                final var ctxBuilder = new LootContext.Builder((ServerLevel)this.level)
                         .withRandom(RAND)
                         .withParameter(LootContextParams.THIS_ENTITY, target)
                         .withParameter(LootContextParams.ORIGIN, target.position())
