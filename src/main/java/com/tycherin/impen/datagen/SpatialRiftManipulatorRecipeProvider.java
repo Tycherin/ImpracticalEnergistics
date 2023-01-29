@@ -183,7 +183,7 @@ public class SpatialRiftManipulatorRecipeProvider {
         helper.addSpatialForAnotherMod(CREATE_MOD_ID, "zinc_block", "deepslate_zinc_ore");
     }
 
-    private static class BuilderHelper {
+    protected static class BuilderHelper {
         private final Consumer<FinishedRecipe> consumer;
 
         public BuilderHelper(final Consumer<FinishedRecipe> consumer) {
@@ -222,7 +222,7 @@ public class SpatialRiftManipulatorRecipeProvider {
         }
     }
 
-    private static class RecipeBuilder {
+    protected static class RecipeBuilder {
         private String recipeName;
 
         private ItemStack topInput;
@@ -316,7 +316,7 @@ public class SpatialRiftManipulatorRecipeProvider {
         }
     }
     
-    private static class CustomSpatialRecipeResult implements FinishedRecipe {
+    protected static class CustomSpatialRecipeResult implements FinishedRecipe {
         private final String recipeName;
         private final String otherModId;
         private final String itemRegistryName;

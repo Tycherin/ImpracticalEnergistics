@@ -183,6 +183,13 @@ public class ImpenRegistry {
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
+
+    public static final ItemDefinition CIRCUIT_QUANTIZED = makeItem("circuit_quantized");
+    public static final ItemDefinition CIRCUIT_MAGNIFIED = makeItem("circuit_magnified");
+    public static final ItemDefinition CIRCUIT_EQUALIZED = makeItem("circuit_equalized");
+    public static final ItemDefinition PROCESSOR_QUANTIZED = makeItem("processor_quantized");
+    public static final ItemDefinition PROCESSOR_MAGNIFIED = makeItem("processor_magnified");
+    public static final ItemDefinition PROCESSOR_EQUALIZED = makeItem("processor_equalized");
     
     // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");

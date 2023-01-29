@@ -2,8 +2,12 @@ package com.tycherin.impen.datagen;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
+import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpenRegistry.BlockDefinition;
 import com.tycherin.impen.ImpenRegistry.ItemDefinition;
@@ -12,13 +16,18 @@ import com.tycherin.impen.util.ImpenIdUtil;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
+import appeng.datagen.providers.recipes.AE2RecipeProvider;
 import appeng.datagen.providers.tags.ConventionTags;
+import appeng.recipes.handlers.InscriberProcessType;
+import appeng.recipes.handlers.InscriberRecipeSerializer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -47,10 +56,10 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .pattern("EGP")
                 .pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON)
-                .define('P', ImpenRegistry.RIFT_PRISM)
+                .define('P', ImpenRegistry.AEROCRYSTAL_PRISM)
                 .define('E', AEBlocks.ENERGY_CELL)
                 .define('G', Blocks.GLASS)
-                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
                 .save(consumer);
         // TODO Advanced BNL
         // Atm. Crystallizer
@@ -66,35 +75,35 @@ public class ImpenRecipeProvider extends RecipeProvider {
         // Spatial Rift Spawner
         ShapedRecipeBuilder.shaped(ImpenRegistry.SPATIAL_RIFT_SPAWNER)
                 .pattern("IRI")
-                .pattern("FXF")
+                .pattern("PXP")
                 .pattern("ICI")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('C', Tags.Items.INGOTS_COPPER)
-                .define('F', AEItems.FLUIX_CRYSTAL)
+                .define('P', ImpenRegistry.PROCESSOR_QUANTIZED)
                 .define('R', Items.REDSTONE_BLOCK)
                 .define('X', ImpenRegistry.SPATIAL_MACHINE_CORE)
                 .unlockedBy("has_aerocrystal", has(ImpenRegistry.AEROCRYSTAL))
                 .save(consumer);
         // Spatial Rift Manipulator
         ShapedRecipeBuilder.shaped(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR)
-                .pattern("IPI")
-                .pattern("RXR")
+                .pattern("IRI")
+                .pattern("QXQ")
                 .pattern("ICI")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('C', Tags.Items.INGOTS_COPPER)
                 .define('R', ImpenRegistry.RIFT_SHARD)
-                .define('P', ImpenRegistry.RIFT_PRISM)
+                .define('Q', ImpenRegistry.PROCESSOR_EQUALIZED)
                 .define('X', ImpenRegistry.SPATIAL_MACHINE_CORE)
                 .unlockedBy("has_rift_shard", has(ImpenRegistry.RIFT_SHARD))
                 .save(consumer);
         // Spatial Rift Collapser
         ShapedRecipeBuilder.shaped(ImpenRegistry.SPATIAL_RIFT_COLLAPSER)
                 .pattern("IPI")
-                .pattern("TXT")
+                .pattern("RXR")
                 .pattern("ICI")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('C', Tags.Items.INGOTS_COPPER)
-                .define('T', AEItems.CERTUS_QUARTZ_CRYSTAL)
+                .define('R', ImpenRegistry.PROCESSOR_MAGNIFIED)
                 .define('P', ImpenRegistry.RIFT_PRISM)
                 .define('X', ImpenRegistry.SPATIAL_MACHINE_CORE)
                 .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
@@ -111,10 +120,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(ImpenRegistry.POSSIBILITY_DISINTEGRATOR)
                 .pattern("IPI")
                 .pattern("IRI")
-                .pattern("IRI")
+                .pattern("IQI")
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('P', ImpenRegistry.STABILIZED_RIFT_PRISM)
-                .define('R', Items.REDSTONE)
+                .define('R', ImpenRegistry.PROCESSOR_MAGNIFIED)
+                .define('Q', ImpenRegistry.PROCESSOR_EQUALIZED)
                 .unlockedBy("has_stabilized_rift_prism", has(ImpenRegistry.STABILIZED_RIFT_PRISM))
                 .save(consumer);
         // Capture Plane (imitating AE2 recipes for Annihilation & Formation Planes)
@@ -147,9 +157,9 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .save(consumer);
         // Lunchbox Cell
         ShapedRecipeBuilder.shaped(ImpenRegistry.LUNCHBOX_CELL_ITEM)
-                .pattern("ICI")
+                .pattern("IPI")
                 .pattern("ASB")
-                .define('C', ImpenRegistry.AEROCRYSTAL_ASSEMBLY)
+                .define('P', ImpenRegistry.PROCESSOR_QUANTIZED)
                 .define('I', Items.IRON_INGOT)
                 .define('A', Items.APPLE)
                 .define('B', Items.BREAD)
@@ -188,7 +198,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('A', ImpenRegistry.AEROCRYSTAL_ASSEMBLY)
                 .unlockedBy("has_aerocrystal_assembly", has(ImpenRegistry.AEROCRYSTAL_ASSEMBLY))
                 .save(consumer);
-        
+
         stairBuilder(ImpenRegistry.RIFTSTONE_STAIRS, Ingredient.of(ImpenRegistry.RIFTSTONE))
                 .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
@@ -198,7 +208,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
         stairBuilder(ImpenRegistry.SMOOTH_RIFTSTONE_STAIRS, Ingredient.of(ImpenRegistry.SMOOTH_RIFTSTONE))
                 .unlockedBy("has_smooth_riftstone", has(ImpenRegistry.SMOOTH_RIFTSTONE))
                 .save(consumer);
-        
+
         slabBuilder(ImpenRegistry.RIFTSTONE_SLAB, Ingredient.of(ImpenRegistry.RIFTSTONE))
                 .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
@@ -337,6 +347,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .smelting(Ingredient.of(ImpenRegistry.RIFTSTONE), ImpenRegistry.SMOOTH_RIFTSTONE, 0.1F, 200)
                 .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
+
         addOreRecipes(consumer, ImpenRegistry.RIFT_SHARD_ORE, ImpenRegistry.RIFT_SHARD);
         addOreRecipes(consumer, ImpenRegistry.NETHER_GLOWSTONE_ORE, Items.GLOWSTONE);
         addOreRecipes(consumer, ImpenRegistry.NETHER_DEBRIS_ORE, Items.NETHERITE_SCRAP);
@@ -345,6 +356,42 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
         // Stonecutter recipes
         stonecutterResultFromBaseOverride(consumer, ImpenRegistry.RIFTSTONE_BRICK, ImpenRegistry.SMOOTH_RIFTSTONE);
+
+        // Inscriber recipes
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.CIRCUIT_QUANTIZED)
+                .setTop(Ingredient.of(AEItems.ENGINEERING_PROCESSOR_PRESS))
+                .setMiddle(Ingredient.of(ImpenRegistry.AEROCRYSTAL))
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(consumer);
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.CIRCUIT_MAGNIFIED)
+                .setTop(Ingredient.of(AEItems.LOGIC_PROCESSOR_PRESS))
+                .setMiddle(Ingredient.of(ImpenRegistry.BLAZING_AEROCRYSTAL))
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(consumer);
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.CIRCUIT_EQUALIZED)
+                .setTop(Ingredient.of(AEItems.CALCULATION_PROCESSOR_PRESS))
+                .setMiddle(Ingredient.of(ImpenRegistry.EXOTIC_AEROCRYSTAL))
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(consumer);
+
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.PROCESSOR_QUANTIZED)
+                .setTop(Ingredient.of(ImpenRegistry.CIRCUIT_QUANTIZED))
+                .setMiddle(Ingredient.of(Items.REDSTONE))
+                .setBottom(Ingredient.of(AEItems.SILICON_PRINT))
+                .setMode(InscriberProcessType.PRESS)
+                .save(consumer);
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.PROCESSOR_MAGNIFIED)
+                .setTop(Ingredient.of(ImpenRegistry.CIRCUIT_MAGNIFIED))
+                .setMiddle(Ingredient.of(Items.REDSTONE))
+                .setBottom(Ingredient.of(AEItems.SILICON_PRINT))
+                .setMode(InscriberProcessType.PRESS)
+                .save(consumer);
+        InscriberRecipeBuilder.forOutput(ImpenRegistry.PROCESSOR_EQUALIZED)
+                .setTop(Ingredient.of(ImpenRegistry.CIRCUIT_EQUALIZED))
+                .setMiddle(Ingredient.of(Items.REDSTONE))
+                .setBottom(Ingredient.of(AEItems.SILICON_PRINT))
+                .setMode(InscriberProcessType.PRESS)
+                .save(consumer);
 
         // Custom recipe categories
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
@@ -407,4 +454,99 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 // This is the bit we actually need to override
                 .save(p_176547_, ImpenIdUtil.makeId(getConversionRecipeName(p_176548_, p_176549_) + "_stonecutting"));
     }
+
+    // The equivalent class in AE2 isn't visible, so here's this nonsense
+    protected static class InscriberRecipeBuilder {
+        private final String recipeName;
+        private Ingredient topInput;
+        private Ingredient middleInput;
+        private Ingredient bottomInput;
+        private ItemStack output;
+        private InscriberProcessType mode = InscriberProcessType.INSCRIBE;
+
+        public static InscriberRecipeBuilder forOutput(final ItemLike item) {
+            return InscriberRecipeBuilder.forOutput(item.asItem().getDefaultInstance());
+        }
+
+        public static InscriberRecipeBuilder forOutput(final ItemStack output) {
+            final InscriberRecipeBuilder builder = new InscriberRecipeBuilder(
+                    output.getItem().getRegistryName().getPath());
+            builder.setOutput(output);
+            return builder;
+        }
+
+        public InscriberRecipeBuilder(final String recipeName) {
+            this.recipeName = recipeName;
+        }
+
+        public InscriberRecipeBuilder setTop(final Ingredient topInput) {
+            this.topInput = topInput;
+            return this;
+        }
+
+        public InscriberRecipeBuilder setMiddle(final Ingredient middleInput) {
+            this.middleInput = middleInput;
+            return this;
+        }
+
+        public InscriberRecipeBuilder setBottom(final Ingredient bottomInput) {
+            this.bottomInput = bottomInput;
+            return this;
+        }
+
+        public InscriberRecipeBuilder setOutput(final ItemStack output) {
+            this.output = output;
+            return this;
+        }
+
+        public InscriberRecipeBuilder setMode(final InscriberProcessType processType) {
+            this.mode = processType;
+            return this;
+        }
+
+        public void save(final Consumer<FinishedRecipe> consumer) {
+            consumer.accept(new RecipeResult());
+        }
+
+        private class RecipeResult implements FinishedRecipe {
+
+            @Override
+            public void serializeRecipeData(JsonObject json) {
+                json.addProperty("mode", mode.name().toLowerCase(Locale.ROOT));
+                json.add("result", AE2RecipeProvider.toJson(output));
+                var ingredients = new JsonObject();
+                ingredients.add("middle", middleInput.toJson());
+                if (topInput != null) {
+                    ingredients.add("top", topInput.toJson());
+                }
+                if (bottomInput != null) {
+                    ingredients.add("bottom", bottomInput.toJson());
+                }
+                json.add("ingredients", ingredients);
+            }
+
+            @Override
+            public ResourceLocation getId() {
+                return ImpenIdUtil.makeId("inscriber/" + recipeName);
+            }
+
+            @Override
+            public RecipeSerializer<?> getType() {
+                return InscriberRecipeSerializer.INSTANCE;
+            }
+
+            @Nullable
+            @Override
+            public JsonObject serializeAdvancement() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ResourceLocation getAdvancementId() {
+                return null;
+            }
+        }
+    }
+
 }

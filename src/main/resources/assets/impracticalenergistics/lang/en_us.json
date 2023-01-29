@@ -53,6 +53,13 @@
     "item.impracticalenergistics.disintegrator_capsule_egg": "Yellow Disintegrator Capsule",
     "item.impracticalenergistics.disintegrator_capsule_player_kill": "Orange Disintegrator Capsule",
     
+    "item.impracticalenergistics.circuit_quantized": "Printed Quantized Circuit",
+    "item.impracticalenergistics.circuit_magnified": "Printed Magnified Circuit",
+    "item.impracticalenergistics.circuit_equalized": "Printed Equalized Circuit",
+    "item.impracticalenergistics.processor_quantized": "Quantized Processor",
+    "item.impracticalenergistics.processor_magnified": "Magnified Processor",
+    "item.impracticalenergistics.processor_equalized": "Equalized Processor",
+    
     "itemGroup.impracticalenergistics.main": "Impractical Energistics",
     
     "gui.impracticalenergistics.spatial_rift_spawner": "Spatial Rift Spawner",

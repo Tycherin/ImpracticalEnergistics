@@ -35,7 +35,7 @@ public class SpatialRiftCollapserRecipeProvider {
         helper.add(ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, AEItems.SPATIAL_CELL128);
     }
 
-    private static class BuilderHelper {
+    protected static class BuilderHelper {
         private final Consumer<FinishedRecipe> consumer;
 
         public BuilderHelper(final Consumer<FinishedRecipe> consumer) {
@@ -53,7 +53,7 @@ public class SpatialRiftCollapserRecipeProvider {
         }
     }
 
-    private static class RecipeBuilder {
+    protected static class RecipeBuilder {
         private String recipeName;
         private Ingredient input;
         private ItemStack output;
