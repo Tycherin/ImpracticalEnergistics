@@ -128,8 +128,8 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
                 .save(consumer, ImpenIdUtil.makeId(ImpenRegistry.CAPTURE_PLANE_ITEM, "vertical"));
         ShapedRecipeBuilder.shaped(ImpenRegistry.CAPTURE_PLANE_ITEM)
-                .pattern("AAA")
-                .pattern("BCB")
+                .pattern("BBB")
+                .pattern("ACA")
                 .define('A', Tags.Items.INGOTS_IRON)
                 .define('C', ImpenRegistry.AEROCRYSTAL_PRISM)
                 .define('B', ConventionTags.ALL_FLUIX)
