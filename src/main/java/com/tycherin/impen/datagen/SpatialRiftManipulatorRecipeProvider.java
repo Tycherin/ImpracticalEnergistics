@@ -40,7 +40,7 @@ public class SpatialRiftManipulatorRecipeProvider {
         consumer.accept(new RecipeBuilder()
                 .recipeName("spatial_clear_precision")
                 .bottomInput(Ingredient.of(Tags.Items.GLASS))
-                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.BOOST_PRECISION)
+                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.CLEAR_INPUTS)
                 .build());
         consumer.accept(new RecipeBuilder()
                 .recipeName("spatial_boost_precision")

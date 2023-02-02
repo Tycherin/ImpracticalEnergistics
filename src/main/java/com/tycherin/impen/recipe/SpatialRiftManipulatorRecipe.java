@@ -122,7 +122,7 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
     public static class SpecialSpatialRecipe extends SpatialRiftManipulatorRecipe {
 
         public static enum SpecialSpatialRecipeType {
-            CLEAR_PRECISION,
+            CLEAR_INPUTS,
             BOOST_PRECISION
         }
 

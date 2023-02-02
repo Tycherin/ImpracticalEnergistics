@@ -206,10 +206,14 @@ public class SpatialRiftCellDataManager {
         }
 
         public int getRemainingSlots() {
-            return getMaxInputCount() - this.storedInputs.size();
+            return getMaxSlots() - getUsedSlots();
         }
 
-        public int getMaxInputCount() {
+        public int getUsedSlots() {
+            return this.storedInputs.size();
+        }
+
+        public int getMaxSlots() {
             final SpatialStoragePlot plot = getPlot();
             final int blockCount = plot.getSize().getX()
                     * plot.getSize().getY()

@@ -69,7 +69,20 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
                     .addItemStack(spatialRecipe.getBlock().asItem().getDefaultInstance());
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
-            // TODO Implement me
+            final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
+
+            final String effectStr = switch (specialRecipe.getSpecialType()) {
+            case BOOST_PRECISION -> "Boosts precision, which improves result quality";
+            case CLEAR_INPUTS -> "Erases all modifications";
+            };
+            outSlot.addTooltipCallback((recipeSlotView, tooltip) -> {
+                tooltip.add(new TextComponent(effectStr)
+                        .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
+            });
+            layoutBuilder.createFocusLink(inSlot, outSlot);
         }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);

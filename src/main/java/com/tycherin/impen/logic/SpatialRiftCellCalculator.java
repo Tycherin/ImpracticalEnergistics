@@ -115,7 +115,7 @@ public class SpatialRiftCellCalculator {
             };
         }
 
-        final int scale = data.getMaxInputCount();
+        final int scale = data.getMaxSlots();
         final double scaleFactor = switch (scale) {
         case 1 -> 1.0;
         case 2 -> 1.1;

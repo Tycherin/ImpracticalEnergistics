@@ -1,6 +1,7 @@
 package com.tycherin.impen.recipe;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.item.SpatialRiftCellItem;
@@ -12,23 +13,24 @@ public class SpatialRiftManipulatorRecipeManager {
 
     public static Optional<? extends SpatialRiftManipulatorRecipe> getRecipe(final Level level,
             final ItemStack topInput, final ItemStack bottomInput) {
-        var stream = level.getRecipeManager().getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
-                .stream();
+        Stream<? extends SpatialRiftManipulatorRecipe> stream = level.getRecipeManager()
+                .getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
+                .stream()
+                .filter(recipe -> recipe.getBottomInput().test(bottomInput));
 
         if (topInput.getItem() instanceof SpatialRiftCellItem) {
-            return stream.filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe))
-                    .map(recipe -> (SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe)recipe)
-                    .filter(recipe -> recipe.getBottomInput().test(bottomInput))
-                    .findFirst();
+            // We know this will only match a SpatialRiftEffectRecipe or SpecialEffectRecipe, so we don't need to do any
+            // additional filtering
         }
         else {
-            return stream.filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe))
+            // This is a generic recipe, so we need to check the top input as well
+            stream = stream.filter(recipe -> (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe))
                     .map(recipe -> (SpatialRiftManipulatorRecipe.GenericManipulatorRecipe)recipe)
                     .filter(recipe -> {
-                        return recipe.getTopInput().test(topInput)
-                                && recipe.getBottomInput().test(bottomInput);
-                    })
-                    .findFirst();
+                        return recipe.getTopInput().test(topInput);
+                    });
         }
+
+        return stream.findFirst();
     }
 }

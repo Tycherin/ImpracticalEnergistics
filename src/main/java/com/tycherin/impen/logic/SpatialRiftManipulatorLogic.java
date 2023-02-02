@@ -1,32 +1,24 @@
 package com.tycherin.impen.logic;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.slf4j.Logger;
 
-import com.google.common.collect.ImmutableSet;
 import com.mojang.logging.LogUtils;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
 import appeng.spatial.SpatialStoragePlotManager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class SpatialRiftManipulatorLogic {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    // TODO Get rid of this set and depend on the special recipe type instead
-    private static final Item MODIFIER_ITEM_CLEAR = Items.GLASS;
-    private static final Item MODIFIER_ITEM_BOOST = Items.BOW;
-    private static final Set<Item> SPECIAL_MODIFIERS = ImmutableSet.of(
-            MODIFIER_ITEM_CLEAR, MODIFIER_ITEM_BOOST);
 
     private static final int MODIFIER_BOOST_AMOUNT = 20;
 
@@ -47,19 +39,30 @@ public class SpatialRiftManipulatorLogic {
             // If the rift cell isn't formatted, then it isn't valid
             return false;
         }
-        else if (dataOpt.get().getRemainingSlots() > 0) {
-            return getRecipeInput(spatialCellIs, modifierIs).isPresent();
-        }
         else if (modifierIs.isEmpty()) {
-            // If the modifier slot is empty, then this is okay
-            return true;
-        }
-        else if (SPECIAL_MODIFIERS.contains(modifierIs.getItem())) {
+            // A rift cell is always valid if there's nothing in the other slot
             return true;
         }
         else {
-            // Otherwise, it's an item that won't work
-            return false;
+            final var recipeOpt = getRecipeInput(spatialCellIs, modifierIs);
+            if (!recipeOpt.isPresent()) {
+                // No recipe for these inputs
+                return false;
+            }
+            else {
+                if (recipeOpt.get() instanceof SpatialRiftEffectRecipe) {
+                    // We can add modifiers only if the cell has available slots
+                    return dataOpt.get().getRemainingSlots() > 0;
+                }
+                else if (recipeOpt.get() instanceof SpecialSpatialRecipe specialRecipe) {
+                    // These modifiers only make sense if the cell has some inputs already
+                    return dataOpt.get().getUsedSlots() > 0;
+                }
+                else {
+                    LOGGER.warn("Unexpected recipe subtype for {}", recipeOpt.get());
+                    return false;
+                }
+            }
         }
     }
 
@@ -84,18 +87,16 @@ public class SpatialRiftManipulatorLogic {
             return ItemStack.EMPTY;
         }
         final SpatialRiftCellData data = dataOpt.get();
-        final var recipe = getRecipeInput(spatialCellIs,
-                modifierIs).get();
-        
+        final var recipe = getRecipeInput(spatialCellIs, modifierIs).get();
+
         if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
-            // TODO How to handle the situation where the modifier already exists?
             data.addInput(spatialRecipe.getBlock());
             return spatialCellIs;
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
             switch (specialRecipe.getSpecialType()) {
             case BOOST_PRECISION -> data.addPrecisionBoost(MODIFIER_BOOST_AMOUNT);
-            case CLEAR_PRECISION -> data.clearInputs();
+            case CLEAR_INPUTS -> data.clearInputs();
             }
             return spatialCellIs;
         }
