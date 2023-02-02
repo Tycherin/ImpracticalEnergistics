@@ -40,33 +40,33 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
     public LunchboxCellItem() {
         super(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
     }
-    
+
     // TODO Change item model when food is available vs. not
-    
+
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack lunchIs = player.getItemInHand(hand);
         final Optional<ItemStack> storedIs = this.getStoredItemStack(lunchIs);
         return storedIs.isPresent() ? storedIs.get().use(level, player, hand) : InteractionResultHolder.pass(lunchIs);
-     }
+    }
 
-     public ItemStack finishUsingItem(final ItemStack is, final Level level, final LivingEntity entity) {
-         final StorageCell storCell = StorageCells.getCellInventory(is, null);
-         final KeyCounter storedItems = storCell.getAvailableStacks();
-         if (storedItems.getFirstEntry() != null) {
-             // This will apply the effects to the player, but it won't actually mutate the contents of the cell
-             storedItems.getFirstEntry().getKey().wrapForDisplayOrFilter().finishUsingItem(level, entity);
-             // For that, we need this bit here
-             storCell.extract(storedItems.getFirstKey(), 1, Actionable.MODULATE, null);
-         }
-         return is;
-     }
-    
+    public ItemStack finishUsingItem(final ItemStack is, final Level level, final LivingEntity entity) {
+        final StorageCell storCell = StorageCells.getCellInventory(is, null);
+        final KeyCounter storedItems = storCell.getAvailableStacks();
+        if (storedItems.getFirstEntry() != null) {
+            // This will apply the effects to the player, but it won't actually mutate the contents of the cell
+            storedItems.getFirstEntry().getKey().wrapForDisplayOrFilter().finishUsingItem(level, entity);
+            // For that, we need this bit here
+            storCell.extract(storedItems.getFirstKey(), 1, Actionable.MODULATE, null);
+        }
+        return is;
+    }
+
     @Override
     public FoodProperties getFoodProperties(final ItemStack is, final LivingEntity entity) {
         final Optional<ItemStack> storedIs = this.getStoredItemStack(is);
         return storedIs.isPresent() ? storedIs.get().getFoodProperties(entity) : null;
     }
-    
+
     @Override
     public UseAnim getUseAnimation(final ItemStack is) {
         final Optional<ItemStack> storedIs = this.getStoredItemStack(is);
@@ -78,12 +78,12 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
         final Optional<ItemStack> storedIs = this.getStoredItemStack(is);
         return storedIs.isPresent() ? storedIs.get().getUseDuration() : 0;
     }
-    
+
     @Override
     public boolean isBlackListed(final ItemStack cellItem, final AEKey requestedAddition) {
         return !requestedAddition.wrapForDisplayOrFilter().isEdible();
     }
-    
+
     private Optional<ItemStack> getStoredItemStack(final ItemStack lunchboxCellIs) {
         final KeyCounter storedItems = StorageCells.getCellInventory(lunchboxCellIs, null).getAvailableStacks();
         if (storedItems.isEmpty()) {
@@ -93,10 +93,11 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
             return Optional.of(storedItems.getFirstEntry().getKey().wrapForDisplayOrFilter());
         }
     }
-    
+
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(final ItemStack is, final Level level, final List<Component> lines, final TooltipFlag advancedTooltips) {
+    public void appendHoverText(final ItemStack is, final Level level, final List<Component> lines,
+            final TooltipFlag advancedTooltips) {
         // TODO Localization goes here
         final KeyCounter storedItems = StorageCells.getCellInventory(is, null).getAvailableStacks();
         if (!storedItems.isEmpty()) {
@@ -106,8 +107,7 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
                     Tooltips.of("Currently holding "),
                     Tooltips.of(whatItem.formatAmount(whatAmount, AmountFormat.FULL)),
                     Tooltips.of(" "),
-                    Tooltips.of(whatItem.getDisplayName())
-                    ));
+                    Tooltips.of(whatItem.getDisplayName())));
         }
         else {
             lines.add(Tooltips.of("Currently holding nothing"));
@@ -115,7 +115,7 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
     }
 
     // IBasicCellItem shenanigans go here
-    
+
     @Override
     public boolean isEditable(ItemStack is) {
         return false;
@@ -164,7 +164,8 @@ public class LunchboxCellItem extends Item implements IBasicCellItem {
         }
         try {
             return FuzzyMode.valueOf(fz);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             return FuzzyMode.IGNORE_ALL;
         }
     }

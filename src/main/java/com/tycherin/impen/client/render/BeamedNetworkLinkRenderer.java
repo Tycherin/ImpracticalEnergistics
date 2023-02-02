@@ -181,7 +181,7 @@ public class BeamedNetworkLinkRenderer implements BlockEntityRenderer<BeamedNetw
                 .color(colorR, colorG, colorB, colorAlpha)
                 .uv(uVal, vVal)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(15728880) // ???
+                .uv2(15728880) // It Just Works (TM)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .endVertex();
     }

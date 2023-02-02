@@ -1,6 +1,5 @@
 package com.tycherin.impen.config;
 
-import appeng.core.AEConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
@@ -113,7 +112,7 @@ public class ImpenConfig {
         private final IntValue bnlRange;
         private final IntValue atmWorkRate;
         private final IntValue psdWorkRate;
-        private final BooleanValue srsOverwrite;
+        private final BooleanValue riftOverwrite;
 
         public MachineSettings(final Builder builder) {
             this.bnlRange = builder.comment("Connection range for the Beamed Network Link block")
@@ -122,7 +121,7 @@ public class ImpenConfig {
                     .defineInRange("atmospheric_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
             this.psdWorkRate = builder.comment("Base number of ticks for each Possibility Disintegrator operation")
                     .defineInRange("possibility_disintegrator_work_rate", 40, 1, Integer.MAX_VALUE);
-            this.srsOverwrite = builder.comment("If true, the SpatialRiftStabilizer machine will overwrite existing blocks in spatial storage")
+            this.riftOverwrite = builder.comment("If true, the SpatialRiftCollapser machine will overwrite existing blocks in spatial storage")
                     .define("srs_overwrite_blocks", false);
         }
 
@@ -139,22 +138,12 @@ public class ImpenConfig {
         }
 
         public boolean riftOverwriteBlocks() {
-            return srsOverwrite.get();
+            return riftOverwrite.get();
         }
     }
 
     public static class MiscellaneousConfig {
-        private final BooleanValue overrideAe2;
-
         public MiscellaneousConfig(final Builder builder) {
-            this.overrideAe2 = builder
-                    .comment(
-                            "If true, enables fluix-style in-world crafting even if AE2's in-world fluix crafting is disabled")
-                    .define("force_in_world_crafting", false);
-        }
-
-        public boolean isInWorldCraftingEnabled() {
-            return AEConfig.instance().isInWorldFluixEnabled() || overrideAe2.get();
         }
     }
 }

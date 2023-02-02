@@ -24,7 +24,6 @@ public class AtmosphericCrystallizerRecipeSerializer extends ForgeRegistryEntry<
     public AtmosphericCrystallizerRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
         // Ideally we would validate that the dimension exists here, but unfortunately, the dimension registry isn't
         // available at the time when recipes are loaded
-        // TODO Consider some sort of post-load plugin to remove invalid recipes
         final ResourceLocation dimensionKey = new ResourceLocation(GsonHelper.getAsString(json, "dimension"));
         final ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
         return new AtmosphericCrystallizerRecipe(recipeId, dimensionKey, result);

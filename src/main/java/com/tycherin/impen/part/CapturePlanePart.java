@@ -33,6 +33,7 @@ import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
@@ -169,6 +170,9 @@ public class CapturePlanePart extends BasicStatePart {
         }
         else if (projectile instanceof LargeFireball lf && lf.getEffectSource() instanceof Ghast) {
             projectileItem = Items.GHAST_TEAR.getDefaultInstance();
+        }
+        else if (projectile instanceof FireworkRocketEntity) {
+            projectileItem = Items.FIREWORK_ROCKET.getDefaultInstance();
         }
         else {
             projectileItem = ItemStack.EMPTY;

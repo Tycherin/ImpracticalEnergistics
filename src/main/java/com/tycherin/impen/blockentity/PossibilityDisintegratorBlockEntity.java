@@ -107,7 +107,7 @@ public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
 
         if (entity instanceof Mob mob && !targets.containsKey(mob)) {
             if (MobUtil.canBeCaptured(mob)
-                    && this.targets.size() <= this.getMaxTargets()) {
+                    && this.targets.size() < this.getMaxTargets()) {
                 this.lockTarget(mob);
                 targets.put(mob, new TargetStats());
             }

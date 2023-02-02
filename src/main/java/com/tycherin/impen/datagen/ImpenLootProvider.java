@@ -36,7 +36,7 @@ public class ImpenLootProvider extends LootTableProvider {
 
     @Override
     protected void validate(final Map<ResourceLocation, LootTable> map, final ValidationContext validationtracker) {
-        // do not validate against all registered loot tables
+        // Override the vanilla LootTableProvider behavior, which tries to validate against all vanilla loot tables
     }
 
     private static class ImpenBlockLoot extends BlockLoot {

@@ -61,7 +61,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('G', Blocks.GLASS)
                 .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
                 .save(consumer);
-        // TODO Advanced BNL
         // Atm. Crystallizer
         ShapedRecipeBuilder.shaped(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER)
                 .pattern(" I ")
