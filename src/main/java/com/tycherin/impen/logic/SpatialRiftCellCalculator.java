@@ -30,6 +30,9 @@ public class SpatialRiftCellCalculator {
 
     private final Map<Block, BaseBlockCompatibility> compatibilityCache = new HashMap<>();
 
+    // TODO Need to cover a bunch of the "bonus" recipes I've added
+    // TODO This was designed for a cross-mod compatibility pass that ended up not working. I should just add baseBlock
+    //   back to the recipe itself, especially now that the recipes are datagenned.
     private static enum BaseBlockCompatibility {
         STONE,
         DEEPSLATE,

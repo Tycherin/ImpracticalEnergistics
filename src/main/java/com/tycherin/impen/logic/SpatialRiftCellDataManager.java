@@ -143,6 +143,10 @@ public class SpatialRiftCellDataManager {
             return storedInputs.add(block);
         }
 
+        public boolean hasBlock(final Block block) {
+            return storedInputs.contains(block);
+        }
+
         public CompoundTag getAsTag() {
             final CompoundTag tag = new CompoundTag();
             tag.putInt(TAG_PLOT_ID, plotId);
@@ -168,7 +172,9 @@ public class SpatialRiftCellDataManager {
                 storedInputs.add(block);
             });
             final var data = new SpatialRiftCellData(plotId, storedInputs);
-            data.bonusPrecision = tag.getInt(TAG_BONUS_PRECISION);
+            data.bonusPrecision = tag.contains(TAG_BONUS_PRECISION)
+                    ? tag.getInt(TAG_BONUS_PRECISION)
+                    : 0;
             data.recalculateInputs();
             return data;
         }

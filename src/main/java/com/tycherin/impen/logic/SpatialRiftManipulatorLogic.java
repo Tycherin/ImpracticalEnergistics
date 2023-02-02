@@ -50,9 +50,18 @@ public class SpatialRiftManipulatorLogic {
                 return false;
             }
             else {
-                if (recipeOpt.get() instanceof SpatialRiftEffectRecipe) {
-                    // We can add modifiers only if the cell has available slots
-                    return dataOpt.get().getRemainingSlots() > 0;
+                if (recipeOpt.get() instanceof SpatialRiftEffectRecipe spatialRecipe) {
+                    if (dataOpt.get().getRemainingSlots() == 0) {
+                        // We can't add inputs if there are no slots left
+                        return false;
+                    }
+                    else if (dataOpt.get().hasBlock(spatialRecipe.getBlock())) {
+                        // We can't add an input that's already present
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
                 }
                 else if (recipeOpt.get() instanceof SpecialSpatialRecipe specialRecipe) {
                     // These modifiers only make sense if the cell has some inputs already
