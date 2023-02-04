@@ -2,9 +2,6 @@ package com.tycherin.impen.blockentity.rift;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
@@ -22,6 +19,7 @@ import appeng.items.storage.SpatialStorageCellItem;
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import appeng.util.inv.filter.IAEItemFilter;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -29,9 +27,8 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
+@Slf4j
 public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     // TODO Change the time required for an operation based on the size of the plot
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
@@ -95,7 +92,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
             final int plotId = item.getPlotId(input);
             final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId);
             if (dataOpt.isEmpty()) {
-                LOGGER.warn("Rift cell data not found for {}", plotId);
+                log.warn("Rift cell data not found for {}", plotId);
                 return false;
             }
 
@@ -120,7 +117,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
             // Regular crafting recipe
             final var recipeOpt = getRecipeForInput(this.inputContainer);
             if (recipeOpt.isEmpty()) {
-                LOGGER.warn("No recipe found for input item {}", input);
+                log.warn("No recipe found for input item {}", input);
                 this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
                 this.invWrapper.getOutput().setItemDirect(0, input);
                 return true;

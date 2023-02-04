@@ -1,10 +1,12 @@
 package com.tycherin.impen.util;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 
+@UtilityClass
 public class MobUtil {
 
     public static boolean canBeCaptured(final Mob mob) {

@@ -9,6 +9,8 @@ import org.apache.commons.lang3.NotImplementedException;
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
 
+import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +23,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+@Getter
 public class AtmosphericCrystallizerRecipe implements BidirectionalRecipe<Container> {
 
     public static final String RECIPE_TYPE_NAME = "atmospheric_crystallizer";
@@ -29,15 +32,11 @@ public class AtmosphericCrystallizerRecipe implements BidirectionalRecipe<Contai
     private final ResourceLocation dimensionKey;
     private final ItemStack result;
 
-    public AtmosphericCrystallizerRecipe(final ResourceLocation id, final ResourceLocation dimensionKey,
-            final ItemStack result) {
+    public AtmosphericCrystallizerRecipe(final ResourceLocation id, @NonNull final ResourceLocation dimensionKey,
+            @NonNull final ItemStack result) {
         this.id = id;
         this.dimensionKey = dimensionKey;
         this.result = result;
-    }
-
-    public ResourceLocation getDimensionKey() {
-        return this.dimensionKey;
     }
 
     public Optional<Level> getDimension(final Level sourceLevel) {

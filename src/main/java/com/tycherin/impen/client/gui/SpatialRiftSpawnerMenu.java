@@ -8,6 +8,7 @@ import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.interfaces.IProgressProvider;
+import lombok.Getter;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
@@ -18,12 +19,16 @@ public class SpatialRiftSpawnerMenu extends AEBaseMenu implements IProgressProvi
             .build("spatial_rift_spawner");
 
     @GuiSync(10)
-    public int progress;
+    @Getter
+    public int currentProgress;
     @GuiSync(11)
+    @Getter
     public int maxProgress;
     @GuiSync(12)
+    @Getter
     public int currentFuel;
     @GuiSync(13)
+    @Getter
     public int maxFuel;
 
     public SpatialRiftSpawnerMenu(final int id, final Inventory playerInv, final SpatialRiftSpawnerBlockEntity be) {
@@ -35,7 +40,7 @@ public class SpatialRiftSpawnerMenu extends AEBaseMenu implements IProgressProvi
                 SlotSemantics.MACHINE_OUTPUT);
         this.addSlot(new FilteredInputSlot(be.getInventoryFilter(), be.getInternalInventory(), 2),
                 SlotSemantics.INSCRIBER_PLATE_TOP /* i.e. fuel slot */);
-        
+
         this.maxProgress = be.getMaxProgress();
         this.maxFuel = be.getMaxFuel();
 
@@ -44,28 +49,8 @@ public class SpatialRiftSpawnerMenu extends AEBaseMenu implements IProgressProvi
 
     @Override
     public void broadcastChanges() {
-        this.progress = ((SpatialRiftSpawnerBlockEntity)this.getBlockEntity()).getProgress();
+        this.currentProgress = ((SpatialRiftSpawnerBlockEntity)this.getBlockEntity()).getProgress();
         this.currentFuel = ((SpatialRiftSpawnerBlockEntity)this.getBlockEntity()).getStoredFuel();
         super.broadcastChanges();
-    }
-
-    @Override
-    public int getCurrentProgress() {
-        return this.progress;
-    }
-
-    @Override
-    public int getMaxProgress() {
-        return this.maxProgress;
-    }
-
-    @Override
-    public int getCurrentFuel() {
-        return this.currentFuel;
-    }
-
-    @Override
-    public int getMaxFuel() {
-        return this.maxFuel;
     }
 }

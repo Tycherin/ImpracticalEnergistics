@@ -9,5 +9,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
  * types.
  */
 public interface BidirectionalRecipeSerializer<T extends BidirectionalRecipe<?>> extends RecipeSerializer<T> {
+    /** Serializes the given recipe into the given JSON object */
     void toJson(T recipe, JsonObject json);
 }

@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.util.AEPowerUtil;
@@ -25,6 +22,7 @@ import appeng.api.util.AEColor;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.blockentity.grid.AENetworkBlockEntity;
 import appeng.me.helpers.BlockEntityNodeListener;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -32,9 +30,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+@Slf4j
 public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
         implements IPowerChannelState, ServerTickingBlockEntity {
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final int CHECK_INTERVAL = 20;
 
@@ -377,7 +375,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
                     }
                 }
                 else {
-                    LOGGER.warn("Encountered BNL block without associated BlockEntity at {}", checkPos.toShortString());
+                    log.warn("Encountered BNL block without associated BlockEntity at {}", checkPos.toShortString());
                     checkDistance = -1;
                     break;
                 }

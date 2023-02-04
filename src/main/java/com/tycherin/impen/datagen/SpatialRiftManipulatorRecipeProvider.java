@@ -11,6 +11,7 @@ import com.tycherin.impen.util.ImpenIdUtil;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
+import lombok.Builder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -26,22 +27,19 @@ import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
 public class SpatialRiftManipulatorRecipeProvider {
 
-    public SpatialRiftManipulatorRecipeProvider() {
-    }
-
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
 
-        consumer.accept(new RecipeBuilder()
+        consumer.accept(RecipeArgs.builder()
                 .recipeName("spatial_clear_precision")
                 .bottomInput(Ingredient.of(Tags.Items.GLASS))
-                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.CLEAR_INPUTS)
-                .build());
-        consumer.accept(new RecipeBuilder()
+                .specialType(SpecialSpatialRecipeType.CLEAR_INPUTS)
+                .build().toRecipe());
+        consumer.accept(RecipeArgs.builder()
                 .recipeName("spatial_boost_precision")
                 .bottomInput(Ingredient.of(ImpenRegistry.STABILIZED_RIFT_PRISM))
-                .hasSpecialSpatialEffect(SpecialSpatialRecipeType.BOOST_PRECISION)
-                .build());
+                .specialType(SpecialSpatialRecipeType.BOOST_PRECISION)
+                .build().toRecipe());
 
         helper.addNormal(ImpenRegistry.RIFTSTONE, Items.IRON_PICKAXE, ImpenRegistry.RIFTSTONE_DUST);
 
@@ -202,22 +200,23 @@ public class SpatialRiftManipulatorRecipeProvider {
 
         public void addNormal(final ItemLike topInput, final ItemLike bottomInput, final ItemLike output) {
             final String recipeName = topInput.asItem().getRegistryName().getPath();
-            final var result = new RecipeBuilder()
+            final FinishedRecipe result = RecipeArgs.builder()
                     .recipeName(recipeName)
                     .topInput(Ingredient.of(topInput))
                     .bottomInput(Ingredient.of(bottomInput))
                     .output(output.asItem().getDefaultInstance())
-                    .build();
+                    .build().toRecipe();
             consumer.accept(result);
         }
 
         public void addSpatial(final ItemLike bottomInput, final Block block, final Block baseBlock) {
             final String recipeName = "spatial_" + bottomInput.asItem().getRegistryName().getPath();
-            final var result = new RecipeBuilder()
+            final FinishedRecipe result = RecipeArgs.builder()
                     .recipeName(recipeName)
                     .bottomInput(Ingredient.of(bottomInput))
-                    .spatialEffect(block, baseBlock)
-                    .build();
+                    .block(block)
+                    .baseBlock(baseBlock)
+                    .build().toRecipe();
             consumer.accept(result);
         }
 
@@ -233,7 +232,8 @@ public class SpatialRiftManipulatorRecipeProvider {
         }
     }
 
-    protected static class RecipeBuilder {
+    @Builder
+    protected static class RecipeArgs {
         private String recipeName;
 
         private Ingredient topInput;
@@ -244,11 +244,7 @@ public class SpatialRiftManipulatorRecipeProvider {
         private Block baseBlock;
         private SpecialSpatialRecipeType specialType;
 
-        public FinishedRecipe build() {
-            if (recipeName == null) {
-                throw new RuntimeException("Recipe name cannot be null");
-            }
-
+        public FinishedRecipe toRecipe() {
             final SpatialRiftManipulatorRecipe recipe;
             if (block != null) {
                 recipe = new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(null, bottomInput, block, baseBlock);
@@ -263,37 +259,6 @@ public class SpatialRiftManipulatorRecipeProvider {
                 throw new IllegalArgumentException("Must set at least one recipe subtype");
             }
             return new CustomRecipeResult(recipeName, recipe);
-        }
-
-        public RecipeBuilder hasSpecialSpatialEffect(final SpecialSpatialRecipeType specialType) {
-            this.specialType = specialType;
-            return this;
-        }
-
-        public RecipeBuilder recipeName(final String s) {
-            this.recipeName = s;
-            return this;
-        }
-
-        public RecipeBuilder topInput(final Ingredient ing) {
-            this.topInput = ing;
-            return this;
-        }
-
-        public RecipeBuilder bottomInput(final Ingredient ing) {
-            this.bottomInput = ing;
-            return this;
-        }
-
-        public RecipeBuilder output(final ItemStack output) {
-            this.output = output;
-            return this;
-        }
-
-        public RecipeBuilder spatialEffect(final Block block, final Block baseBlock) {
-            this.block = block;
-            this.baseBlock = baseBlock;
-            return this;
         }
     }
 

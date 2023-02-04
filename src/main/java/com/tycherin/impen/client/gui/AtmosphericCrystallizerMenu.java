@@ -8,6 +8,7 @@ import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.AppEngSlot;
+import lombok.Getter;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
@@ -19,8 +20,10 @@ public class AtmosphericCrystallizerMenu extends UpgradeableMenu<AtmosphericCrys
             .build("atmospheric_crystallizer");
 
     @GuiSync(10)
-    public int progress;
+    @Getter
+    public int currentProgress;
     @GuiSync(11)
+    @Getter
     public int maxProgress;
 
     public AtmosphericCrystallizerMenu(final int id, final Inventory playerInv, final AtmosphericCrystallizerBlockEntity be) {
@@ -35,17 +38,7 @@ public class AtmosphericCrystallizerMenu extends UpgradeableMenu<AtmosphericCrys
 
     @Override
     public void broadcastChanges() {
-        this.progress = ((AtmosphericCrystallizerBlockEntity) this.getBlockEntity()).getProgress();
+        this.currentProgress = ((AtmosphericCrystallizerBlockEntity) this.getBlockEntity()).getProgress();
         super.broadcastChanges();
-    }
-
-    @Override
-    public int getCurrentProgress() {
-        return this.progress;
-    }
-
-    @Override
-    public int getMaxProgress() {
-        return this.maxProgress;
     }
 }

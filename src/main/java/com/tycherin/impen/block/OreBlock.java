@@ -11,6 +11,7 @@ public class OreBlock extends Block {
 
     public OreBlock(final BlockBehaviour.Properties props) {
         super(props);
+        props.requiresCorrectToolForDrops();
     }
 
     @Override

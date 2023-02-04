@@ -6,15 +6,13 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.definitions.AEItems;
+import lombok.Builder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 public class SpatialRiftSpawnerRecipeProvider {
-
-    public SpatialRiftSpawnerRecipeProvider() {
-    }
 
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
@@ -35,45 +33,27 @@ public class SpatialRiftSpawnerRecipeProvider {
 
         public void add(final ItemLike input, final ItemLike output, final int fuelCost) {
             final String recipeName = input.asItem().getRegistryName().getPath();
-            final var result = new RecipeBuilder()
+            final FinishedRecipe result = RecipeArgs.builder()
                     .recipeName(recipeName)
                     .input(Ingredient.of(input))
                     .output(output.asItem().getDefaultInstance())
                     .fuelCost(fuelCost)
-                    .build();
+                    .build().toRecipe();
             consumer.accept(result);
         }
     }
 
-    protected static class RecipeBuilder {
+    @Builder
+    protected static class RecipeArgs {
         private String recipeName;
         private Ingredient input;
         private ItemStack output;
+        @Builder.Default
         private int fuelCost = -1;
 
-        public FinishedRecipe build() {
+        public FinishedRecipe toRecipe() {
             final var recipe = new SpatialRiftSpawnerRecipe(null, input, output, fuelCost);
             return new CustomRecipeResult(recipeName, recipe);
-        }
-
-        public RecipeBuilder recipeName(final String s) {
-            this.recipeName = s;
-            return this;
-        }
-
-        public RecipeBuilder input(final Ingredient input) {
-            this.input = input;
-            return this;
-        }
-
-        public RecipeBuilder output(final ItemStack output) {
-            this.output = output;
-            return this;
-        }
-
-        public RecipeBuilder fuelCost(final int fuelCost) {
-            this.fuelCost = fuelCost;
-            return this;
         }
     }
 }

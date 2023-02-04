@@ -4,21 +4,18 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
+@Slf4j
 public class SpatialRiftCellCalculator {
 
     public static final SpatialRiftCellCalculator INSTANCE = new SpatialRiftCellCalculator();
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static record SpatialRiftCellCalculatorResult(Optional<Block> baseBlock, int precision) {
     }
@@ -36,7 +33,7 @@ public class SpatialRiftCellCalculator {
                 baseBlocks.add(recipeOpt.get().getBaseBlock());
             }
             else {
-                LOGGER.warn("No recipe found for block {}; input will be discarded", inputBlock);
+                log.warn("No recipe found for block {}; input will be discarded", inputBlock);
             }
         }
 

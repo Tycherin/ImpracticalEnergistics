@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
 
 import appeng.datagen.providers.recipes.AE2RecipeProvider;
+import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -18,6 +20,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+@Getter
 public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> {
 
     public static final String RECIPE_TYPE_NAME = "spatial_rift_spawner";
@@ -28,16 +31,10 @@ public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> 
     private final ItemStack output;
     private final int fuelCost;
 
-    public SpatialRiftSpawnerRecipe(final ResourceLocation id, final Ingredient input, final ItemStack output,
-            final int fuelCost) {
+    public SpatialRiftSpawnerRecipe(final ResourceLocation id, @NonNull final Ingredient input,
+            @NonNull final ItemStack output, final int fuelCost) {
         this.id = id;
-        if (input == null) {
-            throw new IllegalArgumentException("Input must not be null");
-        }
         this.input = input;
-        if (output == null) {
-            throw new IllegalArgumentException("Output must not be null");
-        }
         this.output = output;
         if (fuelCost < 0) {
             throw new IllegalArgumentException("Fuel cost must not be negative");
@@ -58,14 +55,6 @@ public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> 
             }
         }
         return false;
-    }
-
-    public int getFuelCost() {
-        return fuelCost;
-    }
-
-    public Ingredient getInput() {
-        return input;
     }
 
     @Override

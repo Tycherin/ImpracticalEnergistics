@@ -10,6 +10,8 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe.SpecialSpatialRecipeType;
 
 import appeng.datagen.providers.recipes.AE2RecipeProvider;
+import lombok.Getter;
+import lombok.NonNull;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -31,18 +33,12 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
 
     private final ResourceLocation id;
 
+    @Getter
     protected final Ingredient bottomInput;
 
-    public SpatialRiftManipulatorRecipe(final ResourceLocation id, final Ingredient bottomInput) {
+    public SpatialRiftManipulatorRecipe(final ResourceLocation id, @NonNull final Ingredient bottomInput) {
         this.id = id;
-        if (bottomInput == null) {
-            throw new IllegalArgumentException("Bottom input must not be null");
-        }
         this.bottomInput = bottomInput;
-    }
-
-    public Ingredient getBottomInput() {
-        return this.bottomInput;
     }
 
     @Override
@@ -102,30 +98,16 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
     /**
      * Normal crafting recipe for Spatial Rift Manipulator, one that doesn't operate on Spatial Rift Cells
      */
+    @Getter
     public static class GenericManipulatorRecipe extends SpatialRiftManipulatorRecipe {
-
         private final Ingredient topInput;
         private final ItemStack output;
 
-        public GenericManipulatorRecipe(final ResourceLocation id, final Ingredient topInput,
-                final Ingredient bottomInput, final ItemStack output) {
+        public GenericManipulatorRecipe(final ResourceLocation id, @NonNull final Ingredient topInput,
+                @NonNull final Ingredient bottomInput, @NonNull final ItemStack output) {
             super(id, bottomInput);
-            if (topInput == null) {
-                throw new IllegalArgumentException("Top input must not be null");
-            }
             this.topInput = topInput;
-            if (output == null) {
-                throw new IllegalArgumentException("Output must not be null");
-            }
             this.output = output;
-        }
-
-        public ItemStack getOutput() {
-            return this.output;
-        }
-
-        public Ingredient getTopInput() {
-            return this.topInput;
         }
     }
 
@@ -135,29 +117,16 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
      * The input for this recipe is always some type of Spatial Rift Cell, and the output is the same cell with modified
      * properties
      */
+    @Getter
     public static class SpatialRiftEffectRecipe extends SpatialRiftManipulatorRecipe {
-
         private final Block block;
         private final Block baseBlock;
 
-        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block, final Block baseBlock) {
+        public SpatialRiftEffectRecipe(final ResourceLocation id, @NonNull final Ingredient bottomInput,
+                @NonNull final Block block, @NonNull final Block baseBlock) {
             super(id, bottomInput);
-            if (block == null) {
-                throw new IllegalArgumentException("Block must not be null");
-            }
             this.block = block;
-            if (baseBlock == null) {
-                throw new IllegalArgumentException("Base block must not be null");
-            }
             this.baseBlock = baseBlock;
-        }
-
-        public Block getBlock() {
-            return block;
-        }
-
-        public Block getBaseBlock() {
-            return baseBlock;
         }
     }
 
@@ -165,6 +134,7 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
      * There are a couple of recipes that manipulate rift cells, but don't have an associated block, and therefore need
      * special handling
      */
+    @Getter
     public static class SpecialSpatialRecipe extends SpatialRiftManipulatorRecipe {
 
         public static enum SpecialSpatialRecipeType {
@@ -174,17 +144,10 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
 
         private final SpecialSpatialRecipeType specialType;
 
-        public SpecialSpatialRecipe(final ResourceLocation id, final Ingredient bottomInput,
-                final SpecialSpatialRecipeType specialType) {
+        public SpecialSpatialRecipe(final ResourceLocation id, @NonNull final Ingredient bottomInput,
+                @NonNull final SpecialSpatialRecipeType specialType) {
             super(id, bottomInput);
-            if (specialType == null) {
-                throw new IllegalArgumentException("Effect type not be null");
-            }
             this.specialType = specialType;
-        }
-
-        public SpecialSpatialRecipeType getSpecialType() {
-            return specialType;
         }
     }
 
@@ -208,7 +171,8 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
                 if (spatialJson.has("block")) {
                     final Block block = getAsBlock(spatialJson, "block");
                     final Block baseBlock = getAsBlock(spatialJson, "baseBlock");
-                    return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, baseBlock);
+                    return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block,
+                            baseBlock);
                 }
                 else if (spatialJson.has("special_effect")) {
                     final var type = SpecialSpatialRecipeType.valueOf(spatialJson.get("special_effect").getAsString());
@@ -256,7 +220,8 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             if (typeFlag == SPATIAL_RECIPE_FLAG) {
                 final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
                 final Block baseBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
-                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, baseBlock);
+                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block,
+                        baseBlock);
             }
             else {
                 final Ingredient topInput = Ingredient.fromNetwork(buffer);

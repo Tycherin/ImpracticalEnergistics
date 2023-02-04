@@ -7,6 +7,7 @@ import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.interfaces.IProgressProvider;
+import lombok.Getter;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
@@ -17,8 +18,10 @@ public class SpatialRiftCollapserMenu extends AEBaseMenu implements IProgressPro
             .build("spatial_rift_collapser");
 
     @GuiSync(10)
-    public int progress;
+    @Getter
+    public int currentProgress;
     @GuiSync(11)
+    @Getter
     public int maxProgress;
 
     public SpatialRiftCollapserMenu(final int id, final Inventory playerInv, final SpatialRiftCollapserBlockEntity be) {
@@ -36,17 +39,7 @@ public class SpatialRiftCollapserMenu extends AEBaseMenu implements IProgressPro
 
     @Override
     public void broadcastChanges() {
-        this.progress = ((SpatialRiftCollapserBlockEntity)this.getBlockEntity()).getProgress();
+        this.currentProgress = ((SpatialRiftCollapserBlockEntity)this.getBlockEntity()).getProgress();
         super.broadcastChanges();
-    }
-
-    @Override
-    public int getCurrentProgress() {
-        return this.progress;
-    }
-
-    @Override
-    public int getMaxProgress() {
-        return this.maxProgress;
     }
 }

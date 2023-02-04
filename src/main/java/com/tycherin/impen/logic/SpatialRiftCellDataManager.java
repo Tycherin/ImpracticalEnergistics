@@ -4,14 +4,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -23,11 +21,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.registries.ForgeRegistries;
 
+@Slf4j
 public class SpatialRiftCellDataManager {
 
     public static final SpatialRiftCellDataManager INSTANCE = new SpatialRiftCellDataManager();
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private SpatialRiftCellDataManager() {
     }
@@ -101,7 +98,7 @@ public class SpatialRiftCellDataManager {
                 final SpatialRiftCellData cellData = SpatialRiftCellData.fromTag((CompoundTag)entryTag);
                 worldData.put(cellData.getPlotId(), cellData);
             });
-            LOGGER.info("Loaded rift cell data for {} plots", plots.size());
+            log.info("Loaded rift cell data for {} plots", plots.size());
             return worldData;
         }
     }
@@ -169,7 +166,7 @@ public class SpatialRiftCellDataManager {
                 final String blockId = ((StringTag)blockIdTag).getAsString();
                 final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockId));
                 if (block == null) {
-                    LOGGER.warn("Block {} missing from registry; value will be ignored", blockId);
+                    log.warn("Block {} missing from registry; value will be ignored", blockId);
                 }
                 storedInputs.add(block);
             });

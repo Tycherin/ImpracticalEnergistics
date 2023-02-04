@@ -27,9 +27,6 @@ public class SpatialRiftCollapserLogic {
 
     private static final Random RAND = new Random();
 
-    public SpatialRiftCollapserLogic() {
-    }
-
     public void addBlocksToPlot(final SpatialStoragePlot plot, final SpatialRiftCellData data, final Level level) {
         final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
         final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size(), level);

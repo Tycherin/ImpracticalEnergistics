@@ -3,7 +3,9 @@ package com.tycherin.impen.util;
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
 import appeng.me.helpers.IGridConnectedBlockEntity;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class AEPowerUtil {
 
     private static final double FLOATING_POINT_MATH_HELPER = 0.0000001;

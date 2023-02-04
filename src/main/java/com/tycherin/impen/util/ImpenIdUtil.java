@@ -3,11 +3,13 @@ package com.tycherin.impen.util;
 import com.tycherin.impen.ImpenRegistry.RegistryIdProvider;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 
+import lombok.experimental.UtilityClass;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+@UtilityClass
 public class ImpenIdUtil {
     public static ResourceLocation makeId(final String key) {
         return new ResourceLocation(ImpracticalEnergisticsMod.MOD_ID, key);

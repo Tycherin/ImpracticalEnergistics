@@ -5,9 +5,12 @@ import java.util.Optional;
 import appeng.api.implementations.items.ISpatialStorageCell;
 import appeng.items.storage.SpatialStorageCellItem;
 import appeng.spatial.SpatialStoragePlotManager;
+import lombok.experimental.UtilityClass;
 import net.minecraft.world.item.ItemStack;
 
+@UtilityClass
 public class SpatialRiftUtil {
+
     public static boolean isSpatialCell(final ItemStack cell) {
         if (!cell.isEmpty() && cell.getItem() instanceof ISpatialStorageCell spatialCell) {
             return spatialCell.isSpatialStorage(cell);

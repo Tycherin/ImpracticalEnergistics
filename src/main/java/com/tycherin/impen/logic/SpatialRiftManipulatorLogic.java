@@ -2,9 +2,6 @@ package com.tycherin.impen.logic;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
@@ -13,12 +10,12 @@ import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialReci
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
 import appeng.spatial.SpatialStoragePlotManager;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+@Slf4j
 public class SpatialRiftManipulatorLogic {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final int MODIFIER_BOOST_AMOUNT = 20;
 
@@ -68,7 +65,7 @@ public class SpatialRiftManipulatorLogic {
                     return dataOpt.get().getUsedSlots() > 0;
                 }
                 else {
-                    LOGGER.warn("Unexpected recipe subtype for {}", recipeOpt.get());
+                    log.warn("Unexpected recipe subtype for {}", recipeOpt.get());
                     return false;
                 }
             }
@@ -89,10 +86,11 @@ public class SpatialRiftManipulatorLogic {
         }
     }
 
-    private ItemStack processInputsSpatialCell(final ItemStack spatialCellIs, final ItemStack modifierIs, final Level level) {
+    private ItemStack processInputsSpatialCell(final ItemStack spatialCellIs, final ItemStack modifierIs,
+            final Level level) {
         final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForCell(spatialCellIs);
         if (dataOpt.isEmpty()) {
-            LOGGER.warn("No rift cell data found for input spatial cell!");
+            log.warn("No rift cell data found for input spatial cell!");
             return ItemStack.EMPTY;
         }
         final SpatialRiftCellData data = dataOpt.get();

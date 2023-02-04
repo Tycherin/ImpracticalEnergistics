@@ -6,15 +6,13 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 
 import appeng.core.definitions.AEItems;
+import lombok.Builder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 public class SpatialRiftCollapserRecipeProvider {
-
-    public SpatialRiftCollapserRecipeProvider() {
-    }
 
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         final BuilderHelper helper = new BuilderHelper(consumer);
@@ -35,38 +33,24 @@ public class SpatialRiftCollapserRecipeProvider {
 
         public void add(final ItemLike input, final ItemLike output) {
             final String recipeName = input.asItem().getRegistryName().getPath();
-            final var result = new RecipeBuilder()
+            final FinishedRecipe result = RecipeArgs.builder()
                     .recipeName(recipeName)
                     .input(Ingredient.of(input))
                     .output(output.asItem().getDefaultInstance())
-                    .build();
+                    .build().toRecipe();
             consumer.accept(result);
         }
     }
 
-    protected static class RecipeBuilder {
+    @Builder
+    protected static class RecipeArgs {
         private String recipeName;
         private Ingredient input;
         private ItemStack output;
 
-        public FinishedRecipe build() {
+        protected FinishedRecipe toRecipe() {
             final var recipe = new SpatialRiftCollapserRecipe(null, input, output);
             return new CustomRecipeResult(recipeName, recipe);
-        }
-
-        public RecipeBuilder recipeName(final String s) {
-            this.recipeName = s;
-            return this;
-        }
-
-        public RecipeBuilder input(final Ingredient input) {
-            this.input = input;
-            return this;
-        }
-
-        public RecipeBuilder output(final ItemStack output) {
-            this.output = output;
-            return this;
         }
     }
 }

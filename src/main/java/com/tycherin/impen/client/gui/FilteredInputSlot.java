@@ -4,7 +4,6 @@ import appeng.api.inventories.InternalInventory;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -15,10 +14,6 @@ public class FilteredInputSlot extends AppEngSlot {
     public FilteredInputSlot(final IAEItemFilter filter, final InternalInventory inv, final int invSlot) {
         super(inv, invSlot);
         this.filter = filter;
-    }
-
-    public Slot setStackLimit(int i) {
-        return this;
     }
 
     @Override
