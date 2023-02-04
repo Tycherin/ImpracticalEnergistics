@@ -80,16 +80,16 @@ public class SpatialRiftManipulatorLogic {
         return SpatialRiftManipulatorRecipeManager.getRecipe(level, topSlot, bottomSlot);
     }
 
-    public ItemStack processInputs(final ItemStack topSlot, final ItemStack bottomSlot) {
+    public ItemStack processInputs(final ItemStack topSlot, final ItemStack bottomSlot, final Level level) {
         if (topSlot.getItem() instanceof SpatialRiftCellItem) {
-            return processInputsSpatialCell(topSlot, bottomSlot);
+            return processInputsSpatialCell(topSlot, bottomSlot, level);
         }
         else {
             return processInputsRecipe(topSlot, bottomSlot);
         }
     }
 
-    private ItemStack processInputsSpatialCell(final ItemStack spatialCellIs, final ItemStack modifierIs) {
+    private ItemStack processInputsSpatialCell(final ItemStack spatialCellIs, final ItemStack modifierIs, final Level level) {
         final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForCell(spatialCellIs);
         if (dataOpt.isEmpty()) {
             LOGGER.warn("No rift cell data found for input spatial cell!");
@@ -99,13 +99,13 @@ public class SpatialRiftManipulatorLogic {
         final var recipe = getRecipeInput(spatialCellIs, modifierIs).get();
 
         if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
-            data.addInput(spatialRecipe.getBlock());
+            data.addInput(level, spatialRecipe.getBlock());
             return spatialCellIs;
         }
         else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
             switch (specialRecipe.getSpecialType()) {
             case BOOST_PRECISION -> data.addPrecisionBoost(MODIFIER_BOOST_AMOUNT);
-            case CLEAR_INPUTS -> data.clearInputs();
+            case CLEAR_INPUTS -> data.clearInputs(level);
             }
             return spatialCellIs;
         }

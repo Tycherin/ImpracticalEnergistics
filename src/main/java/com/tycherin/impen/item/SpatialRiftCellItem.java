@@ -98,7 +98,7 @@ public class SpatialRiftCellItem extends AEBaseItem {
             lines.add(Tooltips.of(GuiText.StoredSize, size.getX(), size.getY(), size.getZ()));
 
             final String desc = String.format("%d of %d inputs added (%d%% precision)",
-                    data.getUsedSlots(), data.getMaxSlots(), data.getPrecision());
+                    data.getUsedSlots(), data.getMaxSlots(), data.getPrecision(level));
             lines.add(Tooltips.of(desc));
             
             if (!data.getInputs().isEmpty()) {

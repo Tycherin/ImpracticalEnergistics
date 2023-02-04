@@ -18,6 +18,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -117,6 +118,7 @@ public class SpatialRiftCellDataManager {
         // Convenience fields - not persisted
         private int precision = 0;
         private Optional<Block> baseBlock = Optional.empty();
+        private boolean dirtyFlag = true;
 
         public SpatialRiftCellData(final int plotId, final Set<Block> storedInputs) {
             this.plotId = plotId;
@@ -175,16 +177,16 @@ public class SpatialRiftCellDataManager {
             data.bonusPrecision = tag.contains(TAG_BONUS_PRECISION)
                     ? tag.getInt(TAG_BONUS_PRECISION)
                     : 0;
-            data.recalculateInputs();
             return data;
         }
 
-        public void clearInputs() {
+        public void clearInputs(final Level level) {
             this.storedInputs.clear();
-            this.recalculateInputs();
+            this.recalculateInputs(level);
         }
 
-        public int getPrecision() {
+        public int getPrecision(final Level level) {
+            updateIfNeeded(level);
             return this.precision + this.bonusPrecision;
         }
 
@@ -192,12 +194,19 @@ public class SpatialRiftCellDataManager {
             return this.bonusPrecision;
         }
 
+        private void updateIfNeeded(final Level level) {
+            if (this.dirtyFlag) {
+                this.recalculateInputs(level);
+                this.dirtyFlag = false;
+            }
+        }
+
         public Optional<Block> getBaseBlock() {
             return this.baseBlock;
         }
 
-        private void recalculateInputs() {
-            final var result = SpatialRiftCellCalculator.INSTANCE.calculate(this);
+        private void recalculateInputs(final Level level) {
+            final var result = SpatialRiftCellCalculator.INSTANCE.calculate(level, this);
             this.precision = result.precision();
             this.baseBlock = result.baseBlock();
         }
@@ -206,9 +215,9 @@ public class SpatialRiftCellDataManager {
             this.bonusPrecision += bonusPrecision;
         }
 
-        public void addInput(final Block block) {
+        public void addInput(final Level level, final Block block) {
             this.storedInputs.add(block);
-            this.recalculateInputs();
+            this.recalculateInputs(level);
         }
 
         public int getRemainingSlots() {

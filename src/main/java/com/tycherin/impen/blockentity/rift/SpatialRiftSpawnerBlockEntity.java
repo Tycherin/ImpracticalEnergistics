@@ -238,8 +238,9 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
 
     @Override
     public TickRateModulation tickingRequest(final IGridNode node, final int ticksSinceLastCall) {
-        final var modulationRate = super.tickingRequest(node, ticksSinceLastCall);
+        // Recheck fuel FIRST, in case it allows us to start a new operation
         this.recheckFuel();
+        final var modulationRate = super.tickingRequest(node, ticksSinceLastCall);
         return modulationRate;
     }
 

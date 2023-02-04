@@ -80,7 +80,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         final ItemStack topInput = this.inv.getStackInSlot(Slots.TOP);
         final ItemStack bottomInput = this.inv.getStackInSlot(Slots.BOTTOM);
 
-        final ItemStack output = logic.processInputs(topInput, bottomInput);
+        final ItemStack output = logic.processInputs(topInput, bottomInput, this.level);
         if (!this.outSlot.canAdd(output)) {
             return false;
         }

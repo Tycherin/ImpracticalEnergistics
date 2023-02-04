@@ -138,17 +138,26 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
     public static class SpatialRiftEffectRecipe extends SpatialRiftManipulatorRecipe {
 
         private final Block block;
+        private final Block baseBlock;
 
-        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block) {
+        public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block, final Block baseBlock) {
             super(id, bottomInput);
             if (block == null) {
                 throw new IllegalArgumentException("Block must not be null");
             }
             this.block = block;
+            if (baseBlock == null) {
+                throw new IllegalArgumentException("Base block must not be null");
+            }
+            this.baseBlock = baseBlock;
         }
 
         public Block getBlock() {
             return block;
+        }
+
+        public Block getBaseBlock() {
+            return baseBlock;
         }
     }
 
@@ -197,8 +206,9 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             if (json.has("spatial_effect")) {
                 final JsonObject spatialJson = GsonHelper.getAsJsonObject(json, "spatial_effect");
                 if (spatialJson.has("block")) {
-                    final Block block = getAsBlock(spatialJson);
-                    return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
+                    final Block block = getAsBlock(spatialJson, "block");
+                    final Block baseBlock = getAsBlock(spatialJson, "baseBlock");
+                    return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, baseBlock);
                 }
                 else if (spatialJson.has("special_effect")) {
                     final var type = SpecialSpatialRecipeType.valueOf(spatialJson.get("special_effect").getAsString());
@@ -226,6 +236,7 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
                 final JsonObject spatialJson = new JsonObject();
                 spatialJson.addProperty("block", spatialRecipe.block.getRegistryName().toString());
+                spatialJson.addProperty("baseBlock", spatialRecipe.baseBlock.getRegistryName().toString());
                 json.add("spatial_effect", spatialJson);
             }
             else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
@@ -244,7 +255,8 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
 
             if (typeFlag == SPATIAL_RECIPE_FLAG) {
                 final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
-                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
+                final Block baseBlock = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
+                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block, baseBlock);
             }
             else {
                 final Ingredient topInput = Ingredient.fromNetwork(buffer);
@@ -261,6 +273,7 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
                 buffer.writeChar(SPATIAL_RECIPE_FLAG);
                 buffer.writeRegistryId(spatialRecipe.getBlock());
+                buffer.writeRegistryId(spatialRecipe.getBaseBlock());
             }
             else if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
                 buffer.writeChar(GENERIC_RECIPE_FLAG);
@@ -272,8 +285,8 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             }
         }
 
-        private Block getAsBlock(final JsonObject json) {
-            final String name = GsonHelper.getAsString(json, "block");
+        private Block getAsBlock(final JsonObject json, final String jsonKey) {
+            final String name = GsonHelper.getAsString(json, jsonKey);
             final ResourceLocation key = new ResourceLocation(name);
             if (!ForgeRegistries.BLOCKS.containsKey(key)) {
                 throw new JsonSyntaxException(String.format("Unknown block '%s'", key));
@@ -287,5 +300,4 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
             return Objects.requireNonNull(block);
         }
     }
-
 }

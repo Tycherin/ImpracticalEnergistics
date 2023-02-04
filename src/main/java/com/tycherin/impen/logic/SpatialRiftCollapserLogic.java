@@ -18,6 +18,7 @@ import appeng.core.definitions.AEBlocks;
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,9 +30,9 @@ public class SpatialRiftCollapserLogic {
     public SpatialRiftCollapserLogic() {
     }
 
-    public void addBlocksToPlot(final SpatialStoragePlot plot, final SpatialRiftCellData data) {
+    public void addBlocksToPlot(final SpatialStoragePlot plot, final SpatialRiftCellData data, final Level level) {
         final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
-        final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size());
+        final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size(), level);
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
         blocksToReplace.forEach(blockPos -> {
@@ -69,7 +70,7 @@ public class SpatialRiftCollapserLogic {
                 .collect(Collectors.toList());
     }
 
-    private Supplier<Block> getBlockReplacer(final SpatialRiftCellData data, final int numBlocks) {
+    private Supplier<Block> getBlockReplacer(final SpatialRiftCellData data, final int numBlocks, final Level level) {
         final Set<Block> replacementBlocks;
         final Block baseBlock;
         final int effectivePrecision;
@@ -78,7 +79,7 @@ public class SpatialRiftCollapserLogic {
             baseBlock = data.getBaseBlock()
                     // This shouldn't happen, I'm just being paranoid
                     .orElseGet(() -> Blocks.MOSSY_COBBLESTONE);
-            effectivePrecision = data.getPrecision();
+            effectivePrecision = data.getPrecision(level);
         }
         else {
             // Special case: there are no inputs configured in the cell, so we get to simulate random rift space

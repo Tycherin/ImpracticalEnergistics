@@ -110,7 +110,7 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
             final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
             ((SpatialStorageCellItem)AEItems.SPATIAL_CELL2.asItem()).setStoredDimension(output, plotId, plot.getSize());
 
-            logic.addBlocksToPlot(plot, data);
+            logic.addBlocksToPlot(plot, data, this.level);
 
             this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
             this.invWrapper.getOutput().setItemDirect(0, output);

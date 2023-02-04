@@ -1,120 +1,54 @@
 package com.tycherin.impen.logic;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
-import com.tycherin.impen.util.TagUtil;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.tags.ITag;
 
 public class SpatialRiftCellCalculator {
 
     public static final SpatialRiftCellCalculator INSTANCE = new SpatialRiftCellCalculator();
 
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     public static record SpatialRiftCellCalculatorResult(Optional<Block> baseBlock, int precision) {
     }
 
-    private final ITag<Block> stoneOresTag = TagUtil.getBlockTag(Tags.Blocks.ORES_IN_GROUND_STONE);
-    private final ITag<Block> deepslateOresTag = TagUtil.getBlockTag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE);
-    private final ITag<Block> netherrackOresTag = TagUtil.getBlockTag(Tags.Blocks.ORES_IN_GROUND_NETHERRACK);
-    private final ITag<Block> allOresTag = TagUtil.getBlockTag(Tags.Blocks.ORES);
-
-    private final Map<Block, BaseBlockCompatibility> compatibilityCache = new HashMap<>();
-
-    // TODO Need to cover a bunch of the "bonus" recipes I've added
-    // TODO This was designed for a cross-mod compatibility pass that ended up not working. I should just add baseBlock
-    //   back to the recipe itself, especially now that the recipes are datagenned.
-    private static enum BaseBlockCompatibility {
-        STONE,
-        DEEPSLATE,
-        NETHERRACK,
-        RIFTSTONE,
-        DIRT
-    }
-
-    private Set<BaseBlockCompatibility> getBaseBlocks(final Collection<Block> blocks) {
-        return blocks.stream()
-                .map(this::getCompatibility)
-                .distinct()
-                .collect(Collectors.toSet());
-    }
-
-    private BaseBlockCompatibility getCompatibility(final Block block) {
-        if (compatibilityCache.containsKey(block)) {
-            return compatibilityCache.get(block);
-        }
-
-        // First step: if the ore is nicely tagged, we can rely on that
-        if (stoneOresTag.contains(block)) {
-            return BaseBlockCompatibility.STONE;
-        }
-        else if (deepslateOresTag.contains(block)) {
-            return BaseBlockCompatibility.DEEPSLATE;
-        }
-        else if (netherrackOresTag.contains(block)) {
-            return BaseBlockCompatibility.NETHERRACK;
-        }
-        // Not a tag, but maybe it should be??? (probably not)
-        else if (ImpenRegistry.RIFT_SHARD_ORE.asBlock().equals(block)) {
-            return BaseBlockCompatibility.RIFTSTONE;
-        }
-
-        // Block isn't tagged nicely, so we have to get creative
-
-        if (allOresTag.contains(block)) {
-            // Probably an ore, just not tagged cleanly
-            final String blockName = block.getRegistryName().toString();
-            if (blockName.contains("deepslate")) {
-                return BaseBlockCompatibility.DEEPSLATE;
-            }
-            else if (blockName.contains("nether")) {
-                return BaseBlockCompatibility.NETHERRACK;
-            }
-            else {
-                return BaseBlockCompatibility.STONE;
-            }
-        }
-        else {
-            // Probably not an ore
-            return BaseBlockCompatibility.DIRT;
-        }
-    }
-
-    public SpatialRiftCellCalculatorResult calculate(final SpatialRiftCellData data) {
+    public SpatialRiftCellCalculatorResult calculate(final Level level, final SpatialRiftCellData data) {
         final Set<Block> inputs = data.getInputs();
-
         if (inputs.isEmpty()) {
             return new SpatialRiftCellCalculatorResult(Optional.empty(), -1);
         }
 
-        final Set<BaseBlockCompatibility> validBases = getBaseBlocks(inputs);
+        final Set<Block> baseBlocks = new HashSet<>();
+        for (final Block inputBlock : inputs) {
+            final var recipeOpt = SpatialRiftManipulatorRecipeManager.getRecipe(level, inputBlock);
+            if (recipeOpt.isPresent()) {
+                baseBlocks.add(recipeOpt.get().getBaseBlock());
+            }
+            else {
+                LOGGER.warn("No recipe found for block {}; input will be discarded", inputBlock);
+            }
+        }
 
         final Block baseBlock;
         final boolean isConflict;
-        if (validBases.size() > 1) {
+        if (baseBlocks.size() > 1) {
             isConflict = true;
-            // Conflict - there are multiple possible base stones
             baseBlock = ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock();
-
         }
         else {
             isConflict = false;
-            baseBlock = switch (validBases.iterator().next()) {
-            case STONE -> Blocks.STONE;
-            case DEEPSLATE -> Blocks.DEEPSLATE;
-            case NETHERRACK -> Blocks.NETHERRACK;
-            case RIFTSTONE -> ImpenRegistry.RIFTSTONE.asBlock();
-            case DIRT -> Blocks.DIRT;
-            };
+            baseBlock = baseBlocks.iterator().next();
         }
 
         final int scale = data.getMaxSlots();
@@ -123,7 +57,7 @@ public class SpatialRiftCellCalculator {
         case 2 -> 1.1;
         case 3 -> 1.2;
         case 4 -> 1.25;
-        case 5 -> 1.30;
+        case 5 -> 1.3;
         case 6 -> 1.35;
         case 7 -> 1.5;
         case 8 -> 1.75;
