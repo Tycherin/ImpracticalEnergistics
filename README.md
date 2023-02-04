@@ -1,24 +1,15 @@
 # Impractical Energistics
 
-Readme goes here!
-
 ## About
 
-An addon mod for Applied Energistics 2 that adds several features that are interesting, unique, and generally impractical.
+Impractical Energistics is an addon mod for Applied Energistics 2 (AE2) that adds new features that extend AE2's mechanics. These features might be unique, interesting, or even powerful, but they are all impractical.
 
-## Contacts
+Impractical Energistics requires [Applied Energistics 2](https://appliedenergistics.github.io/) to work.
 
 * Github https://github.com/Tycherin/ImpracticalEnergistics
-
-## License
-
-TODO
+* Issues https://github.com/Tycherin/ImpracticalEnergistics/issues
 
 ## Downloads
 
 * CurseForge (TODO)
 * Modrinth (TODO)
-
-## Issues
-
-https://github.com/Tycherin/ImpracticalEnergistics/issues

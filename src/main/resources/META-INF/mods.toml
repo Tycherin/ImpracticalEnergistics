@@ -20,12 +20,8 @@ license="mit"
     modId = "impracticalenergistics"
     version = "${file.jarVersion}"
     displayName = "Impractical Energistics"
-    #logoFile="examplemod.png"
-    #credits="Thanks for this example mod goes to Java"
     authors = "Tycherin"
-    description = '''
-Yes, hi, hello.
-'''
+    description = '''Impractical Energistics is an addon mod for Applied Energistics 2 (AE2) that adds new features that extend AE2's mechanics.'''
 
 [[dependencies.impracticalenergistics]]
     modId = "forge"
@@ -33,7 +29,6 @@ Yes, hi, hello.
     versionRange = "[40,)"
     ordering = "NONE"
     side = "BOTH"
-
 
 [[dependencies.impracticalenergistics]]
     modId = "jei"
