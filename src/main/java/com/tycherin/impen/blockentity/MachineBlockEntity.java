@@ -55,10 +55,15 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
             grid.getTickManager().alertDevice(this.getGridNode());
         });
     }
+    
+    protected void resetOperation() {
+        this.activeOperation = Optional.empty();
+        this.runningTicks = -1;
+    }
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
-        // TODO Consider changing this to sleep instead
+        // This request says we're never sleeping - the only thing that triggers sleep is a failed operation
         return new TickingRequest(1, 20, false, true);
     }
 
@@ -75,13 +80,6 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
         if (this.activeOperation.isPresent()) {
             final var op = this.activeOperation.get();
 
-            if (!op.shouldRunFunc.getAsBoolean()) {
-                // Operation should stop
-                this.runningTicks = -1;
-                this.activeOperation = Optional.empty();
-                return TickRateModulation.SAME;
-            }
-
             if (this.runningTicks == -1) {
                 this.startOperation();
                 this.runningTicks = 0;
@@ -93,12 +91,13 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
 
             if (this.runningTicks >= op.ticksRequired) {
                 if (op.executeOperationFunc.getAsBoolean()) {
-                    this.runningTicks = -1;
-                    this.activeOperation = Optional.empty();
+                    this.resetOperation();
                     return TickRateModulation.SAME;
                 }
                 else {
-                    return TickRateModulation.SAME;
+                    // The operation failed for whatever reason. Most likely, the inputs or outputs don't match. Set the
+                    // machine to sleep and let it tell us when to wake up, probably because its inventory changes.
+                    return TickRateModulation.SLEEP;
                 }
             }
             else {
@@ -106,7 +105,7 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
             }
         }
         else {
-            return TickRateModulation.SLOWER;
+            return TickRateModulation.SLEEP;
         }
     }
 
@@ -121,7 +120,6 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
 
     public static record MachineOperation(
             int ticksRequired,
-            BooleanSupplier shouldRunFunc,
             BooleanSupplier executeOperationFunc) {
     }
     

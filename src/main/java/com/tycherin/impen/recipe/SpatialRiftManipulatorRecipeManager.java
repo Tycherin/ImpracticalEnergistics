@@ -13,6 +13,10 @@ public class SpatialRiftManipulatorRecipeManager {
 
     public static Optional<? extends SpatialRiftManipulatorRecipe> getRecipe(final Level level,
             final ItemStack topInput, final ItemStack bottomInput) {
+        if (topInput.isEmpty() || bottomInput.isEmpty()) {
+            return Optional.empty();
+        }
+
         Stream<? extends SpatialRiftManipulatorRecipe> stream = level.getRecipeManager()
                 .getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get())
                 .stream()

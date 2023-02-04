@@ -17,11 +17,6 @@ public class FilteredInputSlot extends AppEngSlot {
         this.filter = filter;
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
     public Slot setStackLimit(int i) {
         return this;
     }
@@ -49,6 +44,6 @@ public class FilteredInputSlot extends AppEngSlot {
 
     @Override
     public boolean mayPickup(final Player player) {
-        return true;
+        return super.mayPickup(player);
     }
 }

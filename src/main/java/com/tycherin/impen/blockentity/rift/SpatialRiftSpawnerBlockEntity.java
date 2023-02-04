@@ -10,6 +10,7 @@ import com.tycherin.impen.logic.SpatialRiftCellDataManager;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.logic.SpatialRiftSpawnerFuelHelper;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
+import com.tycherin.impen.util.ManagedOutputInventory;
 import com.tycherin.impen.util.SpatialRiftUtil;
 
 import appeng.api.implementations.items.ISpatialStorageCell;
@@ -18,6 +19,7 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.items.storage.SpatialStorageCellItem;
 import appeng.util.inv.AppEngInternalInventory;
+import appeng.util.inv.CombinedInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
@@ -25,6 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -40,8 +43,11 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         public static final int FUEL = 2;
     }
 
-    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 3);
+    private final InternalInventory inputInv = new AppEngInternalInventory(this, 1, 1);
+    private final InternalInventory fuelInv = new AppEngInternalInventory(this, 1, 64);
+    private final InternalInventory outputInv = new AppEngInternalInventory(this, 1, 64);
     private final InternalInventory invExt;
+    private final InternalInventory inv = new CombinedInternalInventory(inputInv, fuelInv, outputInv);
     private final int baseSpeedTicks;
     private final MachineOperation op;
     private final IAEItemFilter filter;
@@ -49,6 +55,7 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     /** Convenience field just so we don't have to build this every time we want to scan it */
     private final Container inputContainer;
     private final double powerPerTick;
+    private final ManagedOutputInventory outSlot;
 
     private int storedFuel = 0;
 
@@ -57,12 +64,12 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         this.baseSpeedTicks = DEFAULT_SPEED_TICKS;
         this.op = new MachineOperation(
                 this.baseSpeedTicks,
-                this::enableOperation,
                 this::doOperation);
         this.filter = new InventoryItemFilter();
         this.invExt = new FilteredInternalInventory(inv, this.filter);
-        this.inputContainer = this.inv.getSubInventory(Slots.INPUT, Slots.INPUT + 1).toContainer();
+        this.inputContainer = this.inputInv.toContainer();
         this.powerPerTick = ImpenConfig.POWER.spatialRiftSpawnerCost();
+        this.outSlot = new ManagedOutputInventory(this.inv.getSlotInv(Slots.OUTPUT));
     }
 
     // ***
@@ -70,34 +77,10 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     // ***
 
     private boolean enableOperation() {
-        final var recipeOpt = this.getCurrentRecipe();
+        final var recipeOpt = this.getRecipe(this.inputContainer);
         return recipeOpt.isPresent()
                 && recipeOpt.get().getFuelCost() <= this.storedFuel
-                && this.canHandleOutput(recipeOpt.get().getResultItem());
-    }
-
-    private boolean canHandleOutput(final ItemStack is) {
-        final ItemStack existingOutput = this.inv.getStackInSlot(Slots.OUTPUT);
-        if (existingOutput.isEmpty()) {
-            return true;
-        }
-        else {
-            if (existingOutput.getItem().equals(is.getItem())) {
-                return (existingOutput.getCount() + is.getCount()) >= existingOutput.getMaxStackSize();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void startOperation() {
-        final Optional<SpatialRiftSpawnerRecipe> recipe = this.getCurrentRecipe();
-        if (recipe.isEmpty()) {
-            throw new RuntimeException("Can't start operation - recipe missing");
-        }
-
-        this.storedFuel -= recipe.get().getFuelCost();
-        this.recheckFuel();
+                && this.outSlot.canAdd(recipeOpt.get().getResultItem());
     }
 
     private void recheckFuel() {
@@ -122,13 +105,21 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
     }
 
     protected boolean doOperation() {
+        final Optional<SpatialRiftSpawnerRecipe> recipe = this.getRecipe(this.inputContainer);
+        this.storedFuel -= recipe.get().getFuelCost();
+        this.recheckFuel();
+        
         final ItemStack input = this.inv.getStackInSlot(Slots.INPUT);
         final ItemStack output = this.getOutputForItem(input);
 
-        input.setCount(input.getCount() - 1);
-        this.inv.setItemDirect(Slots.OUTPUT, output);
-
-        return true;
+        if (this.outSlot.tryAdd(output)) {
+            input.setCount(input.getCount() - 1);
+            return true;
+        }
+        else {
+            // Failed to insert into the output for some reason
+            return false;
+        }
     }
 
     private ItemStack getOutputForItem(final ItemStack input) {
@@ -137,7 +128,7 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
             return getOutputForSpatialCell(input, spatialCellOpt.get());
         }
         else {
-            return getCurrentRecipe()
+            return getRecipe(this.inputContainer)
                     .map(SpatialRiftSpawnerRecipe::getResultItem)
                     .orElse(ItemStack.EMPTY);
         }
@@ -168,8 +159,21 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
             if (slot == Slots.INPUT) {
-                // Only allow spatial cells that have allocated plots already
-                return SpatialRiftUtil.getPlotId(stack).isPresent();
+                final var recipeOpt = getRecipe(new SimpleContainer(stack));
+                if (recipeOpt.isPresent()) {
+                    if (stack.getItem() instanceof SpatialRiftCellItem) {
+                        // Only allow spatial cells that have allocated plots already
+                        return SpatialRiftUtil.getPlotId(stack).isPresent();
+                    }
+                    else {
+                        // Normal recipe - ok to insert
+                        return true;
+                    }
+                }
+                else {
+                    // No recipe - don't insert
+                    return false;
+                }
             }
             else if (slot == Slots.FUEL) {
                 return fuelHelper.isFuel(stack);
@@ -178,6 +182,15 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
                 return false;
             }
         }
+    }
+
+    @Override
+    public void onChangeInventory(final InternalInventory inv, final int slot) {
+        super.onChangeInventory(inv, slot);
+        if (slot == Slots.INPUT) {
+            this.resetOperation();
+        }
+        // Changing fuel or output doesn't change an in-progress operation
     }
 
     // ***
@@ -194,13 +207,9 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         }
     }
 
-    private Optional<SpatialRiftSpawnerRecipe> getCurrentRecipe() {
-        if (this.inv.getStackInSlot(Slots.INPUT).isEmpty()) {
-            return Optional.empty();
-        }
-
+    private Optional<SpatialRiftSpawnerRecipe> getRecipe(final Container c) {
         return this.level.getRecipeManager()
-                .getRecipeFor(ImpenRegistry.SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.get(), this.inputContainer, level);
+                .getRecipeFor(ImpenRegistry.SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.get(), c, level);
     }
 
     @Override

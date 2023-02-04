@@ -13,7 +13,8 @@ import com.tycherin.impen.logic.SpatialRiftCellDataManager;
 import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.logic.SpatialRiftCollapserLogic;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
-import com.tycherin.impen.util.FilteredInventoryWrapper;
+import com.tycherin.impen.util.ImpenFilteredInventoryWrapper;
+import com.tycherin.impen.util.ManagedOutputInventory;
 
 import appeng.api.inventories.InternalInventory;
 import appeng.core.definitions.AEItems;
@@ -24,6 +25,7 @@ import appeng.util.inv.filter.IAEItemFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -34,25 +36,26 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     // TODO Change the time required for an operation based on the size of the plot
     private static final int DEFAULT_SPEED_TICKS = 20 * 5; // 5s
 
-    private final FilteredInventoryWrapper invWrapper;
+    private final ImpenFilteredInventoryWrapper invWrapper;
     private final MachineOperation op;
     private final SpatialRiftCollapserLogic logic;
     private final IAEItemFilter filter;
     private final double powerPerTick;
     /** Convenience field just so we don't have to build this every time we want to scan it */
     private final Container inputContainer;
+    private final ManagedOutputInventory outSlot;
 
     public SpatialRiftCollapserBlockEntity(final BlockPos blockPos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_COLLAPSER, blockPos, blockState);
         this.op = new MachineOperation(
                 DEFAULT_SPEED_TICKS,
-                this::enableOperation,
                 this::doOperation);
         this.logic = new SpatialRiftCollapserLogic();
         this.filter = new InventoryItemFilter();
-        this.invWrapper = new FilteredInventoryWrapper(this, this.filter);
+        this.invWrapper = new ImpenFilteredInventoryWrapper(this, this.filter);
         this.inputContainer = this.invWrapper.getInput().toContainer();
         this.powerPerTick = ImpenConfig.POWER.spatialRiftCollapserCost();
+        this.outSlot = new ManagedOutputInventory(this.invWrapper.getOutput());
     }
 
     @Override
@@ -66,7 +69,21 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
     }
 
     private boolean enableOperation() {
-        return !this.invWrapper.getInput().isEmpty() && this.invWrapper.getOutput().isEmpty();
+        final ItemStack input = this.invWrapper.getInput().getStackInSlot(0);
+        if (input.isEmpty()) {
+            // No input - nothing to do
+            return false;
+        }
+
+        final var recipeOpt = getRecipeForInput(this.inputContainer);
+        if (recipeOpt.isEmpty()) {
+            // No recipe for input - weird, but nothing to do
+            return false;
+        }
+        else {
+            // Recipe found - check if there's room for the result item
+            return outSlot.canAdd(recipeOpt.get().getResultItem());
+        }
     }
 
     protected boolean doOperation() {
@@ -78,8 +95,6 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
             final int plotId = item.getPlotId(input);
             final Optional<SpatialRiftCellData> dataOpt = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId);
             if (dataOpt.isEmpty()) {
-                // TODO Ideally this should put the machine to sleep or something, since otherwise it'll keep retrying
-                // the operation over and over again with no chance of success
                 LOGGER.warn("Rift cell data not found for {}", plotId);
                 return false;
             }
@@ -99,35 +114,28 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
             this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
             this.invWrapper.getOutput().setItemDirect(0, output);
+            return true;
         }
         else {
             // Regular crafting recipe
-            final var recipeOpt = getRecipeForInput(input);
+            final var recipeOpt = getRecipeForInput(this.inputContainer);
             if (recipeOpt.isEmpty()) {
                 LOGGER.warn("No recipe found for input item {}", input);
                 this.invWrapper.getInput().setItemDirect(0, ItemStack.EMPTY);
                 this.invWrapper.getOutput().setItemDirect(0, input);
+                return true;
             }
             else {
-                // TODO This sort of logic is fairly generic, I should look for a way to extract it since I need the
-                // same kind of protections on every machine inventory
-                input.setCount(input.getCount() - 1);
-                final ItemStack existingOutput = this.invWrapper.getOutput().getStackInSlot(0);
-                if (existingOutput.isEmpty()) {
-                    this.invWrapper.getOutput().setItemDirect(0, recipeOpt.get().getResultItem());
-                }
-                else if (existingOutput.getItem().equals(recipeOpt.get().getResultItem().getItem())
-                        && existingOutput.getCount() < existingOutput.getMaxStackSize()) {
-                    existingOutput.setCount(existingOutput.getCount() + 1);
+                if (this.outSlot.tryAdd(recipeOpt.get().getResultItem())) {
+                    input.setCount(input.getCount() - 1);
+                    return true;
                 }
                 else {
-                    // Can't write output, since there's no room
+                    // For some reason, we couldn't insert into the output
                     return false;
                 }
             }
         }
-
-        return true;
     }
 
     @Override
@@ -149,7 +157,6 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         return DEFAULT_SPEED_TICKS;
     }
 
-    // TODO The entire way I'm handling inventories is annoying and should be changed
     private class InventoryItemFilter implements IAEItemFilter {
         @Override
         public boolean allowExtract(final InternalInventory inv, final int slot, final int amount) {
@@ -158,7 +165,13 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
 
         @Override
         public boolean allowInsert(final InternalInventory inv, final int slot, final ItemStack stack) {
-            return slot == 0 && getRecipeForInput(stack).isPresent();
+            if (slot == 0 && invWrapper.getInput().isEmpty()) {
+                // We don't check if there's room for the output here, only that an output is possible
+                return getRecipeForInput(new SimpleContainer(stack)).isPresent();
+            }
+            else {
+                return false;
+            }
         }
     }
 
@@ -172,8 +185,16 @@ public class SpatialRiftCollapserBlockEntity extends MachineBlockEntity {
         return this.powerPerTick;
     }
 
-    private Optional<SpatialRiftCollapserRecipe> getRecipeForInput(final ItemStack is) {
+    @Override
+    public void onChangeInventory(final InternalInventory inv, final int slot) {
+        super.onChangeInventory(inv, slot);
+        if (inv.equals(this.invWrapper.getInput())) {
+            this.resetOperation();
+        }
+    }
+
+    private Optional<SpatialRiftCollapserRecipe> getRecipeForInput(final Container c) {
         return level.getRecipeManager().getRecipeFor(
-                ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get(), this.inputContainer, this.level);
+                ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get(), c, this.level);
     }
 }
