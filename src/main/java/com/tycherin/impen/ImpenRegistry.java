@@ -203,13 +203,13 @@ public class ImpenRegistry {
     
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition SMOOTH_RIFTSTONE_STAIRS = makeCustomBlock("smooth_riftstone_stairs",
-            () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
+            () -> new StairBlock(SMOOTH_RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
     public static final BlockDefinition SMOOTH_RIFTSTONE_SLAB = makeCustomBlock("smooth_riftstone_slab",
             () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
     
     public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFTSTONE_BRICK_STAIRS = makeCustomBlock("riftstone_brick_stairs",
-            () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
+            () -> new StairBlock(RIFTSTONE_BRICK.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
     public static final BlockDefinition RIFTSTONE_BRICK_SLAB = makeCustomBlock("riftstone_brick_slab",
             () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
 
@@ -221,6 +221,8 @@ public class ImpenRegistry {
     public static final BlockDefinition RIFT_SHARD_BLOCK = makeBasicBlock("rift_shard_block", Material.AMETHYST);
     public static final BlockDefinition RIFT_ALLOY_BLOCK = makeBasicBlock("rift_alloy_block", Material.METAL);
 
+    public static final BlockDefinition UNSTABLE_RIFTSTONE = makeBasicBlock("unstable_riftstone",
+            RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFT_SHARD_ORE = makeOreBlock("rift_shard_ore");
     public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore");
     public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore");

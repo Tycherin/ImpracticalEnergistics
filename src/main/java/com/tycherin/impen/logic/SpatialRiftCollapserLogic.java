@@ -82,9 +82,10 @@ public class SpatialRiftCollapserLogic {
         }
         else {
             // Special case: there are no inputs configured in the cell, so we get to simulate random rift space
-            // TODO Replace End Stone with Unstable Riftstone
-            replacementBlocks = Sets.newHashSet(ImpenRegistry.RIFT_SHARD_ORE.asBlock(), Blocks.END_STONE);
-            baseBlock = ImpenRegistry.RIFTSTONE.asBlock();
+            replacementBlocks = Sets.newHashSet(
+                    ImpenRegistry.RIFT_SHARD_ORE.asBlock(),
+                    ImpenRegistry.RIFTSTONE.asBlock());
+            baseBlock = ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock();
             effectivePrecision = 20;
         }
 

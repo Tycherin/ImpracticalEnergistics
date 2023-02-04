@@ -103,8 +103,7 @@ public class SpatialRiftCellCalculator {
         if (validBases.size() > 1) {
             isConflict = true;
             // Conflict - there are multiple possible base stones
-            // TODO Switch to Unstable Riftstone
-            baseBlock = Blocks.END_STONE;
+            baseBlock = ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock();
 
         }
         else {
