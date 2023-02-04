@@ -26,13 +26,9 @@ import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
-import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
-import com.tycherin.impen.recipe.SpatialRiftCollapserRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeSerializer;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
-import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipeSerializer;
 
 import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
@@ -244,28 +240,28 @@ public class ImpenRegistry {
 
     // Custom recipe types
     public static final RegistryObject<RecipeType<AtmosphericCrystallizerRecipe>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = ImpenRegistry
-            .<AtmosphericCrystallizerRecipe>makeRecipeType("atmospheric_crystallizer");
+            .<AtmosphericCrystallizerRecipe>makeRecipeType(AtmosphericCrystallizerRecipe.RECIPE_TYPE_NAME);
     public static final RegistryObject<RecipeSerializer<?>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.getId().getPath(),
-                    () -> AtmosphericCrystallizerRecipeSerializer.INSTANCE);
+                    () -> AtmosphericCrystallizerRecipe.Serializer.INSTANCE);
 
     public static final RegistryObject<RecipeType<SpatialRiftSpawnerRecipe>> SPATIAL_RIFT_SPAWNER_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftSpawnerRecipe>makeRecipeType("spatial_rift_spawner");
+            .<SpatialRiftSpawnerRecipe>makeRecipeType(SpatialRiftSpawnerRecipe.RECIPE_TYPE_NAME);
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_SPAWNER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftSpawnerRecipeSerializer.INSTANCE);
+                    () -> SpatialRiftSpawnerRecipe.Serializer.INSTANCE);
     
     public static final RegistryObject<RecipeType<SpatialRiftCollapserRecipe>> SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftCollapserRecipe>makeRecipeType("spatial_rift_collapser");
+            .<SpatialRiftCollapserRecipe>makeRecipeType(SpatialRiftCollapserRecipe.RECIPE_TYPE_NAME);
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_COLLAPSER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftCollapserRecipeSerializer.INSTANCE);
+                    () -> SpatialRiftCollapserRecipe.Serializer.INSTANCE);
 
     public static final RegistryObject<RecipeType<SpatialRiftManipulatorRecipe>> SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftManipulatorRecipe>makeRecipeType("spatial_rift_manipulator");
+            .<SpatialRiftManipulatorRecipe>makeRecipeType(SpatialRiftManipulatorRecipe.RECIPE_TYPE_NAME);
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_MANIPULATOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftManipulatorRecipeSerializer.INSTANCE);
+                    () -> SpatialRiftManipulatorRecipe.Serializer.INSTANCE);
 
     // Particles
     public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_DAMAGE_PARTICLE = PARTICLES

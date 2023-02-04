@@ -2,25 +2,16 @@ package com.tycherin.impen.datagen;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.recipe.SpatialRiftCollapserRecipeSerializer;
-import com.tycherin.impen.util.ImpenIdUtil;
+import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 
 import appeng.core.definitions.AEItems;
-import appeng.datagen.providers.recipes.AE2RecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 
 public class SpatialRiftCollapserRecipeProvider {
-
-    public static final String RECIPE_TYPE_NAME = "spatial_rift_collapser";
 
     public SpatialRiftCollapserRecipeProvider() {
     }
@@ -58,17 +49,9 @@ public class SpatialRiftCollapserRecipeProvider {
         private Ingredient input;
         private ItemStack output;
 
-        public RecipeResult build() {
-            if (recipeName == null) {
-                throw new RuntimeException("Recipe name cannot be null");
-            }
-            if (input == null) {
-                throw new RuntimeException("Input cannot be null");
-            }
-            if (output == null) {
-                throw new RuntimeException("Output cannot be null");
-            }
-            return new RecipeResult();
+        public FinishedRecipe build() {
+            final var recipe = new SpatialRiftCollapserRecipe(null, input, output);
+            return new CustomRecipeResult(recipeName, recipe);
         }
 
         public RecipeBuilder recipeName(final String s) {
@@ -84,37 +67,6 @@ public class SpatialRiftCollapserRecipeProvider {
         public RecipeBuilder output(final ItemStack output) {
             this.output = output;
             return this;
-        }
-
-        private class RecipeResult implements FinishedRecipe {
-
-            @Override
-            public void serializeRecipeData(final JsonObject json) {
-                json.add("input", input.toJson());
-                json.add("output", AE2RecipeProvider.toJson(output));
-            }
-
-            @Override
-            public ResourceLocation getId() {
-                return ImpenIdUtil.makeId(RECIPE_TYPE_NAME + "/" + recipeName);
-            }
-
-            @Override
-            public RecipeSerializer<?> getType() {
-                return SpatialRiftCollapserRecipeSerializer.INSTANCE;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getAdvancementId() {
-                return null;
-            }
         }
     }
 }

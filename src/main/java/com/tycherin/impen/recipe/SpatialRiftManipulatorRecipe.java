@@ -1,18 +1,33 @@
 package com.tycherin.impen.recipe;
 
-import com.tycherin.impen.ImpenRegistry;
+import java.util.Objects;
 
+import javax.annotation.Nullable;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe.SpecialSpatialRecipeType;
+
+import appeng.datagen.providers.recipes.AE2RecipeProvider;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
+public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Container> {
+
+    public static final String RECIPE_TYPE_NAME = "spatial_rift_manipulator";
 
     private final ResourceLocation id;
 
@@ -20,11 +35,19 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
 
     public SpatialRiftManipulatorRecipe(final ResourceLocation id, final Ingredient bottomInput) {
         this.id = id;
+        if (bottomInput == null) {
+            throw new IllegalArgumentException("Bottom input must not be null");
+        }
         this.bottomInput = bottomInput;
     }
 
     public Ingredient getBottomInput() {
         return this.bottomInput;
+    }
+
+    @Override
+    public void serializeRecipeData(final JsonObject json) {
+        this.getSerializer().toJson(this, json);
     }
 
     // ***
@@ -62,13 +85,18 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return SpatialRiftCollapserRecipeSerializer.INSTANCE;
+    public SpatialRiftManipulatorRecipe.Serializer getSerializer() {
+        return SpatialRiftManipulatorRecipe.Serializer.INSTANCE;
     }
 
     @Override
     public RecipeType<?> getType() {
         return ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get();
+    }
+
+    @Override
+    public String getRecipeTypeName() {
+        return RECIPE_TYPE_NAME;
     }
 
     /**
@@ -82,7 +110,13 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
         public GenericManipulatorRecipe(final ResourceLocation id, final Ingredient topInput,
                 final Ingredient bottomInput, final ItemStack output) {
             super(id, bottomInput);
+            if (topInput == null) {
+                throw new IllegalArgumentException("Top input must not be null");
+            }
             this.topInput = topInput;
+            if (output == null) {
+                throw new IllegalArgumentException("Output must not be null");
+            }
             this.output = output;
         }
 
@@ -107,6 +141,9 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
 
         public SpatialRiftEffectRecipe(final ResourceLocation id, final Ingredient bottomInput, final Block block) {
             super(id, bottomInput);
+            if (block == null) {
+                throw new IllegalArgumentException("Block must not be null");
+            }
             this.block = block;
         }
 
@@ -114,7 +151,7 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
             return block;
         }
     }
-    
+
     /**
      * There are a couple of recipes that manipulate rift cells, but don't have an associated block, and therefore need
      * special handling
@@ -131,6 +168,9 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
         public SpecialSpatialRecipe(final ResourceLocation id, final Ingredient bottomInput,
                 final SpecialSpatialRecipeType specialType) {
             super(id, bottomInput);
+            if (specialType == null) {
+                throw new IllegalArgumentException("Effect type not be null");
+            }
             this.specialType = specialType;
         }
 
@@ -138,4 +178,114 @@ public class SpatialRiftManipulatorRecipe implements Recipe<Container> {
             return specialType;
         }
     }
+
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
+            implements BidirectionalRecipeSerializer<SpatialRiftManipulatorRecipe> {
+
+        public static final SpatialRiftManipulatorRecipe.Serializer INSTANCE = new SpatialRiftManipulatorRecipe.Serializer();
+
+        private static final char GENERIC_RECIPE_FLAG = 'g';
+        private static final char SPATIAL_RECIPE_FLAG = 's';
+
+        private Serializer() {
+        }
+
+        @Override
+        public SpatialRiftManipulatorRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
+            final Ingredient bottomInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "bottom_input"));
+
+            if (json.has("spatial_effect")) {
+                final JsonObject spatialJson = GsonHelper.getAsJsonObject(json, "spatial_effect");
+                if (spatialJson.has("block")) {
+                    final Block block = getAsBlock(spatialJson);
+                    return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
+                }
+                else if (spatialJson.has("special_effect")) {
+                    final var type = SpecialSpatialRecipeType.valueOf(spatialJson.get("special_effect").getAsString());
+                    return new SpatialRiftManipulatorRecipe.SpecialSpatialRecipe(recipeId, bottomInput, type);
+                }
+                else {
+                    throw new RuntimeException("Unknown spatial effect type for " + recipeId);
+                }
+            }
+            else {
+                final Ingredient topInput = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "top_input"));
+                final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
+                return new SpatialRiftManipulatorRecipe.GenericManipulatorRecipe(recipeId, topInput, bottomInput,
+                        output);
+            }
+        }
+
+        @Override
+        public void toJson(final SpatialRiftManipulatorRecipe recipe, final JsonObject json) {
+            json.add("bottom_input", recipe.bottomInput.toJson());
+            if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
+                json.add("top_input", genericRecipe.topInput.toJson());
+                json.add("output", AE2RecipeProvider.toJson(genericRecipe.output));
+            }
+            else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+                final JsonObject spatialJson = new JsonObject();
+                spatialJson.addProperty("block", spatialRecipe.block.getRegistryName().toString());
+                json.add("spatial_effect", spatialJson);
+            }
+            else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
+                final JsonObject spatialJson = new JsonObject();
+                spatialJson.addProperty("special_effect", specialRecipe.specialType.toString());
+                json.add("spatial_effect", spatialJson);
+            }
+        }
+
+        @Nullable
+        @Override
+        public SpatialRiftManipulatorRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer) {
+            final Ingredient bottomInput = Ingredient.fromNetwork(buffer);
+
+            final char typeFlag = buffer.readChar();
+
+            if (typeFlag == SPATIAL_RECIPE_FLAG) {
+                final Block block = ForgeRegistries.BLOCKS.getValue(buffer.readRegistryId());
+                return new SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe(recipeId, bottomInput, block);
+            }
+            else {
+                final Ingredient topInput = Ingredient.fromNetwork(buffer);
+                final ItemStack output = buffer.readItem();
+                return new SpatialRiftManipulatorRecipe.GenericManipulatorRecipe(recipeId, topInput, bottomInput,
+                        output);
+            }
+        }
+
+        @Override
+        public void toNetwork(final FriendlyByteBuf buffer, final SpatialRiftManipulatorRecipe recipe) {
+            recipe.getBottomInput().toNetwork(buffer);
+
+            if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+                buffer.writeChar(SPATIAL_RECIPE_FLAG);
+                buffer.writeRegistryId(spatialRecipe.getBlock());
+            }
+            else if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
+                buffer.writeChar(GENERIC_RECIPE_FLAG);
+                genericRecipe.getTopInput().toNetwork(buffer);
+                buffer.writeItemStack(genericRecipe.getOutput(), true);
+            }
+            else {
+                throw new RuntimeException("Unrecognized recipe type " + recipe);
+            }
+        }
+
+        private Block getAsBlock(final JsonObject json) {
+            final String name = GsonHelper.getAsString(json, "block");
+            final ResourceLocation key = new ResourceLocation(name);
+            if (!ForgeRegistries.BLOCKS.containsKey(key)) {
+                throw new JsonSyntaxException(String.format("Unknown block '%s'", key));
+            }
+
+            final Block block = ForgeRegistries.BLOCKS.getValue(key);
+            if (block == Blocks.AIR) {
+                throw new JsonSyntaxException(String.format("Invalid block '%s'", key));
+            }
+
+            return Objects.requireNonNull(block);
+        }
+    }
+
 }

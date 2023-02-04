@@ -2,25 +2,16 @@ package com.tycherin.impen.datagen;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
-
-import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipeSerializer;
-import com.tycherin.impen.util.ImpenIdUtil;
+import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.definitions.AEItems;
-import appeng.datagen.providers.recipes.AE2RecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 
 public class SpatialRiftSpawnerRecipeProvider {
-
-    public static final String RECIPE_TYPE_NAME = "spatial_rift_spawner";
 
     public SpatialRiftSpawnerRecipeProvider() {
     }
@@ -60,20 +51,9 @@ public class SpatialRiftSpawnerRecipeProvider {
         private ItemStack output;
         private int fuelCost = -1;
 
-        public RecipeResult build() {
-            if (recipeName == null) {
-                throw new RuntimeException("Recipe name cannot be null");
-            }
-            if (input == null) {
-                throw new RuntimeException("Input cannot be null");
-            }
-            if (output == null) {
-                throw new RuntimeException("Output cannot be null");
-            }
-            if (fuelCost == -1) {
-                throw new RuntimeException("Fuel cost name cannot be null");
-            }
-            return new RecipeResult();
+        public FinishedRecipe build() {
+            final var recipe = new SpatialRiftSpawnerRecipe(null, input, output, fuelCost);
+            return new CustomRecipeResult(recipeName, recipe);
         }
 
         public RecipeBuilder recipeName(final String s) {
@@ -94,38 +74,6 @@ public class SpatialRiftSpawnerRecipeProvider {
         public RecipeBuilder fuelCost(final int fuelCost) {
             this.fuelCost = fuelCost;
             return this;
-        }
-
-        private class RecipeResult implements FinishedRecipe {
-
-            @Override
-            public void serializeRecipeData(final JsonObject json) {
-                json.add("input", input.toJson());
-                json.add("output", AE2RecipeProvider.toJson(output));
-                json.addProperty("fuel_cost", fuelCost);
-            }
-
-            @Override
-            public ResourceLocation getId() {
-                return ImpenIdUtil.makeId(RECIPE_TYPE_NAME + "/" + recipeName);
-            }
-
-            @Override
-            public RecipeSerializer<?> getType() {
-                return SpatialRiftSpawnerRecipeSerializer.INSTANCE;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getAdvancementId() {
-                return null;
-            }
         }
     }
 }
