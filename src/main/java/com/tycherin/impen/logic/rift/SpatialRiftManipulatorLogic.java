@@ -1,9 +1,9 @@
-package com.tycherin.impen.logic;
+package com.tycherin.impen.logic.rift;
 
 import java.util.Optional;
 
 import com.tycherin.impen.item.SpatialRiftCellItem;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
+import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.SpecialSpatialRecipe;

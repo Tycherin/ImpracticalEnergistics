@@ -1,4 +1,4 @@
-package com.tycherin.impen.logic;
+package com.tycherin.impen.logic.rift;
 
 import java.util.HashSet;
 import java.util.Optional;

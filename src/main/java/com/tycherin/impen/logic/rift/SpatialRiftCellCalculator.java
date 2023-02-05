@@ -1,11 +1,11 @@
-package com.tycherin.impen.logic;
+package com.tycherin.impen.logic.rift;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
+import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 
 import lombok.extern.slf4j.Slf4j;

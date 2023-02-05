@@ -5,8 +5,8 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
+import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager;
+import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 
 import appeng.core.localization.GuiText;
 import appeng.core.localization.Tooltips;

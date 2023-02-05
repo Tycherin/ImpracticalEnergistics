@@ -1,4 +1,4 @@
-package com.tycherin.impen.logic;
+package com.tycherin.impen.logic.rift;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Sets;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.logic.SpatialRiftCellDataManager.SpatialRiftCellData;
+import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.spatial.SpatialStoragePlot;

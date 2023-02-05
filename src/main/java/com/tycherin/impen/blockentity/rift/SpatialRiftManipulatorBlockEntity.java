@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.logic.SpatialRiftManipulatorLogic;
+import com.tycherin.impen.logic.rift.SpatialRiftManipulatorLogic;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.GenericManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.ManagedOutputInventory;
