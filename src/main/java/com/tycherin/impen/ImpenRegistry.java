@@ -10,6 +10,11 @@ import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.OreBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
+import com.tycherin.impen.block.beam.BeamNetworkAmplifierBlock;
+import com.tycherin.impen.block.beam.BeamNetworkEmitterBlock;
+import com.tycherin.impen.block.beam.BeamNetworkMirrorBlock;
+import com.tycherin.impen.block.beam.BeamNetworkReceiverBlock;
+import com.tycherin.impen.block.beam.BeamNetworkSplitterBlock;
 import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
@@ -17,6 +22,11 @@ import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkEmitterBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkMirrorBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkReceiverBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkSplitterBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftCollapserBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftManipulatorBlockEntity;
 import com.tycherin.impen.blockentity.rift.SpatialRiftSpawnerBlockEntity;
@@ -159,6 +169,18 @@ public class ImpenRegistry {
 
     public static final MachineDefinition<SpatialRiftManipulatorBlock, SpatialRiftManipulatorBlockEntity> SPATIAL_RIFT_MANIPULATOR =
             makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
+    
+    public static final MachineDefinition<BeamNetworkAmplifierBlock, BeamNetworkAmplifierBlockEntity> BEAM_NETWORK_AMPLIFIER =
+            makeMachine("beam_network_amplifier", BeamNetworkAmplifierBlock::new, BeamNetworkAmplifierBlockEntity::new, true);
+    public static final MachineDefinition<BeamNetworkEmitterBlock, BeamNetworkEmitterBlockEntity> BEAM_NETWORK_EMITTER =
+            makeMachine("beam_network_emitter", BeamNetworkEmitterBlock::new, BeamNetworkEmitterBlockEntity::new, true);
+    public static final MachineDefinition<BeamNetworkReceiverBlock, BeamNetworkReceiverBlockEntity> BEAM_NETWORK_RECEIVER =
+            makeMachine("beam_network_receiver", BeamNetworkReceiverBlock::new, BeamNetworkReceiverBlockEntity::new, true);
+    public static final MachineDefinition<BeamNetworkMirrorBlock, BeamNetworkMirrorBlockEntity> BEAM_NETWORK_MIRROR =
+            makeMachine("beam_network_mirror", BeamNetworkMirrorBlock::new, BeamNetworkMirrorBlockEntity::new, true);
+    public static final MachineDefinition<BeamNetworkSplitterBlock, BeamNetworkSplitterBlockEntity> BEAM_NETWORK_SPLITTER =
+            makeMachine("beam_network_splitter", BeamNetworkSplitterBlock::new, BeamNetworkSplitterBlockEntity::new, true);
+    
     //@formatter:on
 
     // Basic items

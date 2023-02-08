@@ -208,6 +208,7 @@ public class BeamedNetworkLinkBlockEntity extends AENetworkBlockEntity
     // Caching opportunities?
     @Override
     public void serverTick() {
+        
         if (this.isRemoved()) {
             return;
         }

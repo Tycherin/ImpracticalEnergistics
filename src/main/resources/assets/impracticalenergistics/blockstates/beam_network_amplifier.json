@@ -1,0 +1,28 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "y": 0
+        },
+        "facing=east": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "y": 90
+        },
+        "facing=south": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "y": 180
+        },
+        "facing=west": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "y": 270
+        },
+        "facing=up": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "x": 270
+        },
+        "facing=down": {
+            "model": "impracticalenergistics:block/beam_network_amplifier",
+            "x": 90
+        }
+    }
+}

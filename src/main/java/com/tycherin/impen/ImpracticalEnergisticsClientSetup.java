@@ -3,6 +3,10 @@ package com.tycherin.impen;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
+import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkEmitterBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkMirrorBlockEntity;
+import com.tycherin.impen.blockentity.beam.BeamNetworkSplitterBlockEntity;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
@@ -51,6 +55,19 @@ public class ImpracticalEnergisticsClientSetup {
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
         BlockEntityRenderers.register(ImpenRegistry.BEAMED_NETWORK_LINK.blockEntity(),
                 BeamedNetworkLinkRenderer::new);
+
+        BlockEntityRenderers.register(
+                ImpenRegistry.BEAM_NETWORK_AMPLIFIER.blockEntity(),
+                BeamNetworkAmplifierBlockEntity.Renderer::new);
+        BlockEntityRenderers.register(
+                ImpenRegistry.BEAM_NETWORK_EMITTER.blockEntity(),
+                BeamNetworkEmitterBlockEntity.Renderer::new);
+        BlockEntityRenderers.register(
+                ImpenRegistry.BEAM_NETWORK_MIRROR.blockEntity(),
+                BeamNetworkMirrorBlockEntity.Renderer::new);
+        BlockEntityRenderers.register(
+                ImpenRegistry.BEAM_NETWORK_SPLITTER.blockEntity(),
+                BeamNetworkSplitterBlockEntity.Renderer::new);
 
         addPlaneModel("part/capture_plane", "part/capture_plane");
         addPlaneModel("part/capture_plane_on", "part/capture_plane_on");

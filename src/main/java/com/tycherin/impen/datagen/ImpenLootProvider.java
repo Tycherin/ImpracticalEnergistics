@@ -52,6 +52,11 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.AEROCRYSTAL_BLOCK.block());
             this.dropSelf(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.block());
             this.dropSelf(ImpenRegistry.BEAMED_NETWORK_LINK.block());
+            this.dropSelf(ImpenRegistry.BEAM_NETWORK_AMPLIFIER.block());
+            this.dropSelf(ImpenRegistry.BEAM_NETWORK_EMITTER.block());
+            this.dropSelf(ImpenRegistry.BEAM_NETWORK_MIRROR.block());
+            this.dropSelf(ImpenRegistry.BEAM_NETWORK_RECEIVER.block());
+            this.dropSelf(ImpenRegistry.BEAM_NETWORK_SPLITTER.block());
             this.dropSelf(ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK.block());
             this.dropSelf(ImpenRegistry.EJECTION_DRIVE.block());
             this.dropSelf(ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK.block());

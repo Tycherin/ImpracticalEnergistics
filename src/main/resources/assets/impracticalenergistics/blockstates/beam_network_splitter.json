@@ -1,0 +1,123 @@
+{
+    "variants": {
+        "forward=north, up=up": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 0
+        },
+        "forward=north, up=east": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 0,
+            "z": 90
+        },
+        "forward=north, up=down": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 0,
+            "z": 180
+        },
+        "forward=north, up=west": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 0,
+            "z": 270
+        },
+        "forward=east, up=up": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 90,
+            "x": 0
+        },
+        "forward=east, up=south": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 90,
+            "x": 270
+        },
+        "forward=east, up=down": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 90,
+            "x": 180
+        },
+        "forward=east, up=north": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 90,
+            "x": 90
+        },
+        "forward=south, up=up": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 180,
+            "z": 0
+        },
+        "forward=south, up=west": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 180,
+            "z": 270
+        },
+        "forward=south, up=down": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 180,
+            "z": 180
+        },
+        "forward=south, up=east": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 180,
+            "z": 90
+        },
+        "forward=west, up=up": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 270,
+            "x": 0
+        },
+        "forward=west, up=south": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 270,
+            "x": 90
+        },
+        "forward=west, up=down": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 270,
+            "x": 180
+        },
+        "forward=west, up=north": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "y": 270,
+            "x": 270
+        },
+        "forward=up, up=north": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 270,
+            "y": 0
+        },
+        "forward=up, up=east": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 270,
+            "y": 90
+        },
+        "forward=up, up=south": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 270,
+            "y": 180
+        },
+        "forward=up, up=west": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 270,
+            "y": 270
+        },
+        "forward=down, up=north": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 90,
+            "y": 180
+        },
+        "forward=down, up=east": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 90,
+            "y": 90
+        },
+        "forward=down, up=south": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 90,
+            "y": 0
+        },
+        "forward=down, up=west": {
+            "model": "impracticalenergistics:block/beam_network_redirecter",
+            "x": 90,
+            "y": 270
+        }
+    }
+}

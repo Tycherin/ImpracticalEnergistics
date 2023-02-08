@@ -15,6 +15,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class ImpenItemModelProvider extends ItemModelProvider {
 
     private static final Set<ItemLike> ITEMS_WITH_CUSTOM_MODEL = Set.of(
+            // TODO I don't know why this is here, but it's going away, so it doesn't matter
             ImpenRegistry.BEAMED_NETWORK_LINK,
             ImpenRegistry.CAPTURE_PLANE_ITEM);
     

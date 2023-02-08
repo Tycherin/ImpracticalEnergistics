@@ -61,6 +61,7 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('G', Blocks.GLASS)
                 .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
                 .save(consumer);
+        // TODO Add recipes for new Beam Network blocks
         // Atm. Crystallizer
         ShapedRecipeBuilder.shaped(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER)
                 .pattern(" I ")
