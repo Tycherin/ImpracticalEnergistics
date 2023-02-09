@@ -120,6 +120,16 @@ public class ImpenRegistry {
                 ATMOSPHERIC_CRYSTALLIZER.blockEntity(), null, null);
         POSSIBILITY_DISINTEGRATOR.block().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
                 POSSIBILITY_DISINTEGRATOR.blockEntity(), null, null);
+        BEAM_NETWORK_AMPLIFIER.block().setBlockEntity(BeamNetworkAmplifierBlockEntity.class,
+                BEAM_NETWORK_AMPLIFIER.blockEntity(), null, null);
+        BEAM_NETWORK_EMITTER.block().setBlockEntity(BeamNetworkEmitterBlockEntity.class,
+                BEAM_NETWORK_EMITTER.blockEntity(), null, null);
+        BEAM_NETWORK_MIRROR.block().setBlockEntity(BeamNetworkMirrorBlockEntity.class,
+                BEAM_NETWORK_MIRROR.blockEntity(), null, null);
+        BEAM_NETWORK_RECEIVER.block().setBlockEntity(BeamNetworkReceiverBlockEntity.class,
+                BEAM_NETWORK_RECEIVER.blockEntity(), null, null);
+        BEAM_NETWORK_SPLITTER.block().setBlockEntity(BeamNetworkSplitterBlockEntity.class,
+                BEAM_NETWORK_SPLITTER.blockEntity(), null, null);
         EJECTION_DRIVE.block().setBlockEntity(EjectionDriveBlockEntity.class, EJECTION_DRIVE.blockEntity(), null,
                 (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
 
@@ -171,15 +181,19 @@ public class ImpenRegistry {
             makeMachine("spatial_rift_manipulator", SpatialRiftManipulatorBlock::new, SpatialRiftManipulatorBlockEntity::new, false);
     
     public static final MachineDefinition<BeamNetworkAmplifierBlock, BeamNetworkAmplifierBlockEntity> BEAM_NETWORK_AMPLIFIER =
-            makeMachine("beam_network_amplifier", BeamNetworkAmplifierBlock::new, BeamNetworkAmplifierBlockEntity::new, true);
+            makeMachine("beam_network_amplifier", BeamNetworkAmplifierBlock::new, BeamNetworkAmplifierBlockEntity::new, true,
+                    props -> props.noOcclusion());
     public static final MachineDefinition<BeamNetworkEmitterBlock, BeamNetworkEmitterBlockEntity> BEAM_NETWORK_EMITTER =
-            makeMachine("beam_network_emitter", BeamNetworkEmitterBlock::new, BeamNetworkEmitterBlockEntity::new, true);
+            makeMachine("beam_network_emitter", BeamNetworkEmitterBlock::new, BeamNetworkEmitterBlockEntity::new, true,
+                    props -> props.noOcclusion());
     public static final MachineDefinition<BeamNetworkReceiverBlock, BeamNetworkReceiverBlockEntity> BEAM_NETWORK_RECEIVER =
             makeMachine("beam_network_receiver", BeamNetworkReceiverBlock::new, BeamNetworkReceiverBlockEntity::new, true);
     public static final MachineDefinition<BeamNetworkMirrorBlock, BeamNetworkMirrorBlockEntity> BEAM_NETWORK_MIRROR =
-            makeMachine("beam_network_mirror", BeamNetworkMirrorBlock::new, BeamNetworkMirrorBlockEntity::new, true);
+            makeMachine("beam_network_mirror", BeamNetworkMirrorBlock::new, BeamNetworkMirrorBlockEntity::new, true,
+                    props -> props.noOcclusion());
     public static final MachineDefinition<BeamNetworkSplitterBlock, BeamNetworkSplitterBlockEntity> BEAM_NETWORK_SPLITTER =
-            makeMachine("beam_network_splitter", BeamNetworkSplitterBlock::new, BeamNetworkSplitterBlockEntity::new, true);
+            makeMachine("beam_network_splitter", BeamNetworkSplitterBlock::new, BeamNetworkSplitterBlockEntity::new, true,
+                    props -> props.noOcclusion());
     
     //@formatter:on
 

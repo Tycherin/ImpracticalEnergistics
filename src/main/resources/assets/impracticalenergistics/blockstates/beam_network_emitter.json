@@ -1,50 +1,50 @@
 {
     "variants": {
-        "facing=north,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=north,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "y": 0
         },
-        "facing=north,is_active=true": {
+        "forward=north,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "y": 0
         },
-        "facing=east,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=east,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "y": 90
         },
-        "facing=east,is_active=true": {
+        "forward=east,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "y": 90
         },
-        "facing=south,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=south,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "y": 180
         },
-        "facing=south,is_active=true": {
+        "forward=south,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "y": 180
         },
-        "facing=west,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=west,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "y": 270
         },
-        "facing=west,is_active=true": {
+        "forward=west,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "y": 270
         },
-        "facing=up,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=up,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "x": 270
         },
-        "facing=up,is_active=true": {
+        "forward=up,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "x": 270
         },
-        "facing=down,is_active=false": {
-            "model": "impracticalenergistics:block/beam_network_emitter",
+        "forward=down,is_active=false": {
+            "model": "impracticalenergistics:block/beam_network_emitter_inactive",
             "x": 90
         },
-        "facing=down,is_active=true": {
+        "forward=down,is_active=true": {
             "model": "impracticalenergistics:block/beam_network_emitter_active",
             "x": 90
         }

@@ -128,6 +128,8 @@ public class ImpracticalEnergisticsClientSetup {
     public static void setupBlockEntityRepresentations() {
         // AE2 needs to be told which item icon to use when representing each BE in the network display. This needs to
         // happen before BEs are instantiated, or else AE2 will explode.
+        //
+        // Weirdly, this needs to be done for anything extending AEBaseBlockEntity, not just ones that are networked.
         Arrays.asList(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
                 ImpenRegistry.BEAMED_NETWORK_LINK,
@@ -135,7 +137,12 @@ public class ImpracticalEnergisticsClientSetup {
                 ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
-                ImpenRegistry.SPATIAL_RIFT_COLLAPSER)
+                ImpenRegistry.SPATIAL_RIFT_COLLAPSER,
+                ImpenRegistry.BEAM_NETWORK_AMPLIFIER,
+                ImpenRegistry.BEAM_NETWORK_EMITTER,
+                ImpenRegistry.BEAM_NETWORK_MIRROR,
+                ImpenRegistry.BEAM_NETWORK_RECEIVER,
+                ImpenRegistry.BEAM_NETWORK_SPLITTER)
                 .forEach(machineDef -> {
                     AEBaseBlockEntity.registerBlockEntityItem(machineDef.blockEntity(), machineDef.item());
                 });

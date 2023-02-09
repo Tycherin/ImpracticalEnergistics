@@ -1,26 +1,26 @@
 {
     "variants": {
-        "facing=north": {
+        "forward=north": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "y": 0
         },
-        "facing=east": {
+        "forward=east": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "y": 90
         },
-        "facing=south": {
+        "forward=south": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "y": 180
         },
-        "facing=west": {
+        "forward=west": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "y": 270
         },
-        "facing=up": {
+        "forward=up": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "x": 270
         },
-        "facing=down": {
+        "forward=down": {
             "model": "impracticalenergistics:block/beam_network_receiver",
             "x": 90
         }

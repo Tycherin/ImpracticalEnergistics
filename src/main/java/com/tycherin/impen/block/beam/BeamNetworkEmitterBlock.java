@@ -12,8 +12,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class BeamNetworkEmitterBlock extends AEBaseEntityBlock<BeamNetworkEmitterBlockEntity> {
+
     private static final BooleanProperty PROP_IS_ACTIVE = BooleanProperty.create("is_active");
-    private static final EnumProperty<Direction> PROP_FACING = EnumProperty.create("facing", Direction.class);
+    private static final EnumProperty<Direction> PROP_FORWARD = EnumProperty.create("forward", Direction.class);
 
     public BeamNetworkEmitterBlock(final BlockBehaviour.Properties props) {
         super(props);
@@ -21,7 +22,7 @@ public class BeamNetworkEmitterBlock extends AEBaseEntityBlock<BeamNetworkEmitte
 
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(PROP_IS_ACTIVE, false)
-                .setValue(PROP_FACING, Direction.NORTH));
+                .setValue(PROP_FORWARD, Direction.NORTH));
     }
 
     @Override
@@ -29,7 +30,7 @@ public class BeamNetworkEmitterBlock extends AEBaseEntityBlock<BeamNetworkEmitte
         super.createBlockStateDefinition(builder);
         builder
                 .add(PROP_IS_ACTIVE)
-                .add(PROP_FACING);
+                .add(PROP_FORWARD);
     }
 
     @Override
@@ -37,6 +38,6 @@ public class BeamNetworkEmitterBlock extends AEBaseEntityBlock<BeamNetworkEmitte
             final BeamNetworkEmitterBlockEntity be) {
         return currentState
                 .setValue(PROP_IS_ACTIVE, be.isActive())
-                .setValue(PROP_FACING, be.getForward());
+                .setValue(PROP_FORWARD, be.getForward());
     }
 }

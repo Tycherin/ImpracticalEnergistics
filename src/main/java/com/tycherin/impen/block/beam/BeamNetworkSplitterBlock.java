@@ -12,29 +12,31 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class BeamNetworkSplitterBlock extends AEBaseEntityBlock<BeamNetworkSplitterBlockEntity> {
 
-    // TODO This one also needs the up direction
-
-    private static final EnumProperty<Direction> PROP_FACING = EnumProperty.create("facing", Direction.class);
+    private static final EnumProperty<Direction> PROP_FORWARD = EnumProperty.create("forward", Direction.class);
+    private static final EnumProperty<Direction> PROP_UP = EnumProperty.create("up", Direction.class);
 
     public BeamNetworkSplitterBlock(final BlockBehaviour.Properties props) {
         super(props);
         props.requiresCorrectToolForDrops();
 
         this.registerDefaultState(this.defaultBlockState()
-                .setValue(PROP_FACING, Direction.NORTH));
+                .setValue(PROP_FORWARD, Direction.NORTH)
+                .setValue(PROP_UP, Direction.UP));
     }
 
     @Override
     public void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder
-                .add(PROP_FACING);
+                .add(PROP_FORWARD)
+                .add(PROP_UP);
     }
 
     @Override
     protected BlockState updateBlockStateFromBlockEntity(final BlockState currentState,
             final BeamNetworkSplitterBlockEntity be) {
         return currentState
-                .setValue(PROP_FACING, be.getForward());
+                .setValue(PROP_FORWARD, be.getForward())
+                .setValue(PROP_UP, be.getUp());
     }
 }
