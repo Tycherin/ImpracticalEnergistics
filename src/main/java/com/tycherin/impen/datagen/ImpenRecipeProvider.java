@@ -50,17 +50,6 @@ public class ImpenRecipeProvider extends RecipeProvider {
 
         // === Machines ===
 
-        // BNL
-        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAMED_NETWORK_LINK)
-                .pattern("III")
-                .pattern("EGP")
-                .pattern("III")
-                .define('I', Tags.Items.INGOTS_IRON)
-                .define('P', ImpenRegistry.AEROCRYSTAL_PRISM)
-                .define('E', AEBlocks.ENERGY_CELL)
-                .define('G', Blocks.GLASS)
-                .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
-                .save(consumer);
         // Beam Network
         ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_EMITTER)
                 .pattern("III")

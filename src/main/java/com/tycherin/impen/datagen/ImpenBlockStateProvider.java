@@ -20,7 +20,6 @@ public class ImpenBlockStateProvider extends AE2BlockStateProvider {
     // These blocks have custom blockstates AND models, so we're going to ignore them
     private static final Set<BlockLike> BLOCKS_WITH_CUSTOM_EVERYTHING = Set.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
-            ImpenRegistry.BEAMED_NETWORK_LINK,
             ImpenRegistry.BEAM_NETWORK_AMPLIFIER,
             ImpenRegistry.BEAM_NETWORK_EMITTER,
             ImpenRegistry.BEAM_NETWORK_MIRROR,

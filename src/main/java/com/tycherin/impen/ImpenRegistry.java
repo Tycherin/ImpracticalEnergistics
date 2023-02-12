@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
-import com.tycherin.impen.block.BeamedNetworkLinkBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.OreBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
@@ -19,7 +18,6 @@ import com.tycherin.impen.block.rift.SpatialRiftCollapserBlock;
 import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
-import com.tycherin.impen.blockentity.BeamedNetworkLinkBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
@@ -107,9 +105,6 @@ public class ImpenRegistry {
     }
 
     public static void commonSetup(final FMLCommonSetupEvent event) {
-        BEAMED_NETWORK_LINK.block().setBlockEntity(BeamedNetworkLinkBlockEntity.class,
-                BEAMED_NETWORK_LINK.blockEntity(),
-                null, (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
         SPATIAL_RIFT_SPAWNER.block().setBlockEntity(SpatialRiftSpawnerBlockEntity.class,
                 SPATIAL_RIFT_SPAWNER.blockEntity(), null, null);
         SPATIAL_RIFT_COLLAPSER.block().setBlockEntity(SpatialRiftCollapserBlockEntity.class,
@@ -158,10 +153,6 @@ public class ImpenRegistry {
 
     // Machines
     //@formatter:off
-    public static final MachineDefinition<BeamedNetworkLinkBlock, BeamedNetworkLinkBlockEntity> BEAMED_NETWORK_LINK =
-            makeMachine("beamed_network_link", BeamedNetworkLinkBlock::new, BeamedNetworkLinkBlockEntity::new, true,
-                    props -> props.noOcclusion());
-
     public static final MachineDefinition<AtmosphericCrystallizerBlock, AtmosphericCrystallizerBlockEntity> ATMOSPHERIC_CRYSTALLIZER =
             makeMachine("atmospheric_crystallizer", AtmosphericCrystallizerBlock::new, AtmosphericCrystallizerBlockEntity::new, true);
 

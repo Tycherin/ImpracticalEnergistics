@@ -1,5 +1,4 @@
 {
-    "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
     "block.impracticalenergistics.beam_network_amplifier": "Beam Network Amplifier",
     "block.impracticalenergistics.beam_network_emitter": "Beam Network Emitter",
     "block.impracticalenergistics.beam_network_mirror": "Beam Network Mirror",
@@ -86,7 +85,6 @@
     "dimension.minecraft:the_end": "Dimension: The End",
     
     "jei.impracticalenergistics.description.atmospheric_crystallizer": "Atmospheric Crystallizers use ME network energy to gradually form crystals out of the surrounding air. This produces different items depending on which dimension the Crystallizer is placed in.",
-    "jei.impracticalenergistics.description.beamed_network_link": "Beamed Network Link blocks can be used to link AE2 networks across distances without cables. If two BNLs are within 16 blocks of each other, and they are facing each other, they will connect automatically.",
     "jei.impracticalenergistics.description.capture_plane": "Converts projectiles that hit the plane into items. Works on all types of arrows, thrown items like snowballs and eggs, and more!",
     "jei.impracticalenergistics.description.disintegrator_capsule_loot": "When used in a Possibility Disintegrator, causes trapped mobs to drop more loot as they are disintegrated.",
     "jei.impracticalenergistics.description.disintegrator_capsule_egg": "When used in a Possibility Disintegrator, causes trapped mobs to sometimes drop spawn eggs when killed.",

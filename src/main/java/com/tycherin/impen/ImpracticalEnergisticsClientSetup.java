@@ -19,7 +19,6 @@ import com.tycherin.impen.client.gui.SpatialRiftSpawnerMenu;
 import com.tycherin.impen.client.gui.SpatialRiftSpawnerScreen;
 import com.tycherin.impen.client.particle.DisintegratorDamageParticle;
 import com.tycherin.impen.client.particle.DisintegratorLockParticle;
-import com.tycherin.impen.client.render.BeamedNetworkLinkRenderer;
 
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.client.gui.style.ScreenStyle;
@@ -53,9 +52,6 @@ public class ImpracticalEnergisticsClientSetup {
     }
 
     public static void modelRegistryEvent(final ModelRegistryEvent event) {
-        BlockEntityRenderers.register(ImpenRegistry.BEAMED_NETWORK_LINK.blockEntity(),
-                BeamedNetworkLinkRenderer::new);
-
         BlockEntityRenderers.register(
                 ImpenRegistry.BEAM_NETWORK_AMPLIFIER.blockEntity(),
                 BeamNetworkAmplifierBlockEntity.Renderer::new);
@@ -132,7 +128,6 @@ public class ImpracticalEnergisticsClientSetup {
         // Weirdly, this needs to be done for anything extending AEBaseBlockEntity, not just ones that are networked.
         Arrays.asList(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
-                ImpenRegistry.BEAMED_NETWORK_LINK,
                 ImpenRegistry.EJECTION_DRIVE,
                 ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,

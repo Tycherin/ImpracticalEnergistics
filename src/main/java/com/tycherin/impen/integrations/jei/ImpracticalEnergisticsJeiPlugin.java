@@ -42,7 +42,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     // TODO Consider moving some of these to item-level tooltips
     private static final List<ItemLike> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
-            ImpenRegistry.BEAMED_NETWORK_LINK,
             ImpenRegistry.CAPTURE_PLANE_ITEM,
             ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT,
             ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK,

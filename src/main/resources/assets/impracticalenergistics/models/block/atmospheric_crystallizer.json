@@ -3,7 +3,7 @@
 	"parent": "block/block",
 	"textures": {
 		"0": "impracticalenergistics:block/atmospheric_crystallizer_base",
-		"1": "impracticalenergistics:block/beamed_network_link_connector",
+		"1": "impracticalenergistics:block/atmospheric_crystallizer_connector",
 		"2": "impracticalenergistics:block/atmospheric_crystallizer_core_side",
 		"3": "impracticalenergistics:block/atmospheric_crystallizer_top",
 		"particle": "impracticalenergistics:block/atmospheric_crystallizer_base"
