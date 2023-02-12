@@ -23,12 +23,13 @@ public class BeamNetworkMirrorBlockEntity extends BeamRenderingBaseBlockEntity i
 
     @Override
     public boolean canAcceptConnection(final Direction dir) {
-        return dir.equals(this.getForward());
+        return !this.isRemoved() && dir.equals(this.getForward());
     }
 
     @Override
     public List<BeamNetworkPhysicalConnection> propagate() {
-        return BeamNetworkConnectionHelper.findLinearConnection(this, getBlockPos(), getUp(), MAX_DISTANCE, level)
+        return BeamNetworkConnectionHelper
+                .findVisualConnection(this, getBlockPos(), this.getUp(), MAX_DISTANCE, level)
                 .map(List::of)
                 .orElseGet(Collections::emptyList);
     }

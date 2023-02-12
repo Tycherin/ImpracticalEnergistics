@@ -8,7 +8,9 @@ import appeng.api.exceptions.SecurityConnectionException;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridConnection;
 import appeng.api.networking.IGridNode;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BeamNetworkGridConnection extends BeamNetworkConnection {
 
     // These are technically overlapping with the equivalent fields in the superclass, but we need to save them
@@ -30,8 +32,10 @@ public class BeamNetworkGridConnection extends BeamNetworkConnection {
         final IGridNode destinationNode = gridDestination.getReceivingGridNode();
 
         if (sourceNode == null || destinationNode == null) {
-            // This will probably break when connecting to a newly placed thing, but maybe not?
-            throw new IllegalStateException("Shouldn't be creating a connection when grid nodes are null!");
+            // This *shouldn't* happen, but weird stuff happens during BE lifecycles (e.g. chunk loading/unloading.
+            // Rather than hard fail, we log a warning and skip the connection, since it's probably invalid anyway.
+            log.warn("Attempted to create a connection with null grid nodes; connection will be ignored");
+            this.gridConnection = Optional.empty();
         }
 
         try {
@@ -58,5 +62,10 @@ public class BeamNetworkGridConnection extends BeamNetworkConnection {
     @Override
     public int getPowerCost() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "grid:" + super.toString();
     }
 }

@@ -16,15 +16,19 @@ import com.tycherin.impen.logic.beam.BeamNetworkPhysicalConnection;
 import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.implementations.IPowerChannelState;
+import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridConnection;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IGridNodeListener;
+import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.util.AEColor;
+import appeng.me.helpers.BlockEntityNodeListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEntity
@@ -36,8 +40,6 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
 
     private boolean hasPower = false;
     private boolean receivedPowerLastCycle = false;
-
-    private int beamColor = AEColor.WHITE.mediumVariant;
 
     public BeamNetworkEmitterBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.BEAM_NETWORK_EMITTER.blockEntity(), pos, blockState);
@@ -68,10 +70,20 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
     @Override
     public void onMainNodeStateChanged(final IGridNodeListener.State reason) {
         if (reason != IGridNodeListener.State.GRID_BOOT) {
-            if (this.hasPower != this.getMainNode().isPowered()) {
-                this.hasPower = this.getMainNode().isPowered();
-            }
+            this.updateBeamColor();
         }
+    }
+
+    @Override
+    protected IManagedGridNode createMainNode() {
+        return GridHelper.createManagedNode(this, new BlockEntityNodeListener<BeamNetworkEmitterBlockEntity>() {
+            @Override
+            public void onInWorldConnectionChanged(final BeamNetworkEmitterBlockEntity nodeOwner,
+                    final IGridNode node) {
+                super.onInWorldConnectionChanged(nodeOwner, node);
+                nodeOwner.updateBeamColor();
+            }
+        });
     }
 
     @Override
@@ -88,43 +100,49 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
         super.onReady();
         this.getMainNode().setExposedOnSides(EnumSet.of(this.getForward().getOpposite()));
         this.network = Optional.of(new BeamNetwork(this));
+        this.updateBeamColor();
     }
 
     @Override
     public void onChunkUnloaded() {
-        this.deactivate();
         super.onChunkUnloaded();
+        this.deactivate();
     }
 
     @Override
     public void setRemoved() {
-        this.deactivate();
         super.setRemoved();
+        this.deactivate();
     }
 
     @Override
     public TickingRequest getTickingRequest(final IGridNode node) {
         // TODO If this is going to consume power every tick, it needs a buffer, or else it's going to get really ornery
         // when starving for power
-        return new TickingRequest(1, 20, false, false);
+        return new TickingRequest(1, 1, false, false);
     }
 
     @Override
     public TickRateModulation tickingRequest(final IGridNode node, final int ticksSinceLastCall) {
+        if (!this.getMainNode().isPowered()) {
+            this.deactivate();
+            return TickRateModulation.IDLE;
+        }
+
         this.receivedPowerLastCycle = AEPowerUtil.drawPower(this, this.getPowerDraw());
         if (!this.receivedPowerLastCycle) {
             this.deactivate();
             return TickRateModulation.IDLE;
         }
         else {
+            // The network will decide whether it needs to run logic or not
             this.network.ifPresent(BeamNetwork::update);
             return TickRateModulation.URGENT;
         }
     }
 
     private void deactivate() {
-        this.network.ifPresent(BeamNetwork::destroy);
-        this.network = Optional.empty();
+        this.network.ifPresent(BeamNetwork::reset);
     }
 
     public double getPowerDraw() {
@@ -133,14 +151,19 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
 
     @Override
     public List<BeamNetworkPhysicalConnection> propagate() {
-        return BeamNetworkConnectionHelper.findLinearConnection(this, getBlockPos(), getForward(), MAX_DISTANCE, level)
+        return BeamNetworkConnectionHelper.findVisualConnection(this, getBlockPos(), getForward(), MAX_DISTANCE, level)
                 .map(List::of)
                 .orElseGet(Collections::emptyList);
     }
 
     @Override
     public void setNetwork(final Optional<BeamNetwork> networkOpt) {
-        // We already have a reference to the network, so we ignore these calls
+        // Network is already populated because this class created it, so this is a no-op
+    }
+
+    @Override
+    public void setColor(final int color) {
+        // We know what the beam color is because it originates here, so this is a no-op
     }
 
     @Override
@@ -149,21 +172,32 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
     }
 
     @Override
-    public int getColor() {
+    public boolean readFromStream(final FriendlyByteBuf data) {
+        final boolean superFlag = super.readFromStream(data);
+
+        final boolean isPoweredOld = this.isPowered();
+        this.hasPower = data.readBoolean();
+
+        return (this.hasPower != isPoweredOld)
+                || superFlag;
+    }
+
+    @Override
+    public void writeToStream(final FriendlyByteBuf data) {
+        super.writeToStream(data);
+        data.writeBoolean(this.isPowered());
+    }
+
+    @Override
+    public int getBeamColor() {
         return this.beamColor;
     }
 
     /**
      * The color of the beam is based on the color of AE2 blocks that are connected directly to this one.
      * This method handles that logic and updates the beam color accordingly.
-     * 
-     * @return true if the color changed; false otherwise
      */
-    protected boolean updateBeamColor() {
-        if (this.isClientSide()) {
-            return false;
-        }
-
+    protected void updateBeamColor() {
         int newBeamColor = AEColor.WHITE.mediumVariant;
         if (this.getMainNode() != null && this.getMainNode().getNode() != null) {
             // Find the colors of all AE network entities linked to this one
@@ -185,12 +219,10 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
             }
         }
 
-        if (newBeamColor != this.beamColor) {
+        if (this.beamColor != newBeamColor) {
             this.beamColor = newBeamColor;
-            return true;
-        }
-        else {
-            return false;
+            this.markForUpdate();
+            this.network.ifPresent(BeamNetwork::forceUpdate);
         }
     }
 }

@@ -1,0 +1,7 @@
+{
+    "parent": "impracticalenergistics:block/beam_network_mirror_horizontal",
+    "textures": {
+        "receiver": "impracticalenergistics:block/beam_network_transmitter",
+        "transmitter": "impracticalenergistics:block/beam_network_receiver"
+    }
+}

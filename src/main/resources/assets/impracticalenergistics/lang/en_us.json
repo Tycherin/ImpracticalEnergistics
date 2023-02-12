@@ -1,5 +1,10 @@
 {
     "block.impracticalenergistics.beamed_network_link": "Beamed Network Link",
+    "block.impracticalenergistics.beam_network_amplifier": "Beam Network Amplifier",
+    "block.impracticalenergistics.beam_network_emitter": "Beam Network Emitter",
+    "block.impracticalenergistics.beam_network_mirror": "Beam Network Mirror",
+    "block.impracticalenergistics.beam_network_receiver": "Beam Network Receiver",
+    "block.impracticalenergistics.beam_network_splitter": "Beam Network Splitter",
     "block.impracticalenergistics.spatial_rift_spawner": "Spatial Rift Spawner",
     "block.impracticalenergistics.spatial_rift_manipulator": "Spatial Rift Manipulator",
     "block.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",

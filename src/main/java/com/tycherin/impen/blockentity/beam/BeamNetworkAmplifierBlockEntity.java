@@ -24,12 +24,13 @@ public class BeamNetworkAmplifierBlockEntity extends BeamRenderingBaseBlockEntit
 
     @Override
     public boolean canAcceptConnection(final Direction dir) {
-        return dir.equals(this.getForward().getOpposite());
+        return !this.isRemoved() && dir.equals(this.getForward());
     }
 
     @Override
     public List<BeamNetworkPhysicalConnection> propagate() {
-        return BeamNetworkConnectionHelper.findLinearConnection(this, getBlockPos(), getForward(), MAX_DISTANCE, level)
+        return BeamNetworkConnectionHelper
+                .findVisualConnection(this, getBlockPos(), getForward().getOpposite(), MAX_DISTANCE, level)
                 .map(List::of)
                 .orElseGet(Collections::emptyList);
     }

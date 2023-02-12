@@ -21,14 +21,16 @@ public abstract class BeamNetworkPhysicalConnection extends BeamNetworkConnectio
 
     @Getter
     public static class BeamNetworkInWorldConnection extends BeamNetworkPhysicalConnection {
-        private final int distanceBetween;
+        /** Number of blocks between the target and the destination, excluding both */
+        private final int distance;
+        /** Direction of the beam relative to the emitting block */
         private final Direction direction;
 
         public BeamNetworkInWorldConnection(final BeamNetworkPropagator sender, final BeamNetworkReceiver receiver,
-                final BlockPos senderPos, final BlockPos receiverPos, final int distanceBetween,
+                final BlockPos senderPos, final BlockPos receiverPos, final int distance,
                 final Direction direction) {
             super(sender, receiver, senderPos, receiverPos);
-            this.distanceBetween = distanceBetween;
+            this.distance = distance;
             this.direction = direction;
         }
 
@@ -44,7 +46,12 @@ public abstract class BeamNetworkPhysicalConnection extends BeamNetworkConnectio
 
         @Override
         public int getPowerCost() {
-            return distanceBetween;
+            return distance;
+        }
+
+        @Override
+        public String toString() {
+            return "world:" + super.toString();
         }
     }
 

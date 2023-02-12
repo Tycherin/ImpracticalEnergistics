@@ -1,136 +1,114 @@
 {
     "variants": {
         "forward=north,up=up": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 0,
-            "y": 0
-        },
-        "forward=north,up=east": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 0
-        },
-        "forward=north,up=down": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 180,
-            "y": 0
-        },
-        "forward=north,up=west": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
-            "y": 0
-        },
-        "forward=east,up=up": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 0,
-            "y": 90
-        },
-        "forward=east,up=south": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 90
-        },
-        "forward=east,up=down": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 180,
-            "y": 90
-        },
-        "forward=east,up=north": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
-            "y": 90
-        },
-        "forward=south,up=up": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 0,
-            "y": 180
-        },
-        "forward=south,up=west": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 180
-        },
-        "forward=south,up=down": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 180,
-            "y": 180
-        },
-        "forward=south,up=east": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
-            "y": 180
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical"
         },
         "forward=west,up=up": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 0,
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
             "y": 270
         },
-        "forward=west,up=south": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 270
+        "forward=south,up=up": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
+            "y": 180
+        },
+        "forward=east,up=up": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
+            "y": 90
+        },
+        "forward=north,up=down": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
+            "x": 180,
+            "y": 180
         },
         "forward=west,up=down": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
             "x": 180,
-            "y": 270
+            "y": 90
         },
-        "forward=west,up=north": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
+        "forward=south,up=down": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
+            "x": 180
+        },
+        "forward=east,up=down": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical",
+            "x": 180,
             "y": 270
         },
         "forward=up,up=north": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
-            "y": 0
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert"
         },
-        "forward=up,up=east": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
+        "forward=up,up=west": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
             "y": 90
         },
         "forward=up,up=south": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
             "y": 180
         },
-        "forward=up,up=west": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 270,
+        "forward=up,up=east": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
             "y": 270
         },
         "forward=down,up=north": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 0
-        },
-        "forward=down,up=east": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
-            "y": 90
-        },
-        "forward=down,up=south": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
+            "x": 180,
             "y": 180
         },
         "forward=down,up=west": {
-            "model": "impracticalenergistics:block/beam_network_mirror",
-            "x": 90,
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
+            "x": 180,
+            "y": 90
+        },
+        "forward=down,up=south": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
+            "x": 180
+        },
+        "forward=down,up=east": {
+            "model": "impracticalenergistics:block/beam_network_mirror_vertical_invert",
+            "x": 180,
             "y": 270
         },
-        "forward=up,up=up": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=up,up=down": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=down,up=down": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=down,up=up": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=north,up=north": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=north,up=south": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=south,up=south": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=south,up=north": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=east,up=east": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=east,up=west": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=west,up=west": { "model": "impracticalenergistics:block/beam_network_mirror" },
-        "forward=west,up=east": { "model": "impracticalenergistics:block/beam_network_mirror" }
+        "forward=north,up=west": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal"
+        },
+        "forward=west,up=south": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal",
+            "y": 270
+        },
+        "forward=south,up=east": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal",
+            "y": 180
+        },
+        "forward=east,up=north": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal",
+            "y": 90
+        },
+        "forward=north,up=east": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal_invert",
+            "y": 90
+        },
+        "forward=east,up=south": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal_invert",
+            "y": 180
+        },
+        "forward=south,up=west": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal_invert",
+            "y": 270
+        },
+        "forward=west,up=north": {
+            "model": "impracticalenergistics:block/beam_network_mirror_horizontal_invert"
+        },
+        "forward=up,up=up": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=up,up=down": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=down,up=down": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=down,up=up": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=north,up=north": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=north,up=south": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=south,up=south": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=south,up=north": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=east,up=east": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=east,up=west": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=west,up=west": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" },
+        "forward=west,up=east": { "model": "impracticalenergistics:block/beam_network_mirror_vertical" }
     }
 }

@@ -13,6 +13,10 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.tycherin.impen.logic.beam.BeamNetworkPhysicalConnection.BeamNetworkInWorldConnection;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -33,9 +37,9 @@ public abstract class BeamNetworkRenderer<T extends BlockEntity> implements Bloc
             "textures/entity/beacon_beam.png");
 
     /** Width of the core beam */
-    private static final float BEAM_WIDTH = 0.175f;
+    private static final float BEAM_WIDTH = 0.16f;
     /** Width of the beam outline */
-    private static final float OUTLINE_WIDTH = 0.22f;
+    private static final float OUTLINE_WIDTH = 0.21f;
     /** How deep the beam will penetrate into the source & destination blocks */
     private static final float BEAM_PENETRATION_DEPTH = 0.2f;
 
@@ -54,18 +58,28 @@ public abstract class BeamNetworkRenderer<T extends BlockEntity> implements Bloc
 
     protected abstract boolean hasRenderData(T be);
 
-    public static record BeamRenderData(Direction direction, byte beamLength, int beamColor) {
+    @EqualsAndHashCode
+    @Getter
+    @AllArgsConstructor
+    public static class BeamRenderData {
+        private final Direction direction;
+        private final byte beamLength;
+        @Setter
+        private int beamColor;
+
         public static BeamRenderData from(final BeamNetworkInWorldConnection conn, final Integer beamColor) {
             // The byte cast isn't technically safe, but in practice, the distance will never be more than 127
-            return new BeamRenderData(conn.getDirection(), (byte)conn.getDistanceBetween(), beamColor);
+            // The -1 offset is to prevent the beam from going through the target block
+            final byte beamLength = (byte)(conn.getDistance() - 1);
+            return new BeamRenderData(conn.getDirection(), beamLength, beamColor);
         }
-        
+
         public void writeToStream(final FriendlyByteBuf buf) {
             buf.writeByte(this.direction.ordinal());
             buf.writeByte(this.beamLength);
             buf.writeInt(this.beamColor);
         }
-        
+
         public static BeamRenderData readFromStream(final FriendlyByteBuf buf) {
             final Direction direction = Direction.values()[buf.readByte()];
             final byte beamLength = buf.readByte();
@@ -81,25 +95,28 @@ public abstract class BeamNetworkRenderer<T extends BlockEntity> implements Bloc
             return;
         }
 
-        getRenderData(be).forEach(data -> {
-            final long gameTime = be.getLevel().getGameTime();
+        getRenderData(be).stream()
+                // There isn't much point to rendering zero-length beams, so we skip them
+                .filter(data -> data.beamLength > 0)
+                .forEach(data -> {
+                    final long gameTime = be.getLevel().getGameTime();
 
-            poseStack.pushPose();
+                    poseStack.pushPose();
 
-            // Move the render point to the center of the block
-            poseStack.translate(0.5, 0.5, 0.5);
+                    // Move the render point to the center of the block
+                    poseStack.translate(0.5, 0.5, 0.5);
 
-            // Rotate so that we're facing the right direction
-            poseStack.mulPose(ROTATION_MAP.get(data.direction));
+                    // Rotate so that we're facing the right direction
+                    poseStack.mulPose(ROTATION_MAP.get(data.direction));
 
-            // Move the render point "up" (which is now forward)
-            poseStack.translate(0.0, 0.5 - BEAM_PENETRATION_DEPTH, 0.0);
+                    // Move the render point "up" (which is now forward)
+                    poseStack.translate(0.0, 0.5 - BEAM_PENETRATION_DEPTH, 0.0);
 
-            renderBeaconBeam(poseStack, bufferIn, partialTicks, gameTime,
-                    data.beamLength + (BEAM_PENETRATION_DEPTH * 2), data.beamColor);
+                    renderBeaconBeam(poseStack, bufferIn, partialTicks, gameTime,
+                            data.beamLength + (BEAM_PENETRATION_DEPTH * 2), data.beamColor);
 
-            poseStack.popPose();
-        });
+                    poseStack.popPose();
+                });
     }
 
     public static void renderBeaconBeam(PoseStack poseStack, MultiBufferSource bufferIn, float partialTicks,

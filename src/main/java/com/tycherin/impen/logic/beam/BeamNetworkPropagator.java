@@ -14,6 +14,8 @@ public interface BeamNetworkPropagator extends BeamNetworkNode {
      */
     List<BeamNetworkPhysicalConnection> propagate();
 
+    void setColor(int color);
+
     void renderConnection(BeamNetworkInWorldConnection conn);
 
     void stopRenderConnection(BeamNetworkInWorldConnection conn);

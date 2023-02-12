@@ -24,26 +24,20 @@ public class BeamNetworkSplitterBlockEntity extends BeamRenderingBaseBlockEntity
 
     @Override
     public boolean canAcceptConnection(final Direction dir) {
-        return dir.equals(this.getForward());
+        return !this.isRemoved() && dir.equals(this.getForward());
     }
 
     @Override
     public List<BeamNetworkPhysicalConnection> propagate() {
-        final var leftConn = BeamNetworkConnectionHelper.findLinearConnection(this, getBlockPos(),
-                getLeft(), MAX_DISTANCE, level);
-        final var rightConn = BeamNetworkConnectionHelper.findLinearConnection(this, getBlockPos(),
-                getRight(), MAX_DISTANCE, level);
         final List<BeamNetworkPhysicalConnection> conns = new ArrayList<>();
-        leftConn.ifPresent(conns::add);
-        rightConn.ifPresent(conns::add);
+        // The visual state of this block doesn't distinguish between "up" and the opposite side, so we treat them as
+        // equivalent here 
+        BeamNetworkConnectionHelper
+                .findVisualConnection(this, getBlockPos(), this.getUp(), MAX_DISTANCE, level)
+                .ifPresent(conns::add);
+        BeamNetworkConnectionHelper
+                .findVisualConnection(this, getBlockPos(), this.getUp().getOpposite(), MAX_DISTANCE, level)
+                .ifPresent(conns::add);
         return conns;
-    }
-
-    private Direction getLeft() {
-        return this.getForward().getCounterClockWise();
-    }
-
-    private Direction getRight() {
-        return this.getForward().getClockWise();
     }
 }

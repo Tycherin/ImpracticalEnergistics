@@ -39,19 +39,22 @@ public class BeamNetworkReceiverBlockEntity extends AENetworkBlockEntity impleme
 
     @Override
     public void onChunkUnloaded() {
-        network.ifPresent(BeamNetwork::update);
         super.onChunkUnloaded();
+        network.ifPresent(BeamNetwork::forceUpdate);
     }
 
     @Override
     public void setRemoved() {
-        network.ifPresent(BeamNetwork::update);
         super.setRemoved();
+        network.ifPresent(BeamNetwork::forceUpdate);
     }
 
     @Override
     public boolean canAcceptConnection(final Direction dir) {
-        return dir.equals(this.getForward());
+        return !this.isRemoved()
+                // The node is null specifically during network setup/teardown
+                && this.getGridNode() != null
+                && dir.equals(this.getForward());
     }
 
     @Override

@@ -9,5 +9,5 @@ public interface BeamNetworkGridPropagator extends BeamNetworkPropagator {
     
     IGridNode getSourceGridNode();
     
-    int getColor();
+    int getBeamColor();
 }
