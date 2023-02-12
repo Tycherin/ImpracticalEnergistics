@@ -61,7 +61,52 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('G', Blocks.GLASS)
                 .unlockedBy("has_aerocrystal_prism", has(ImpenRegistry.AEROCRYSTAL_PRISM))
                 .save(consumer);
-        // TODO Add recipes for new Beam Network blocks
+        // Beam Network
+        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_EMITTER)
+                .pattern("III")
+                .pattern("EP ")
+                .pattern("III")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('P', ImpenRegistry.RIFT_PRISM)
+                .define('E', AEBlocks.ENERGY_CELL)
+                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_RECEIVER)
+                .pattern("III")
+                .pattern("AP ")
+                .pattern("III")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('P', ImpenRegistry.RIFT_PRISM)
+                .define('A', AEBlocks.ENERGY_ACCEPTOR)
+                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_AMPLIFIER)
+                .pattern("III")
+                .pattern("ACA")
+                .pattern("III")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('A', ImpenRegistry.AEROCRYSTAL_PRISM)
+                .define('C', AEBlocks.ENERGY_CELL)
+                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_MIRROR)
+                .pattern("FFF")
+                .pattern("FAG")
+                .pattern("FG ")
+                .define('F', Items.IRON_BARS)
+                .define('A', ImpenRegistry.AEROCRYSTAL_PRISM)
+                .define('G', Items.GLASS)
+                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ImpenRegistry.BEAM_NETWORK_SPLITTER)
+                .pattern("FFF")
+                .pattern("GAG")
+                .pattern("FGF")
+                .define('F', Items.IRON_BARS)
+                .define('A', ImpenRegistry.AEROCRYSTAL_PRISM)
+                .define('G', Items.GLASS)
+                .unlockedBy("has_rift_prism", has(ImpenRegistry.RIFT_PRISM))
+                .save(consumer);
         // Atm. Crystallizer
         ShapedRecipeBuilder.shaped(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER)
                 .pattern(" I ")
