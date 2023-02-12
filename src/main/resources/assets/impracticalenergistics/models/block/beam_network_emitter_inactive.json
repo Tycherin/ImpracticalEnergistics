@@ -1,6 +1,3 @@
 {
-    "parent": "impracticalenergistics:block/beam_network_emitter",
-    "textures": {
-        "emitter": "impracticalenergistics:block/beam_network_emitter_dongle_inactive"
-    }
+    "parent": "impracticalenergistics:block/beam_network_emitter"
 }

@@ -41,7 +41,7 @@ public abstract class BeamNetworkRenderer<T extends BlockEntity> implements Bloc
     /** Width of the beam outline */
     private static final float OUTLINE_WIDTH = 0.21f;
     /** How deep the beam will penetrate into the source & destination blocks */
-    private static final float BEAM_PENETRATION_DEPTH = 0.2f;
+    private static final float BEAM_PENETRATION_DEPTH = 0.3f;
 
     private static final Map<Direction, Quaternion> ROTATION_MAP = ImmutableMap.of(
             Direction.UP, Quaternion.ONE, // Up is the default rendering direction
