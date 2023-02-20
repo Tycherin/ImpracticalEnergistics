@@ -15,7 +15,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -24,19 +23,19 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 @Getter
-public class AtmosphericCrystallizerRecipe implements BidirectionalRecipe<Container> {
+public class AtmosphericCrystallizerRecipe implements SpecialBidirectionalRecipe {
 
     public static final String RECIPE_TYPE_NAME = "atmospheric_crystallizer";
 
     private final ResourceLocation id;
     private final ResourceLocation dimensionKey;
-    private final ItemStack result;
+    private final ItemStack resultItem;
 
     public AtmosphericCrystallizerRecipe(final ResourceLocation id, @NonNull final ResourceLocation dimensionKey,
-            @NonNull final ItemStack result) {
+            @NonNull final ItemStack resultItem) {
         this.id = id;
         this.dimensionKey = dimensionKey;
-        this.result = result;
+        this.resultItem = resultItem;
     }
 
     public Optional<Level> getDimension(final Level sourceLevel) {
@@ -51,33 +50,13 @@ public class AtmosphericCrystallizerRecipe implements BidirectionalRecipe<Contai
     }
 
     @Override
-    public boolean isSpecial() {
-        return true;
+    public RecipeType<?> getType() {
+        return ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get();
     }
 
     @Override
-    public boolean matches(Container p_44002_, Level p_44003_) {
-        return false;
-    }
-
-    @Override
-    public ItemStack assemble(Container p_44001_) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
-        return false;
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return this.result;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
+    public String getRecipeTypeName() {
+        return RECIPE_TYPE_NAME;
     }
 
     @Override
@@ -87,17 +66,7 @@ public class AtmosphericCrystallizerRecipe implements BidirectionalRecipe<Contai
 
     @Override
     public AtmosphericCrystallizerRecipe.Serializer getSerializer() {
-        return AtmosphericCrystallizerRecipe.Serializer.INSTANCE;
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get();
-    }
-
-    @Override
-    public String getRecipeTypeName() {
-        return RECIPE_TYPE_NAME;
+        return Serializer.INSTANCE;
     }
 
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>

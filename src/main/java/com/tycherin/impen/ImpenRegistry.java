@@ -34,6 +34,7 @@ import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
+import com.tycherin.impen.recipe.SpatialRiftBaseRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
@@ -289,6 +290,12 @@ public class ImpenRegistry {
     public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_MANIPULATOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
             .register(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.getId().getPath(),
                     () -> SpatialRiftManipulatorRecipe.Serializer.INSTANCE);
+
+    public static final RegistryObject<RecipeType<SpatialRiftBaseRecipe>> SPATIAL_RIFT_BASE_RECIPE_TYPE = ImpenRegistry
+            .<SpatialRiftBaseRecipe>makeRecipeType(SpatialRiftBaseRecipe.RECIPE_TYPE_NAME);
+    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_BASE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
+            .register(SPATIAL_RIFT_BASE_RECIPE_TYPE.getId().getPath(),
+                    () -> SpatialRiftBaseRecipe.Serializer.INSTANCE);
 
     // Particles
     public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_DAMAGE_PARTICLE = PARTICLES

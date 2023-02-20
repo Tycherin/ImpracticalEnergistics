@@ -13,9 +13,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 public class CustomRecipeResult implements FinishedRecipe {
 
     private final String recipeName;
-    private final BidirectionalRecipe<?> recipe;
+    private final BidirectionalRecipe recipe;
 
-    public CustomRecipeResult(final String recipeName, final BidirectionalRecipe<?> recipe) {
+    public CustomRecipeResult(final String recipeName, final BidirectionalRecipe recipe) {
         if (recipeName == null) {
             throw new IllegalArgumentException("Recipe name cannot be null");
         }

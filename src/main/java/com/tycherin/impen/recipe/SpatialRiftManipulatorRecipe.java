@@ -15,22 +15,21 @@ import lombok.NonNull;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Container> {
+public class SpatialRiftManipulatorRecipe implements SpecialBidirectionalRecipe {
 
     public static final String RECIPE_TYPE_NAME = "spatial_rift_manipulator";
 
+    @Getter
     private final ResourceLocation id;
 
     @Getter
@@ -49,36 +48,6 @@ public class SpatialRiftManipulatorRecipe implements BidirectionalRecipe<Contain
     // ***
     // Recipe boilerplate
     // ***
-
-    @Override
-    public boolean isSpecial() {
-        return true;
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean matches(Container inv, Level level) {
-        return false;
-    }
-
-    @Override
-    public ItemStack assemble(Container inv) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
-        return true;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
 
     @Override
     public SpatialRiftManipulatorRecipe.Serializer getSerializer() {

@@ -21,30 +21,26 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 @Getter
-public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> {
+public class SpatialRiftSpawnerRecipe implements SpecialBidirectionalRecipe {
 
     public static final String RECIPE_TYPE_NAME = "spatial_rift_spawner";
 
+    @Getter
     private final ResourceLocation id;
 
     private final Ingredient input;
-    private final ItemStack output;
+    private final ItemStack resultItem;
     private final int fuelCost;
 
     public SpatialRiftSpawnerRecipe(final ResourceLocation id, @NonNull final Ingredient input,
-            @NonNull final ItemStack output, final int fuelCost) {
+            @NonNull final ItemStack resultItem, final int fuelCost) {
         this.id = id;
         this.input = input;
-        this.output = output;
+        this.resultItem = resultItem;
         if (fuelCost < 0) {
             throw new IllegalArgumentException("Fuel cost must not be negative");
         }
         this.fuelCost = fuelCost;
-    }
-
-    @Override
-    public ItemStack getResultItem() {
-        return output;
     }
 
     @Override
@@ -65,26 +61,6 @@ public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> 
     // ***
     // Recipe boilerplate
     // ***
-
-    @Override
-    public boolean isSpecial() {
-        return true;
-    }
-
-    @Override
-    public ItemStack assemble(final Container container) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
-        return true;
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
 
     @Override
     public SpatialRiftSpawnerRecipe.Serializer getSerializer() {
@@ -120,7 +96,7 @@ public class SpatialRiftSpawnerRecipe implements BidirectionalRecipe<Container> 
         @Override
         public void toJson(final SpatialRiftSpawnerRecipe recipe, final JsonObject json) {
             json.add("input", recipe.input.toJson());
-            json.add("output", AE2RecipeProvider.toJson(recipe.output));
+            json.add("output", AE2RecipeProvider.toJson(recipe.resultItem));
             json.addProperty("fuel_cost", recipe.fuelCost);
         }
 
