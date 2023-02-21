@@ -1,4 +1,4 @@
-package com.tycherin.impen.datagen;
+package com.tycherin.impen.datagen.recipe;
 
 import java.util.Collections;
 import java.util.List;

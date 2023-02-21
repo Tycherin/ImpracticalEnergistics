@@ -1,4 +1,4 @@
-package com.tycherin.impen.datagen;
+package com.tycherin.impen.datagen.recipe;
 
 import javax.annotation.Nullable;
 

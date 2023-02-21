@@ -12,7 +12,7 @@ import com.tycherin.impen.datagen.ImpenItemModelProvider;
 import com.tycherin.impen.datagen.ImpenItemTagsProvider;
 import com.tycherin.impen.datagen.ImpenLootProvider;
 import com.tycherin.impen.datagen.ImpenPartModelProvider;
-import com.tycherin.impen.datagen.ImpenRecipeProvider;
+import com.tycherin.impen.datagen.recipe.ImpenRecipeProvider;
 import com.tycherin.impen.part.CapturePlanePart;
 
 import appeng.api.parts.PartModels;
