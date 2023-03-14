@@ -6,7 +6,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.rift.SpatialRiftManipulatorLogic;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe.GenericManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.ManagedOutputInventory;
 
@@ -66,11 +66,11 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         }
         else {
             final var recipe = recipeOpt.get();
-            if (recipe instanceof GenericManipulatorRecipe genericRecipe) {
-                return this.outSlot.canAdd(genericRecipe.getOutput());
+            if (recipe instanceof SpatialRiftManipulatorCraftingRecipe craftingRecipe) {
+                return this.outSlot.canAdd(craftingRecipe.getOutput());
             }
             else {
-                // One of the spatial recipe types - these don't stack, so the output needs to be empty
+                // The other recipe types output non-stacking SpatialRiftCells, so the output needs to be empty
                 return this.outSlot.isEmpty();
             }
         }
@@ -80,7 +80,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         final ItemStack topInput = this.inv.getStackInSlot(Slots.TOP);
         final ItemStack bottomInput = this.inv.getStackInSlot(Slots.BOTTOM);
 
-        final ItemStack output = logic.processInputs(topInput, bottomInput, this.level);
+        final ItemStack output = logic.processInputs(topInput, bottomInput);
         if (!this.outSlot.canAdd(output)) {
             return false;
         }

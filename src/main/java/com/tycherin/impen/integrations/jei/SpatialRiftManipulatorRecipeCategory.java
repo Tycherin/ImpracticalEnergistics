@@ -3,7 +3,11 @@ package com.tycherin.impen.integrations.jei;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.ImpracticalEnergisticsMod;
 import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBaseBlockRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBlockWeightRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorSpecialRecipe;
 
 import appeng.core.AppEng;
 import mezz.jei.api.constants.VanillaTypes;
@@ -41,23 +45,25 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final SpatialRiftManipulatorRecipe recipe,
             final IFocusGroup focusGroup) {
 
-        layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
-                .addIngredients(recipe.getBottomInput());
-
-        if (recipe instanceof SpatialRiftManipulatorRecipe.GenericManipulatorRecipe genericRecipe) {
+        if (recipe instanceof SpatialRiftManipulatorCraftingRecipe craftingRecipe) {
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
+                    .addIngredients(craftingRecipe.getBottomInput());
             layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                    .addIngredients(genericRecipe.getTopInput());
+                    .addIngredients(craftingRecipe.getTopInput());
             layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
-                    .addItemStack(genericRecipe.getOutput());
+                    .addItemStack(craftingRecipe.getOutput());
         }
-        else if (recipe instanceof SpatialRiftManipulatorRecipe.SpatialRiftEffectRecipe spatialRecipe) {
+        else if (recipe instanceof SpatialRiftManipulatorBlockWeightRecipe blockWeightRecipe) {
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
+                    .addIngredients(blockWeightRecipe.getBottomInput());
             final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
             final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
                     .addIngredients(SpatialRiftCellItem.getIngredient())
                     .addTooltipCallback((recipeSlotView, tooltip) -> {
-                        tooltip.add(new TextComponent("Targeting: "
-                                + spatialRecipe.getBlock().asItem().getDefaultInstance().getHoverName().getString())
+                        final String itemName = blockWeightRecipe.getBlock().asItem().getDefaultInstance()
+                                .getHoverName().getString();
+                        tooltip.add(new TextComponent("Targeting: " + itemName)
                                 .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
                     });
 
@@ -66,23 +72,30 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
 
             // Add the matching block as a "shadow" output so that JEI can search on it
             layoutBuilder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
-                    .addItemStack(spatialRecipe.getBlock().asItem().getDefaultInstance());
+                    .addItemStack(blockWeightRecipe.getBlock().asItem().getDefaultInstance());
         }
-        else if (recipe instanceof SpatialRiftManipulatorRecipe.SpecialSpatialRecipe specialRecipe) {
+        else if (recipe instanceof SpatialRiftManipulatorSpecialRecipe specialRecipe) {
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
+                    .addIngredients(specialRecipe.getBottomInput());
             final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
             final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
 
-            final String effectStr = switch (specialRecipe.getSpecialType()) {
-            case BOOST_PRECISION -> "Boosts precision, which improves result quality";
+            final String effectStr = switch (specialRecipe.getEffectType()) {
+            case BOOST_PRECISION -> "Boosts precision, which improves the effectiveness of targeting specific blocks";
             case CLEAR_INPUTS -> "Erases all modifications";
+            case BOOST_RICHNESS -> "Boosts richness, which adds more valuable blocks to the output";
             };
             outSlot.addTooltipCallback((recipeSlotView, tooltip) -> {
                 tooltip.add(new TextComponent(effectStr)
                         .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
             });
+            
             layoutBuilder.createFocusLink(inSlot, outSlot);
+        }
+        else if (recipe instanceof SpatialRiftManipulatorBaseBlockRecipe baseBlockRecipe) {
+            // TODO Implement this
         }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);

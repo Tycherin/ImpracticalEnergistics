@@ -1,26 +1,21 @@
 package com.tycherin.impen.logic.rift;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import com.tycherin.impen.item.SpatialRiftCellItem;
 
-import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.registries.ForgeRegistries;
 
+/**
+ * Class for managing storing Spatial Rift Cell data
+ */
 @Slf4j
 public class SpatialRiftCellDataManager {
 
@@ -51,10 +46,11 @@ public class SpatialRiftCellDataManager {
     }
 
     private RiftCellWorldData getData() {
-        return SpatialStoragePlotManager.INSTANCE.getLevel().getChunkSource().getDataStorage().computeIfAbsent(
-                RiftCellWorldData::load,
-                RiftCellWorldData::new,
-                RiftCellWorldData.ID);
+        return SpatialStoragePlotManager.INSTANCE.getLevel().getChunkSource().getDataStorage()
+                .computeIfAbsent(
+                        RiftCellWorldData::load,
+                        RiftCellWorldData::new,
+                        RiftCellWorldData.ID);
     }
 
     private static class RiftCellWorldData extends SavedData {
@@ -100,161 +96,6 @@ public class SpatialRiftCellDataManager {
             });
             log.info("Loaded rift cell data for {} plots", plots.size());
             return worldData;
-        }
-    }
-
-    public static class SpatialRiftCellData {
-        private static final String TAG_PLOT_ID = "id";
-        private static final String TAG_INPUTS = "inputs";
-        private static final String TAG_BONUS_PRECISION = "bonus_prec";
-
-        private final int plotId;
-        private final Set<Block> storedInputs;
-        private int bonusPrecision = 0;
-
-        // Convenience fields - not persisted
-        private int precision = 0;
-        private Optional<Block> baseBlock = Optional.empty();
-        private boolean dirtyFlag = true;
-
-        public SpatialRiftCellData(final int plotId, final Set<Block> storedInputs) {
-            this.plotId = plotId;
-            this.storedInputs = storedInputs;
-        }
-
-        public SpatialRiftCellData(final int plotId) {
-            this(plotId, new HashSet<>());
-        }
-
-        public int getPlotId() {
-            return plotId;
-        }
-
-        public SpatialStoragePlot getPlot() {
-            return SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
-        }
-
-        public Set<Block> getInputs() {
-            return storedInputs;
-        }
-
-        public boolean addBlock(final Block block) {
-            return storedInputs.add(block);
-        }
-
-        public boolean hasBlock(final Block block) {
-            return storedInputs.contains(block);
-        }
-
-        public CompoundTag getAsTag() {
-            final CompoundTag tag = new CompoundTag();
-            tag.putInt(TAG_PLOT_ID, plotId);
-            final ListTag inputsTag = new ListTag();
-            tag.put(TAG_INPUTS, inputsTag);
-            storedInputs.forEach(block -> {
-                inputsTag.add(StringTag.valueOf(block.getRegistryName().toString()));
-            });
-            tag.putInt(TAG_BONUS_PRECISION, bonusPrecision);
-            return tag;
-        }
-
-        public static SpatialRiftCellData fromTag(final CompoundTag tag) {
-            final int plotId = tag.getInt(TAG_PLOT_ID);
-            final ListTag inputsTag = tag.getList(TAG_INPUTS, Tag.TAG_STRING);
-            final Set<Block> storedInputs = new HashSet<>();
-            inputsTag.forEach(blockIdTag -> {
-                final String blockId = ((StringTag)blockIdTag).getAsString();
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockId));
-                if (block == null) {
-                    log.warn("Block {} missing from registry; value will be ignored", blockId);
-                }
-                storedInputs.add(block);
-            });
-            final var data = new SpatialRiftCellData(plotId, storedInputs);
-            data.bonusPrecision = tag.contains(TAG_BONUS_PRECISION)
-                    ? tag.getInt(TAG_BONUS_PRECISION)
-                    : 0;
-            return data;
-        }
-
-        public void clearInputs(final Level level) {
-            this.storedInputs.clear();
-            this.recalculateInputs(level);
-        }
-
-        public int getPrecision(final Level level) {
-            updateIfNeeded(level);
-            return this.precision + this.bonusPrecision;
-        }
-
-        public int getBonusPrecision() {
-            return this.bonusPrecision;
-        }
-
-        private void updateIfNeeded(final Level level) {
-            if (this.dirtyFlag) {
-                this.recalculateInputs(level);
-                this.dirtyFlag = false;
-            }
-        }
-
-        public Optional<Block> getBaseBlock() {
-            return this.baseBlock;
-        }
-
-        private void recalculateInputs(final Level level) {
-            final var result = SpatialRiftCellCalculator.INSTANCE.calculate(level, this);
-            this.precision = result.precision();
-            this.baseBlock = result.baseBlock();
-        }
-
-        public void addPrecisionBoost(final int bonusPrecision) {
-            this.bonusPrecision += bonusPrecision;
-        }
-
-        public void addInput(final Level level, final Block block) {
-            this.storedInputs.add(block);
-            this.recalculateInputs(level);
-        }
-
-        public int getRemainingSlots() {
-            return getMaxSlots() - getUsedSlots();
-        }
-
-        public int getUsedSlots() {
-            return this.storedInputs.size();
-        }
-
-        public int getMaxSlots() {
-            final SpatialStoragePlot plot = getPlot();
-            final int blockCount = plot.getSize().getX()
-                    * plot.getSize().getY()
-                    * plot.getSize().getZ();
-
-            // This seemed like a better way of doing things rather than doing cube root shenanigans
-            final int maxInputs;
-            if (blockCount <= (2 * 2 * 2)) {
-                maxInputs = 1;
-            }
-            else if (blockCount <= (4 * 4 * 4)) {
-                maxInputs = 2;
-            }
-            else if (blockCount <= (6 * 6 * 6)) {
-                maxInputs = 3;
-            }
-            else if (blockCount <= (8 * 8 * 8)) {
-                maxInputs = 5;
-            }
-            else if (blockCount <= (10 * 10 * 10)) {
-                maxInputs = 6;
-            }
-            else if (blockCount <= (12 * 12 * 12)) {
-                maxInputs = 7;
-            }
-            else {
-                maxInputs = 8;
-            }
-            return maxInputs;
         }
     }
 }

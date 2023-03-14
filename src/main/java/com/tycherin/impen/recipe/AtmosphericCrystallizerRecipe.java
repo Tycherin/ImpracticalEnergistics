@@ -1,53 +1,50 @@
 package com.tycherin.impen.recipe;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.annotate.NoSerialize;
+import com.tycherin.impen.util.GsonUtil;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import net.minecraft.core.Registry;
+import lombok.NoArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 @Getter
-public class AtmosphericCrystallizerRecipe implements SpecialBidirectionalRecipe {
+@AllArgsConstructor
+public class AtmosphericCrystallizerRecipe implements SpecialRecipe {
 
-    public static final String RECIPE_TYPE_NAME = "atmospheric_crystallizer";
+    private static final Map<Level, Optional<AtmosphericCrystallizerRecipe>> CACHE = new HashMap<>();
 
-    private final ResourceLocation id;
-    private final ResourceLocation dimensionKey;
-    private final ItemStack resultItem;
+    public static Optional<AtmosphericCrystallizerRecipe> getRecipe(final Level level) {
+        if (!CACHE.containsKey(level)) {
+            final var recipeOpt = level.getRecipeManager()
+                    .getAllRecipesFor(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.get()).stream()
+                    .filter(recipe -> level.dimension().location().equals(recipe.dimension))
+                    .findFirst();
+            CACHE.put(level, recipeOpt);
+        }
 
-    public AtmosphericCrystallizerRecipe(final ResourceLocation id, @NonNull final ResourceLocation dimensionKey,
-            @NonNull final ItemStack resultItem) {
-        this.id = id;
-        this.dimensionKey = dimensionKey;
-        this.resultItem = resultItem;
+        return CACHE.get(level);
     }
 
-    public Optional<Level> getDimension(final Level sourceLevel) {
-        // The dimension registry is weird, so we have to jump through some hoops to get at it
-        final var dimensionRegistry = sourceLevel.registryAccess().registry(Registry.DIMENSION_REGISTRY).get();
-        if (dimensionRegistry.containsKey(this.dimensionKey)) {
-            return Optional.of(dimensionRegistry.get(this.dimensionKey));
-        }
-        else {
-            return Optional.empty();
-        }
-    }
+    @NoSerialize
+    private ResourceLocation id;
+    private ResourceLocation dimension;
+    private ItemStack result;
 
     @Override
     public RecipeType<?> getType() {
@@ -55,41 +52,21 @@ public class AtmosphericCrystallizerRecipe implements SpecialBidirectionalRecipe
     }
 
     @Override
-    public String getRecipeTypeName() {
-        return RECIPE_TYPE_NAME;
-    }
-
-    @Override
-    public void serializeRecipeData(final JsonObject json) {
-        this.getSerializer().toJson(this, json);
-    }
-
-    @Override
-    public AtmosphericCrystallizerRecipe.Serializer getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return Serializer.INSTANCE;
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
-            implements BidirectionalRecipeSerializer<AtmosphericCrystallizerRecipe> {
+            implements RecipeSerializer<AtmosphericCrystallizerRecipe> {
 
         public static final AtmosphericCrystallizerRecipe.Serializer INSTANCE = new AtmosphericCrystallizerRecipe.Serializer();
 
-        private Serializer() {
-        }
-
         @Override
         public AtmosphericCrystallizerRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
-            // Ideally we would validate that the dimension exists here, but unfortunately, the dimension registry isn't
-            // available at the time when recipes are loaded
-            final ResourceLocation dimensionKey = new ResourceLocation(GsonHelper.getAsString(json, "dimension"));
-            final ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
-            return new AtmosphericCrystallizerRecipe(recipeId, dimensionKey, result);
-        }
-
-        @Override
-        public void toJson(final AtmosphericCrystallizerRecipe recipe, final JsonObject json) {
-            // TODO Set up datagen for these recipes
-            throw new NotImplementedException();
+            final var recipe = GsonUtil.getStandardGson().fromJson(json, AtmosphericCrystallizerRecipe.class);
+            recipe.id = recipeId;
+            return recipe;
         }
 
         @Nullable
@@ -103,8 +80,8 @@ public class AtmosphericCrystallizerRecipe implements SpecialBidirectionalRecipe
 
         @Override
         public void toNetwork(final FriendlyByteBuf buffer, final AtmosphericCrystallizerRecipe recipe) {
-            buffer.writeResourceLocation(recipe.getDimensionKey());
-            buffer.writeItemStack(recipe.getResultItem(), false);
+            buffer.writeResourceLocation(recipe.getDimension());
+            buffer.writeItemStack(recipe.getResult(), false);
         }
     }
 }

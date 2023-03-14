@@ -3,32 +3,30 @@ package com.tycherin.impen.logic.rift;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Sets;
-import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.config.ImpenConfig;
-import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
+import com.tycherin.impen.logic.rift.SpatialRiftCellData.BlockBoost;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
+import com.tycherin.impen.util.SpatialRiftUtil;
 
-import appeng.core.definitions.AEBlocks;
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class SpatialRiftCollapserLogic {
 
     private static final Random RAND = new Random();
 
     public void addBlocksToPlot(final SpatialStoragePlot plot, final SpatialRiftCellData data, final Level level) {
-        final List<BlockPos> blocksToReplace = getBlocksToReplace(plot);
+        final List<BlockPos> blocksToReplace = SpatialRiftUtil.getClearBlocks(plot)
+                // Need this call to freeze the MutableBlockPos that the iterator returns
+                .map(BlockPos::immutable)
+                .collect(Collectors.toList());
         final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size(), level);
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
@@ -37,75 +35,90 @@ public class SpatialRiftCollapserLogic {
         });
     }
 
-    private List<BlockPos> getBlocksToReplace(final SpatialStoragePlot plot) {
-        final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
-
-        final BlockPos firstCorner = plot.getOrigin();
-        final BlockPos secondCorner = firstCorner.offset(
-                plot.getSize().getX() - 1,
-                plot.getSize().getY() - 1,
-                plot.getSize().getZ() - 1);
-        Stream<BlockPos> blocks = BlockPos.betweenClosedStream(firstCorner, secondCorner);
-
-        if (ImpenConfig.SETTINGS.riftOverwriteBlocks()) {
-            blocks = blocks.filter(blockPos -> {
-                // Overwriting block entities is weird, and I don't want to mess with that
-                return spatialLevel.getBlockEntity(blockPos) == null;
-            });
-        }
-        else {
-            blocks = blocks.filter(blockPos -> {
-                final BlockState bs = spatialLevel.getBlockState(blockPos);
-                // Matrix frame blocks are used to fill the empty space in the allocated space, so we overwrite
-                // those
-                return bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block());
-            });
-        }
-        return blocks
-                // Need this call to freeze the MutableBlockPos that the iterator returns
-                .map(BlockPos::immutable)
-                .collect(Collectors.toList());
-    }
-
     private Supplier<Block> getBlockReplacer(final SpatialRiftCellData data, final int numBlocks, final Level level) {
-        final Set<Block> replacementBlocks;
-        final Block baseBlock;
-        final int effectivePrecision;
-        if (data.getInputs().size() > 0) {
-            replacementBlocks = data.getInputs();
-            baseBlock = data.getBaseBlock()
-                    // This shouldn't happen, I'm just being paranoid
-                    .orElseGet(() -> Blocks.MOSSY_COBBLESTONE);
-            effectivePrecision = data.getPrecision(level);
-        }
-        else {
-            // Special case: there are no inputs configured in the cell, so we get to simulate random rift space
-            replacementBlocks = Sets.newHashSet(
-                    ImpenRegistry.RIFT_SHARD_ORE.asBlock(),
-                    ImpenRegistry.RIFTSTONE.asBlock());
-            baseBlock = ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock();
-            effectivePrecision = 20;
+        final var baseRecipe = SpatialRiftManipulatorRecipeManager.getRecipe(level, data.getBaseBlock().get())
+                .orElseThrow(() -> {
+                    return new IllegalArgumentException("Missing recipe for base block " +
+                            data.getBaseBlock().get().getRegistryName().toString() + ", plot " + data.getPlotId());
+                });
+
+        // Replacement chance goes down slightly as plot size goes up, to account for the increased ability to add
+        // modifiers
+        double globalMod = 1.0 - ((1 - data.getTotalSlots()) * .05);
+        if (!data.isPlateClean()) {
+            // If there are already blocks in the cell, the replacement rate goes down, AND those blocks will
+            // effectively reduce the replacement pool
+            globalMod *= .5;
         }
 
-        final double replacementRatio = effectivePrecision / 100.0;
-        final List<Block> replacements = new ArrayList<>();
-        for (final Block replacementBlock : replacementBlocks) {
+        final double richnessMod = switch (data.getRichnessLevel()) {
+        case 0 -> 1.0;
+        case 1 -> 1.2;
+        case 2 -> 1.5;
+        case 3 -> 2.0;
+        default -> 2.0;
+        };
+
+        final double precisionMod = switch (data.getPrecisionLevel()) {
+        case 0 -> 1.0;
+        case 1 -> 0.9;
+        case 2 -> 0.6;
+        case 3 -> 0.2;
+        default -> 0.2;
+        };
+
+        final double multiblockMod = switch (data.getBoosts().size()) {
+        case 0 -> 1.0;
+        case 1 -> 0.9;
+        case 2 -> 0.7;
+        case 3 -> 0.6;
+        default -> 0.5;
+        };
+
+        final double baselineReplacementRate = globalMod * richnessMod * precisionMod * multiblockMod;
+        final double boostedReplacementRate = globalMod * richnessMod;
+
+        final Map<Block, Integer> boostSet = data.getBoosts().stream()
+                .collect(Collectors.toMap(BlockBoost::getBlock, BlockBoost::getCount));
+
+        final List<Block> replacementBlocks = new ArrayList<>();
+        baseRecipe.getBaseWeights().forEach((block, weight) -> {
+            // One weight here = 1 block per 4000 input blocks
+            final double convertedWeight = weight / 4000.0;
             final double randFactor = .2 - RAND.nextDouble(0.2);
-            final int replacementCount = (int)(numBlocks * (replacementRatio + randFactor));
-            for (int i = 0; i < replacementCount; i++) {
-                replacements.add(replacementBlock);
+
+            final double rateModifier;
+            if (boostSet.containsKey(block)) {
+                final double boostRate = switch (boostSet.get(block)) {
+                case 0 -> 1.0;
+                case 1 -> 1.5;
+                case 2 -> 2.2;
+                case 3 -> 3.0;
+                default -> 3.0;
+                };
+                rateModifier = boostedReplacementRate * boostRate;
             }
-        }
+            else {
+                rateModifier = baselineReplacementRate;
+            }
+
+            final double aggregateRate = convertedWeight * randFactor * rateModifier;
+            final int blockCount = (int)(aggregateRate * numBlocks);
+
+            for (int i = 0; i < blockCount; i++) {
+                replacementBlocks.add(block);
+            }
+        });
 
         // Fill in whatever's left with base blocks
-        while (replacements.size() < numBlocks) {
-            replacements.add(baseBlock);
+        while (replacementBlocks.size() < numBlocks) {
+            replacementBlocks.add(baseRecipe.getBaseBlock());
         }
 
         // Randomize the order so it doesn't come out all clumped up
-        Collections.shuffle(replacements);
+        Collections.shuffle(replacementBlocks);
 
-        return new SpatialRiftBlockSupplier(replacements);
+        return new SpatialRiftBlockSupplier(replacementBlocks);
     }
 
     private static class SpatialRiftBlockSupplier implements Supplier<Block> {

@@ -7,7 +7,6 @@ import java.util.Optional;
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
-import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipeManager;
 import com.tycherin.impen.util.AEPowerUtil;
 
 import appeng.api.inventories.InternalInventory;
@@ -133,7 +132,7 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
     }
 
     public Optional<AtmosphericCrystallizerRecipe> getRecipe() {
-        return AtmosphericCrystallizerRecipeManager.getRecipe(this.getLevel());
+        return AtmosphericCrystallizerRecipe.getRecipe(this.getLevel());
     }
 
     public int getWorkRate() {

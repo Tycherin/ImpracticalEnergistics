@@ -6,11 +6,13 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.core.definitions.AEItems;
-import lombok.Builder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.registries.RegistryObject;
 
 public class SpatialRiftSpawnerRecipeProvider {
 
@@ -24,36 +26,32 @@ public class SpatialRiftSpawnerRecipeProvider {
         helper.add(AEItems.SPATIAL_CELL128, ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM, 80);
     }
 
-    protected static class BuilderHelper {
+    @RequiredArgsConstructor
+    private static class BuilderHelper {
         private final Consumer<FinishedRecipe> consumer;
-
-        public BuilderHelper(final Consumer<FinishedRecipe> consumer) {
-            this.consumer = consumer;
-        }
 
         public void add(final ItemLike input, final ItemLike output, final int fuelCost) {
             final String recipeName = input.asItem().getRegistryName().getPath();
-            final FinishedRecipe result = RecipeArgs.builder()
-                    .recipeName(recipeName)
-                    .input(Ingredient.of(input))
-                    .output(output.asItem().getDefaultInstance())
-                    .fuelCost(fuelCost)
-                    .build().toRecipe();
-            consumer.accept(result);
+            final var recipe = new SpatialRiftSpawnerRecipe(null, Ingredient.of(input),
+                    output.asItem().getDefaultInstance(), fuelCost);
+            consumer.accept(new RealRecipe(recipeName, recipe));
         }
     }
 
-    @Builder
-    protected static class RecipeArgs {
-        private String recipeName;
-        private Ingredient input;
-        private ItemStack output;
-        @Builder.Default
-        private int fuelCost = -1;
+    private static class RealRecipe extends CustomRecipeResult<SpatialRiftSpawnerRecipe> {
 
-        public FinishedRecipe toRecipe() {
-            final var recipe = new SpatialRiftSpawnerRecipe(null, input, output, fuelCost);
-            return new CustomRecipeResult(recipeName, recipe);
+        public RealRecipe(final @NonNull String recipeName, @NonNull final SpatialRiftSpawnerRecipe data) {
+            super(recipeName, data);
+        }
+
+        @Override
+        public RecipeSerializer<?> getType() {
+            return SpatialRiftSpawnerRecipe.Serializer.INSTANCE;
+        }
+
+        @Override
+        protected RegistryObject<?> getRecipeHolder() {
+            return ImpenRegistry.SPATIAL_RIFT_SPAWNER_RECIPE_TYPE;
         }
     }
 }

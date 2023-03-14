@@ -430,7 +430,10 @@ public class ImpenRecipeProvider extends RecipeProvider {
         // Custom recipe categories
         new SpatialRiftSpawnerRecipeProvider().addRecipes(consumer);
         new SpatialRiftCollapserRecipeProvider().addRecipes(consumer);
-        new SpatialRiftManipulatorRecipeProvider().addRecipes(consumer);
+        new SpatialRiftManipulatorBaseBlockRecipeProvider().addRecipes(consumer);
+        new SpatialRiftManipulatorBlockWeightRecipeProvider().addRecipes(consumer);
+        new SpatialRiftManipulatorCraftingRecipeProvider().addRecipes(consumer);
+        new SpatialRiftManipulatorSpecialRecipeProvider().addRecipes(consumer);
 
         // TODO Add compatibility recipes with other mods (particularly Rift Alloy)
     }

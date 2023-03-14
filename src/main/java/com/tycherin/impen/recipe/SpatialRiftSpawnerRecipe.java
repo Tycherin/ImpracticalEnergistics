@@ -4,44 +4,33 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.annotate.NoSerialize;
+import com.tycherin.impen.util.GsonUtil;
 
-import appeng.datagen.providers.recipes.AE2RecipeProvider;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 @Getter
-public class SpatialRiftSpawnerRecipe implements SpecialBidirectionalRecipe {
+@AllArgsConstructor
+public class SpatialRiftSpawnerRecipe implements SpecialRecipe {
 
     public static final String RECIPE_TYPE_NAME = "spatial_rift_spawner";
 
-    @Getter
-    private final ResourceLocation id;
+    @NoSerialize
+    private ResourceLocation id;
 
-    private final Ingredient input;
-    private final ItemStack resultItem;
-    private final int fuelCost;
-
-    public SpatialRiftSpawnerRecipe(final ResourceLocation id, @NonNull final Ingredient input,
-            @NonNull final ItemStack resultItem, final int fuelCost) {
-        this.id = id;
-        this.input = input;
-        this.resultItem = resultItem;
-        if (fuelCost < 0) {
-            throw new IllegalArgumentException("Fuel cost must not be negative");
-        }
-        this.fuelCost = fuelCost;
-    }
+    private Ingredient input;
+    private ItemStack resultItem;
+    private int fuelCost;
 
     @Override
     public boolean matches(final Container container, final Level level) {
@@ -54,22 +43,8 @@ public class SpatialRiftSpawnerRecipe implements SpecialBidirectionalRecipe {
     }
 
     @Override
-    public void serializeRecipeData(final JsonObject json) {
-        this.getSerializer().toJson(this, json);
-    }
-
-    // ***
-    // Recipe boilerplate
-    // ***
-
-    @Override
     public SpatialRiftSpawnerRecipe.Serializer getSerializer() {
         return SpatialRiftSpawnerRecipe.Serializer.INSTANCE;
-    }
-
-    @Override
-    public String getRecipeTypeName() {
-        return RECIPE_TYPE_NAME;
     }
 
     @Override
@@ -78,7 +53,7 @@ public class SpatialRiftSpawnerRecipe implements SpecialBidirectionalRecipe {
     }
 
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
-            implements BidirectionalRecipeSerializer<SpatialRiftSpawnerRecipe> {
+            implements RecipeSerializer<SpatialRiftSpawnerRecipe> {
 
         public static final SpatialRiftSpawnerRecipe.Serializer INSTANCE = new SpatialRiftSpawnerRecipe.Serializer();
 
@@ -87,17 +62,9 @@ public class SpatialRiftSpawnerRecipe implements SpecialBidirectionalRecipe {
 
         @Override
         public SpatialRiftSpawnerRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
-            final Ingredient input = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input"));
-            final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
-            final int fuelCost = GsonHelper.getAsInt(json, "fuel_cost");
-            return new SpatialRiftSpawnerRecipe(recipeId, input, output, fuelCost);
-        }
-
-        @Override
-        public void toJson(final SpatialRiftSpawnerRecipe recipe, final JsonObject json) {
-            json.add("input", recipe.input.toJson());
-            json.add("output", AE2RecipeProvider.toJson(recipe.resultItem));
-            json.addProperty("fuel_cost", recipe.fuelCost);
+            final var recipe = GsonUtil.getStandardGson().fromJson(json, SpatialRiftSpawnerRecipe.class);
+            recipe.id = recipeId;
+            return recipe;
         }
 
         @Nullable

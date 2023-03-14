@@ -5,26 +5,26 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.recipe.SpatialRiftBaseRecipe;
-import com.tycherin.impen.util.ImpenIdUtil;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBaseBlockRecipe;
+import com.tycherin.impen.util.GsonUtil.MockBlock;
 
 import appeng.core.definitions.AEBlocks;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import lombok.NonNull;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.RegistryObject;
 
-public class SpatialRiftBaseRecipeProvider {
-    
+public class SpatialRiftManipulatorBaseBlockRecipeProvider {
+
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
-        final var recipes = List.of(
-                forBlock(Blocks.STONE)
+        List.of(
+                SpatialRiftBaseBlockData.builder()
+                        .block(Blocks.STONE)
                         .ingredientId(Items.STONE.getRegistryName().toString())
                         .ingredientCount(16)
                         .baseWeights(new MapBuilder()
@@ -55,7 +55,9 @@ public class SpatialRiftBaseRecipeProvider {
                                 .put("thermal:cinnabar_ore", 1)
                                 .build())
                         .build(),
-                forBlock(Blocks.DEEPSLATE)
+
+                SpatialRiftBaseBlockData.builder()
+                        .block(Blocks.DEEPSLATE)
                         .ingredientId(Items.DEEPSLATE.getRegistryName().toString())
                         .ingredientCount(16)
                         .baseWeights(new MapBuilder()
@@ -87,7 +89,9 @@ public class SpatialRiftBaseRecipeProvider {
                                 .put("thermal:deepslate_cinnabar_ore", 1)
                                 .build())
                         .build(),
-                forBlock(Blocks.NETHERRACK)
+
+                SpatialRiftBaseBlockData.builder()
+                        .block(Blocks.NETHERRACK)
                         .ingredientId(Items.NETHERRACK.getRegistryName().toString())
                         .ingredientCount(16)
                         .baseWeights(new MapBuilder()
@@ -99,7 +103,9 @@ public class SpatialRiftBaseRecipeProvider {
                                 .put("mysticalagriculture:soulium_ore", 90)
                                 .build())
                         .build(),
-                forBlock(ImpenRegistry.RIFTSTONE.asBlock())
+
+                SpatialRiftBaseBlockData.builder()
+                        .block(ImpenRegistry.RIFTSTONE.asBlock())
                         .ingredientId(ImpenRegistry.RIFTSTONE.asItem().getRegistryName().toString())
                         .ingredientCount(16)
                         .baseWeights(new MapBuilder()
@@ -107,72 +113,60 @@ public class SpatialRiftBaseRecipeProvider {
                                 .put(ImpenRegistry.RIFT_SHARD_ORE, 40)
                                 .put(ImpenRegistry.END_AMETHYST_ORE, 40)
                                 .build())
-                        .build());
-        recipes.forEach(data -> {
-            consumer.accept(new SpatialRiftBaseFinishedRecipe(data)); 
-        });
+                        .build())
+                .forEach(data -> {
+                    final String recipeName = data.block.getRegistryName().getPath();
+                    consumer.accept(new RecipeTemplate(recipeName, data));
+                });
     }
-    
-    private SpatialRiftBaseRecipe.RecipeData.RecipeDataBuilder forBlock(final Block block) {
-        return SpatialRiftBaseRecipe.RecipeData.builder()
-                .recipeName(block.getRegistryName().getPath())
-                .baseBlockId(block.getRegistryName().toString());
-    }
-    
+
     private static class MapBuilder {
-        private final ImmutableMap.Builder<String, Integer> builder = ImmutableMap.<String, Integer>builder();
-        
+        private final ImmutableMap.Builder<MockBlock, Integer> builder = ImmutableMap.<MockBlock, Integer>builder();
+
         public MapBuilder put(final appeng.core.definitions.BlockDefinition<?> blockDef, final Integer value) {
             return this.put(blockDef.block(), value);
         }
-        
+
         public MapBuilder put(final com.tycherin.impen.ImpenRegistry.BlockDefinition blockDef, final Integer value) {
             return this.put(blockDef.block(), value);
         }
-        
+
         public MapBuilder put(final Block block, final Integer value) {
             return this.put(block.getRegistryName().toString(), value);
         }
-        
+
         public MapBuilder put(final String blockId, final Integer value) {
-            builder.put(blockId, value);
+            builder.put(new MockBlock(blockId), value);
             return this;
         }
-        
-        public Map<String, Integer> build() {
-            return builder.build();
+
+        public Map<MockBlock, Integer> build() {
+            return Map.copyOf(builder.build());
         }
     }
 
-    @Getter
-    @RequiredArgsConstructor
-    public static class SpatialRiftBaseFinishedRecipe implements FinishedRecipe {
+    @Builder
+    public static record SpatialRiftBaseBlockData(
+            Block block,
+            String ingredientId,
+            Integer ingredientCount,
+            Map<MockBlock, Integer> baseWeights) {
+    }
 
-        private final SpatialRiftBaseRecipe.RecipeData data;
-        
-        @Override
-        public void serializeRecipeData(final JsonObject json) {
-            SpatialRiftBaseRecipe.Serializer.INSTANCE.toJson(data, json);
+    private static class RecipeTemplate extends CustomRecipeResult<SpatialRiftBaseBlockData> {
+
+        public RecipeTemplate(@NonNull final String recipeName, @NonNull final SpatialRiftBaseBlockData data) {
+            super(recipeName, data);
         }
 
         @Override
         public RecipeSerializer<?> getType() {
-            return SpatialRiftBaseRecipe.Serializer.INSTANCE;
+            return SpatialRiftManipulatorBaseBlockRecipe.Serializer.INSTANCE;
         }
 
         @Override
-        public ResourceLocation getId() {
-            return ImpenIdUtil.makeId(SpatialRiftBaseRecipe.RECIPE_TYPE_NAME + "/" + data.getRecipeName());
-        }
-
-        @Override
-        public JsonObject serializeAdvancement() {
-            return null;
-        }
-
-        @Override
-        public ResourceLocation getAdvancementId() {
-            return null;
+        protected RegistryObject<?> getRecipeHolder() {
+            return ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BASE_BLOCK_RECIPE_TYPE;
         }
     }
 }

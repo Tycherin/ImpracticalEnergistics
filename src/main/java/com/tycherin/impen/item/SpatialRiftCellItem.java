@@ -5,8 +5,8 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.logic.rift.SpatialRiftCellData;
 import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager;
-import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 
 import appeng.core.localization.GuiText;
 import appeng.core.localization.Tooltips;
@@ -36,7 +36,7 @@ public class SpatialRiftCellItem extends AEBaseItem {
                     ImpenRegistry.SPATIAL_RIFT_CELL_128_ITEM));
 
     public static final Ingredient getIngredient() {
-        return INGREDIENT.orElseThrow(() -> new RuntimeException("Problem creating rift cell ingredient"));
+        return INGREDIENT.resolve().get();
     }
 
     public static final SpatialRiftCellItem getMatchingCell(final SpatialStorageCellItem spatialCell) {
@@ -96,16 +96,42 @@ public class SpatialRiftCellItem extends AEBaseItem {
             final SpatialRiftCellData data = SpatialRiftCellDataManager.INSTANCE.getDataForPlot(plotId).get();
             final BlockPos size = data.getPlot().getSize();
             lines.add(Tooltips.of(GuiText.StoredSize, size.getX(), size.getY(), size.getZ()));
+            if (!data.isPlateClean()) {
+                lines.add(Tooltips.of("[!] Plot is not empty; output will be reduced [!]").withStyle(ChatFormatting.DARK_RED));
+            }
 
-            final String desc = String.format("%d of %d inputs added (%d%% precision)",
-                    data.getUsedSlots(), data.getMaxSlots(), data.getPrecision(level));
-            lines.add(Tooltips.of(desc));
-            
-            if (!data.getInputs().isEmpty()) {
-                final String inputDesc = data.getInputs().stream()
-                        .map(block -> block.asItem().getDefaultInstance().getHoverName().getString())
+            final StringBuilder description = new StringBuilder();
+            description.append(data.getUsedSlots())
+                    .append(" of ")
+                    .append(data.getTotalSlots())
+                    .append(" inputs added");
+            if (data.getPrecisionLevel() > 0) {
+                description.append("| Precision level ")
+                        .append(data.getPrecisionLevel());
+            }
+            if (data.getRichnessLevel() > 0) {
+                description.append("| Richness level ")
+                        .append(data.getRichnessLevel());
+            }
+            lines.add(Tooltips.of(description.toString()));
+
+            data.getBaseBlock().ifPresent(block -> {
+                lines.add(Tooltips.of("Base block:" + block.getName().getString()));
+            });
+
+            if (!data.getBoosts().isEmpty()) {
+                final String boostText = data.getBoosts().stream()
+                        .map(boost -> {
+                            final var blockName = boost.getBlock().getName().getString();
+                            if (boost.getCount() == 1) {
+                                return blockName;
+                            }
+                            else {
+                                return blockName + " x" + boost.getCount();
+                            }
+                        })
                         .collect(Collectors.joining(", "));
-                lines.add(Tooltips.of("Targeting: " + inputDesc));
+                lines.add(Tooltips.of("Targeting " + boostText));
             }
         }
     }

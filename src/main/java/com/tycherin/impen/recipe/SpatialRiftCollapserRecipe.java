@@ -2,39 +2,34 @@ package com.tycherin.impen.recipe;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.annotate.NoSerialize;
+import com.tycherin.impen.util.GsonUtil;
 
-import appeng.datagen.providers.recipes.AE2RecipeProvider;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 @Getter
-public class SpatialRiftCollapserRecipe implements SpecialBidirectionalRecipe {
+@AllArgsConstructor
+public class SpatialRiftCollapserRecipe implements SpecialRecipe {
 
-    public static final String RECIPE_TYPE_NAME = "spatial_rift_collapser";
-
-    private final ResourceLocation id;
-    private final Ingredient input;
-    private final ItemStack resultItem;
-
-    public SpatialRiftCollapserRecipe(final ResourceLocation id, @NonNull final Ingredient input,
-            @NonNull final ItemStack resultItem) {
-        this.id = id;
-        this.input = input;
-        this.resultItem = resultItem;
-    }
+    @NoSerialize
+    private ResourceLocation id;
+    private Ingredient input;
+    private ItemStack resultItem;
 
     @Override
     public boolean matches(final Container container, final Level level) {
@@ -47,15 +42,6 @@ public class SpatialRiftCollapserRecipe implements SpecialBidirectionalRecipe {
     }
 
     @Override
-    public void serializeRecipeData(final JsonObject json) {
-        this.getSerializer().toJson(this, json);
-    }
-
-    // ***
-    // Recipe boilerplate
-    // ***
-
-    @Override
     public SpatialRiftCollapserRecipe.Serializer getSerializer() {
         return SpatialRiftCollapserRecipe.Serializer.INSTANCE;
     }
@@ -65,30 +51,19 @@ public class SpatialRiftCollapserRecipe implements SpecialBidirectionalRecipe {
         return ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get();
     }
 
-    @Override
-    public String getRecipeTypeName() {
-        return RECIPE_TYPE_NAME;
-    }
-
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
-            implements BidirectionalRecipeSerializer<SpatialRiftCollapserRecipe> {
+            implements RecipeSerializer<SpatialRiftCollapserRecipe> {
 
         public static final SpatialRiftCollapserRecipe.Serializer INSTANCE = new SpatialRiftCollapserRecipe.Serializer();
 
-        private Serializer() {
-        }
+        private final Gson gson = GsonUtil.getStandardGson();
 
         @Override
         public SpatialRiftCollapserRecipe fromJson(final ResourceLocation recipeId, final JsonObject json) {
-            final Ingredient input = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "input"));
-            final ItemStack output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "output"));
-            return new SpatialRiftCollapserRecipe(recipeId, input, output);
-        }
-
-        @Override
-        public void toJson(final SpatialRiftCollapserRecipe recipe, final JsonObject json) {
-            json.add("input", recipe.input.toJson());
-            json.add("output", AE2RecipeProvider.toJson(recipe.resultItem));
+            final var recipe = gson.fromJson(json, SpatialRiftCollapserRecipe.class);
+            recipe.id = recipeId;
+            return recipe;
         }
 
         @Nullable

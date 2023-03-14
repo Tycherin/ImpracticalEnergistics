@@ -6,9 +6,9 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.logic.rift.SpatialRiftCellData;
 import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager;
 import com.tycherin.impen.logic.rift.SpatialRiftSpawnerFuelHelper;
-import com.tycherin.impen.logic.rift.SpatialRiftCellDataManager.SpatialRiftCellData;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 import com.tycherin.impen.util.ManagedOutputInventory;
 import com.tycherin.impen.util.SpatialRiftUtil;
@@ -18,6 +18,8 @@ import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.items.storage.SpatialStorageCellItem;
+import appeng.spatial.SpatialStoragePlot;
+import appeng.spatial.SpatialStoragePlotManager;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.CombinedInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
@@ -145,7 +147,8 @@ public class SpatialRiftSpawnerBlockEntity extends MachineBlockEntity {
         final ItemStack is = new ItemStack(
                 SpatialRiftCellItem.getMatchingCell((SpatialStorageCellItem)inputItem.getItem()));
         ((SpatialRiftCellItem)is.getItem()).setPlotId(is, plotId);
-        SpatialRiftCellDataManager.INSTANCE.putDataForPlot(new SpatialRiftCellData(plotId));
+        final SpatialStoragePlot plot = SpatialStoragePlotManager.INSTANCE.getPlot(plotId);
+        SpatialRiftCellDataManager.INSTANCE.putDataForPlot(new SpatialRiftCellData(plot));
 
         return is;
     }

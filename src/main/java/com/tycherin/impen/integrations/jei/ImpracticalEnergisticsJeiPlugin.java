@@ -1,5 +1,6 @@
 package com.tycherin.impen.integrations.jei;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,8 +78,14 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.get()));
         registry.addRecipes(SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE,
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.get()));
-        registry.addRecipes(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE,
-                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.get()));
+
+        // We want all of these to appear under a single category
+        final List<SpatialRiftManipulatorRecipe> srmRecipes = new ArrayList<>();
+        srmRecipes.addAll(recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BASE_BLOCK_RECIPE_TYPE.get())); // TOOD Maybe this one should be separate?
+        srmRecipes.addAll(recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_SPECIAL_RECIPE_TYPE.get()));
+        srmRecipes.addAll(recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BLOCK_WEIGHT_RECIPE_TYPE.get()));
+        srmRecipes.addAll(recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_CRAFTING_RECIPE_TYPE.get()));
+        registry.addRecipes(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE, srmRecipes);
 
         ITEMS_WITH_DESCRIPTION.forEach(item -> {
             final String translationKey = "jei.impracticalenergistics.description."

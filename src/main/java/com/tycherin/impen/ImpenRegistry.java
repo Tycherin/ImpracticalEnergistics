@@ -34,9 +34,11 @@ import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
-import com.tycherin.impen.recipe.SpatialRiftBaseRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
-import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBaseBlockRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBlockWeightRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorSpecialRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
 import appeng.api.upgrades.Upgrades;
@@ -267,35 +269,28 @@ public class ImpenRegistry {
             AEItems.SPATIAL_CELL128);
 
     // Custom recipe types
+    //@formatter:off
     public static final RegistryObject<RecipeType<AtmosphericCrystallizerRecipe>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE = ImpenRegistry
-            .<AtmosphericCrystallizerRecipe>makeRecipeType(AtmosphericCrystallizerRecipe.RECIPE_TYPE_NAME);
-    public static final RegistryObject<RecipeSerializer<?>> ATMOSPHERIC_CRYSTALLIZER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(ATMOSPHERIC_CRYSTALLIZER_RECIPE_TYPE.getId().getPath(),
-                    () -> AtmosphericCrystallizerRecipe.Serializer.INSTANCE);
+            .makeRecipeType("atmospheric_crystallizer", AtmosphericCrystallizerRecipe.Serializer.INSTANCE);
 
     public static final RegistryObject<RecipeType<SpatialRiftSpawnerRecipe>> SPATIAL_RIFT_SPAWNER_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftSpawnerRecipe>makeRecipeType(SpatialRiftSpawnerRecipe.RECIPE_TYPE_NAME);
-    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_SPAWNER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(SPATIAL_RIFT_SPAWNER_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftSpawnerRecipe.Serializer.INSTANCE);
-    
+            .makeRecipeType("spatial_rift_spawner", SpatialRiftSpawnerRecipe.Serializer.INSTANCE);
+
     public static final RegistryObject<RecipeType<SpatialRiftCollapserRecipe>> SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftCollapserRecipe>makeRecipeType(SpatialRiftCollapserRecipe.RECIPE_TYPE_NAME);
-    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_COLLAPSER_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(SPATIAL_RIFT_COLLAPSER_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftCollapserRecipe.Serializer.INSTANCE);
+            .makeRecipeType("spatial_rift_collapser", SpatialRiftCollapserRecipe.Serializer.INSTANCE);
 
-    public static final RegistryObject<RecipeType<SpatialRiftManipulatorRecipe>> SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftManipulatorRecipe>makeRecipeType(SpatialRiftManipulatorRecipe.RECIPE_TYPE_NAME);
-    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_MANIPULATOR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(SPATIAL_RIFT_MANIPULATOR_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftManipulatorRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeType<SpatialRiftManipulatorBaseBlockRecipe>> SPATIAL_RIFT_MANIPULATOR_BASE_BLOCK_RECIPE_TYPE = ImpenRegistry
+            .makeRecipeType("spatial_rift_manipulator_base", SpatialRiftManipulatorBaseBlockRecipe.Serializer.INSTANCE);
 
-    public static final RegistryObject<RecipeType<SpatialRiftBaseRecipe>> SPATIAL_RIFT_BASE_RECIPE_TYPE = ImpenRegistry
-            .<SpatialRiftBaseRecipe>makeRecipeType(SpatialRiftBaseRecipe.RECIPE_TYPE_NAME);
-    public static final RegistryObject<RecipeSerializer<?>> SPATIAL_RIFT_BASE_RECIPE_SERIALIZER = RECIPE_SERIALIZERS
-            .register(SPATIAL_RIFT_BASE_RECIPE_TYPE.getId().getPath(),
-                    () -> SpatialRiftBaseRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeType<SpatialRiftManipulatorBlockWeightRecipe>> SPATIAL_RIFT_MANIPULATOR_BLOCK_WEIGHT_RECIPE_TYPE = ImpenRegistry
+            .makeRecipeType("spatial_rift_manipulator_weight", SpatialRiftManipulatorBlockWeightRecipe.Serializer.INSTANCE);
+
+    public static final RegistryObject<RecipeType<SpatialRiftManipulatorCraftingRecipe>> SPATIAL_RIFT_MANIPULATOR_CRAFTING_RECIPE_TYPE = ImpenRegistry
+            .makeRecipeType("spatial_rift_manipulator_crafting", SpatialRiftManipulatorCraftingRecipe.Serializer.INSTANCE);
+
+    public static final RegistryObject<RecipeType<SpatialRiftManipulatorSpecialRecipe>> SPATIAL_RIFT_MANIPULATOR_SPECIAL_RECIPE_TYPE = ImpenRegistry
+            .makeRecipeType("spatial_rift_manipulator_special", SpatialRiftManipulatorSpecialRecipe.Serializer.INSTANCE);
+    //@formatter:on
 
     // Particles
     public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_DAMAGE_PARTICLE = PARTICLES
@@ -363,14 +358,16 @@ public class ImpenRegistry {
     public static ItemDefinition makeRiftCellItem(final String name, final ItemLike originalItem) {
         return makeItem(name, () -> new SpatialRiftCellItem(getItemProps(), originalItem));
     }
-
-    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key) {
-        return RECIPE_TYPES.register(key, () -> new RecipeType<T>() {
+    
+    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key, final RecipeSerializer<T> serializer) {
+        final RegistryObject<RecipeType<T>> recipeType = RECIPE_TYPES.register(key, () -> new RecipeType<T>() {
             @Override
             public String toString() {
                 return key;
             }
         });
+        RECIPE_SERIALIZERS.register(recipeType.getId().getPath(), () -> serializer);
+        return recipeType;
     }
 
     private static BlockDefinition makeCustomBlock(final String name, final Supplier<Block> sup) {

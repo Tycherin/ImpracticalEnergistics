@@ -39,13 +39,13 @@ public class AtmosphericCrystallizerRecipeCategory implements IRecipeCategory<At
     public void setRecipe(final IRecipeLayoutBuilder layoutBuilder, final AtmosphericCrystallizerRecipe recipe,
             final IFocusGroup focusGroup) {
         final ItemStack fakeIs = ImpenRegistry.FAKE_DIMENSION_PLACEHOLDER.asItem().getDefaultInstance();
-        final Component dimensionName = new TranslatableComponent("dimension." + recipe.getDimensionKey());
+        final Component dimensionName = new TranslatableComponent("dimension." + recipe.getDimension());
         fakeIs.setHoverName(dimensionName);
         layoutBuilder.addSlot(RecipeIngredientRole.RENDER_ONLY, 10, 23)
                 .addItemStack(fakeIs);
 
         layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 48, 23)
-                .addItemStack(recipe.getResultItem());
+                .addItemStack(recipe.getResult());
     }
 
     @Override

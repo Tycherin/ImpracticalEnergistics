@@ -23,6 +23,11 @@ public class RegistryUtil {
                 .orElseThrow(() -> new JsonSyntaxException(String.format("Unknown block '%s'", jsonKey)));
     }
 
+    public static Block getBlock(final String registryId) {
+        return RegistryUtil.getBlockOptional(registryId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown block '%s'", registryId)));
+    }
+
     public static Optional<Block> getBlockOptional(final JsonObject jsonObject) {
         return RegistryUtil.getBlockOptional(jsonObject, "block");
     }
@@ -52,6 +57,11 @@ public class RegistryUtil {
     public static Item getItem(final JsonObject jsonObject, final String jsonKey) {
         return RegistryUtil.getItemOptional(GsonHelper.getAsString(jsonObject, jsonKey))
                 .orElseThrow(() -> new JsonSyntaxException(String.format("Unknown item '%s'", jsonKey)));
+    }
+
+    public static Item getItem(final String registryId) {
+        return RegistryUtil.getItemOptional(registryId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown item '%s'", registryId)));
     }
 
     public static Optional<Item> getItemOptional(final String registryId) {
