@@ -137,7 +137,7 @@ public class ImpenConfig {
             return psdWorkRate.get();
         }
 
-        public boolean riftOverwriteBlocks() {
+        public boolean canSRCOverwriteBlocks() {
             return riftOverwrite.get();
         }
     }

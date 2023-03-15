@@ -70,7 +70,7 @@ public class SpatialRiftUtil {
     /**
      * @return A stream of all BlockPos that can be interacted with
      */
-    private static Stream<BlockPos> getEligibleBlocks(final SpatialStoragePlot plot) {
+    public static Stream<BlockPos> getEligibleBlocks(final SpatialStoragePlot plot) {
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         return getAllBlocks(plot)
                 .filter(blockPos -> spatialLevel.getBlockEntity(blockPos) != null);
@@ -98,5 +98,10 @@ public class SpatialRiftUtil {
                     final BlockState bs = spatialLevel.getBlockState(blockPos);
                     return bs.isAir() || bs.getBlock().equals(AEBlocks.MATRIX_FRAME.block());
                 });
+    }
+
+    public static boolean isPlateClean(final SpatialStoragePlot plot) {
+        // Plate is clean iff there are no replaceable blocks in the plot already
+        return getExistingBlocks(plot).findAny().isEmpty();
     }
 }

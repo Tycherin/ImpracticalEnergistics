@@ -52,10 +52,9 @@ public class SpatialRiftCellData {
     public SpatialRiftCellData(final SpatialStoragePlot plot) {
         this(plot.getId(),
                 plot.getSize().getX() * plot.getSize().getY() * plot.getSize().getZ(),
-                // Plate is clean iff there are no replaceable blocks in the plot already
-                SpatialRiftUtil.getExistingBlocks(plot).findAny().isEmpty());
+                SpatialRiftUtil.isPlateClean(plot));
     }
-
+    
     public SpatialRiftCellData(final int plotId, final int blockCount, final boolean isPlateClean) {
         this.plotId = plotId;
         this.blockCount = blockCount;

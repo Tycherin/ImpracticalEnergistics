@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.rift.SpatialRiftCellData.BlockBoost;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.SpatialRiftUtil;
@@ -23,10 +25,18 @@ public class SpatialRiftCollapserLogic {
     private static final Random RAND = new Random();
 
     public void addBlocksToPlot(final SpatialStoragePlot plot, final SpatialRiftCellData data, final Level level) {
-        final List<BlockPos> blocksToReplace = SpatialRiftUtil.getClearBlocks(plot)
+        final Stream<BlockPos> blocksToReplaceStream = ImpenConfig.SETTINGS.canSRCOverwriteBlocks()
+                ? SpatialRiftUtil.getEligibleBlocks(plot)
+                : SpatialRiftUtil.getClearBlocks(plot);
+        final List<BlockPos> blocksToReplace = blocksToReplaceStream
                 // Need this call to freeze the MutableBlockPos that the iterator returns
                 .map(BlockPos::immutable)
                 .collect(Collectors.toList());
+
+        if (blocksToReplace.size() == 0) {
+            return;
+        }
+
         final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size(), level);
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
 
@@ -45,7 +55,8 @@ public class SpatialRiftCollapserLogic {
         // Replacement chance goes down slightly as plot size goes up, to account for the increased ability to add
         // modifiers
         double globalMod = 1.0 - ((1 - data.getTotalSlots()) * .05);
-        if (!data.isPlateClean()) {
+        // Recompute isPlateClean here in case things have changed since the cell was created
+        if (SpatialRiftUtil.isPlateClean(data.getPlot())) {
             // If there are already blocks in the cell, the replacement rate goes down, AND those blocks will
             // effectively reduce the replacement pool
             globalMod *= .5;
