@@ -26,4 +26,9 @@ public class AEPowerUtil {
             return false;
         }
     }
+
+    /** @return True if the desired amount of power was extracted; false otherwise */
+    public static boolean checkPowerDraw(final double desiredAmount, final double actualAmount) {
+        return desiredAmount - actualAmount < FLOATING_POINT_MATH_HELPER;
+    }
 }

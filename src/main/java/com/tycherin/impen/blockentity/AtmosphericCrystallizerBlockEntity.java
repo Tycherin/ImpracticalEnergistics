@@ -9,6 +9,9 @@ import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.util.AEPowerUtil;
 
+import appeng.api.config.Actionable;
+import appeng.api.config.PowerMultiplier;
+import appeng.api.config.PowerUnits;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
@@ -51,6 +54,7 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
                 this::saveChanges);
         this.baseProgressTicks = ImpenConfig.SETTINGS.atmosphericCrystallizerWorkRate();
         this.basePowerDraw = ImpenConfig.POWER.atmosphericCrystallizerCost();
+        this.setInternalMaxPower(this.basePowerDraw * 20 * 5);
     }
 
     @Override
@@ -80,14 +84,16 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
             return TickRateModulation.SLEEP;
         }
 
-        // Attempt to extract power
-        final var workTicks = ticksSinceLastCall * this.getWorkRate();
-        final var powerDesired = this.basePowerDraw * workTicks;
-        if (AEPowerUtil.drawPower(this, powerDesired)) {
-            this.progress += workTicks;
+        // Check operation progress
+        if (this.progress <= this.baseProgressTicks) {
+            // Attempt to extract power
+            final var workTicks = ticksSinceLastCall * this.getWorkRate();
+            final var powerDesired = this.basePowerDraw * workTicks;
+            if (AEPowerUtil.checkPowerDraw(powerDesired, this.extractAEPower(powerDesired, Actionable.MODULATE))) {
+                this.progress += workTicks;
+            }
         }
-
-        if (this.progress > this.baseProgressTicks) {
+        else /* if (this.progress > this.baseProgressTicks) */ {
             final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResult());
             if (leftover.equals(ItemStack.EMPTY)) {
                 this.progress = 0;
@@ -99,6 +105,20 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
             }
         }
 
+        // Charge from grid
+        if (this.getInternalCurrentPower() < this.getAEMaxPower() - 1) {
+            this.getMainNode().ifPresent(grid -> {
+                final double desiredChargeAmount = Math.min(
+                        this.getWorkRate() * this.basePowerDraw * 3,
+                        this.getInternalMaxPower() - this.getInternalCurrentPower());
+
+                final double actualChargeAmount = grid.getEnergyService()
+                        .extractAEPower(desiredChargeAmount, Actionable.MODULATE, PowerMultiplier.ONE);
+
+                this.injectExternalPower(PowerUnits.AE, actualChargeAmount, Actionable.MODULATE);
+            });
+        }
+
         return TickRateModulation.SAME;
     }
 
@@ -107,7 +127,7 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
     }
 
     public int getProgress() {
-        return this.progress;
+        return Math.min(this.progress, getMaxProgress());
     }
 
     public int getMaxProgress() {
