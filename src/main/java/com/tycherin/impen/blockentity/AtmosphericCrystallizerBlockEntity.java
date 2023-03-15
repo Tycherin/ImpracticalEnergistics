@@ -105,7 +105,7 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
         }
 
         if (this.progress > this.baseProgressTicks) {
-            final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResultItem());
+            final ItemStack leftover = this.inv.addItems(this.getRecipe().get().getResult());
             if (leftover.equals(ItemStack.EMPTY)) {
                 this.progress = 0;
             }

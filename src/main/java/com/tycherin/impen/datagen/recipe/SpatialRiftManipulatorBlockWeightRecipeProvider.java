@@ -75,7 +75,6 @@ public class SpatialRiftManipulatorBlockWeightRecipeProvider {
         helper.addRecipe(Items.GLOWSTONE, ImpenRegistry.NETHER_GLOWSTONE_ORE.asBlock());
         helper.addRecipe(Items.NETHERITE_INGOT, ImpenRegistry.NETHER_DEBRIS_ORE.asBlock());
         helper.addRecipe(Items.AMETHYST_BLOCK, ImpenRegistry.END_AMETHYST_ORE.asBlock());
-        helper.addRecipe(Items.MUSHROOM_STEW, ImpenRegistry.MUSHROOM_DIRT.asBlock());
 
         // And now, a big pile of recipes for modded compatibility
         // The fact that this works is kind of impressive

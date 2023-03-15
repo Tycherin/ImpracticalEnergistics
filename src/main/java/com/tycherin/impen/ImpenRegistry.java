@@ -253,7 +253,6 @@ public class ImpenRegistry {
     public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore");
     public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore");
     public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore");
-    public static final BlockDefinition MUSHROOM_DIRT = makeBasicBlock("mushroom_dirt", Material.DIRT);
     
     // Special items
     public static final ItemDefinition LUNCHBOX_CELL_ITEM = makeItem("lunchbox_cell", LunchboxCellItem::new);

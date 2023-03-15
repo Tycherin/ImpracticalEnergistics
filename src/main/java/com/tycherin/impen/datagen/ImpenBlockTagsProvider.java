@@ -2,7 +2,6 @@ package com.tycherin.impen.datagen;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.tycherin.impen.ImpenRegistry;
 
 import net.minecraft.data.DataGenerator;
@@ -54,8 +53,7 @@ public class ImpenBlockTagsProvider extends BlockTagsProvider {
     }
     
     private void addEffectiveTags() {
-        final Map<Block, TagKey<Block>> overrides = ImmutableMap.of(
-                ImpenRegistry.MUSHROOM_DIRT.asBlock(), BlockTags.MINEABLE_WITH_SHOVEL);
+        final Map<Block, TagKey<Block>> overrides = Map.of();
         final TagKey<Block> defaultTag = BlockTags.MINEABLE_WITH_PICKAXE;
         
         ImpenRegistry.getRegisteredBlocks().forEach(blockLike -> {
