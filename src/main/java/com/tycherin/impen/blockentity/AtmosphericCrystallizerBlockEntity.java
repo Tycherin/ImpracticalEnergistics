@@ -45,29 +45,12 @@ public class AtmosphericCrystallizerBlockEntity extends AENetworkPowerBlockEntit
         super(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.blockEntity(), pos, blockState);
 
         this.getMainNode()
-                .addService(IGridTickable.class, this);
+                .addService(IGridTickable.class, this)
+                .setExposedOnSides(EnumSet.complementOf(EnumSet.of(Direction.UP)));
         this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER.item(), 3,
                 this::saveChanges);
         this.baseProgressTicks = ImpenConfig.SETTINGS.atmosphericCrystallizerWorkRate();
         this.basePowerDraw = ImpenConfig.POWER.atmosphericCrystallizerCost();
-    }
-
-    @Override
-    public void onReady() {
-        super.onReady();
-        this.setOrientationFromState();
-    }
-
-    @Override
-    public void setOrientation(final Direction inForward, final Direction inUp) {
-        super.setOrientation(inForward, inUp);
-        this.setOrientationFromState();
-    }
-
-    private void setOrientationFromState() {
-        final var exposedSides = EnumSet.of(this.getForward().getOpposite());
-        this.getMainNode().setExposedOnSides(exposedSides);
-        this.setPowerSides(exposedSides);
     }
 
     @Override
