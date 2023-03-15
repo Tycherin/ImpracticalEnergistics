@@ -53,6 +53,7 @@ public class SpatialRiftManipulatorBlockWeightRecipeProvider {
         helper.addRecipe(Items.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE);
         helper.addRecipe(Items.DIAMOND_BLOCK, Blocks.DEEPSLATE_DIAMOND_ORE);
 
+        helper.addRecipe(Items.NETHER_QUARTZ_ORE, Blocks.NETHER_QUARTZ_ORE);
         helper.addRecipe(Items.QUARTZ_BLOCK, Blocks.NETHER_QUARTZ_ORE);
         helper.addRecipe(Items.DAYLIGHT_DETECTOR, Blocks.NETHER_QUARTZ_ORE);
 
