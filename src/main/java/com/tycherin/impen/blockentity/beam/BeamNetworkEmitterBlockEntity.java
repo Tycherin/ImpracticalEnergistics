@@ -49,7 +49,7 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
                 .setExposedOnSides(EnumSet.noneOf(Direction.class))
                 .setFlags(); // force to not require a channel
 
-        this.basePower = ImpenConfig.POWER.beamedNetworkLinkCost();
+        this.basePower = ImpenConfig.POWER.beamedNetworkEmitterCost();
     }
 
     @Override

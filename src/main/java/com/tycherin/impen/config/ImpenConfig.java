@@ -63,8 +63,8 @@ public class ImpenConfig {
                     .defineInRange("global_power_modifier", 1.0, 0.0, 100.0);
 
             builder.comment("Power consumption for various machines are defined below. Units are AE.");
-            this.bnl = builder.comment("Beamed Network Link consumption per tick while active")
-                    .defineInRange("beamed_network_link", 10, 0, Integer.MAX_VALUE);
+            this.bnl = builder.comment("Beamed Network Emitter consumption per tick while active")
+                    .defineInRange("beamed_network_emitter", 10, 0, Integer.MAX_VALUE);
             this.srs = builder.comment("Spatial Rift Spawner consumption per tick")
                     .defineInRange("spatial_rift_spawner", 40, 0, Integer.MAX_VALUE);
             this.srm = builder.comment("Spatial Rift Manipulator consumption per tick")
@@ -79,7 +79,7 @@ public class ImpenConfig {
                     .defineInRange("atmospheric_crystallizer_operation", 10, 0, Integer.MAX_VALUE);
         }
 
-        public double beamedNetworkLinkCost() {
+        public double beamedNetworkEmitterCost() {
             return bnl.get() * globalModifier.get();
         }
 
@@ -115,14 +115,14 @@ public class ImpenConfig {
         private final BooleanValue riftOverwrite;
 
         public MachineSettings(final Builder builder) {
-            this.bnlRange = builder.comment("Connection range for the Beamed Network Link block")
-                    .defineInRange("beamed_network_link_range", 16, 2, 64);
+            this.bnlRange = builder.comment("Default connection range for Beamed Network blocks")
+                    .defineInRange("beamed_network_range", 16, 4, 64);
             this.atmWorkRate = builder.comment("Base number of ticks for each Atmospheric Crystallizer operation")
                     .defineInRange("atmospheric_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
             this.psdWorkRate = builder.comment("Base number of ticks for each Possibility Disintegrator operation")
                     .defineInRange("possibility_disintegrator_work_rate", 40, 1, Integer.MAX_VALUE);
-            this.riftOverwrite = builder.comment("If true, the SpatialRiftCollapser machine will overwrite existing blocks in spatial storage")
-                    .define("srs_overwrite_blocks", false);
+            this.riftOverwrite = builder.comment("If true, the Spatial Rift Collapser can overwrite existing blocks in spatial storage")
+                    .define("spatial_rift_overwrite_blocks", false);
         }
 
         public int beamedNetworkLinkRange() {
