@@ -107,10 +107,6 @@ public class ImpenLootProvider extends LootTableProvider {
                                 .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
                                 .apply(LimitCount.limitCount(IntRange.range(1, 4)))));
             });
-            this.add(ImpenRegistry.NETHER_DEBRIS_ORE.block(), (block) -> {
-                // TODO Change this to produce Tiny Scrap instead
-                return createOreDrop(block, Items.NETHERITE_SCRAP);
-            });
             this.add(ImpenRegistry.END_AMETHYST_ORE.block(), (block) -> {
                 return createSilkTouchDispatchTable(block,
                         applyExplosionDecay(block, LootItem.lootTableItem(Items.AMETHYST_SHARD)

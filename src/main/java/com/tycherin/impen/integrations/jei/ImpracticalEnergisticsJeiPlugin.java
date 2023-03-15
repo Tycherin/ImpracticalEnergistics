@@ -63,7 +63,8 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             ImpenRegistry.FAKE_DIMENSION_PLACEHOLDER,
             // Currently unused & unavailable
             ImpenRegistry.RIFT_ALLOY_INGOT,
-            ImpenRegistry.RIFT_ALLOY_BLOCK);
+            ImpenRegistry.RIFT_ALLOY_BLOCK,
+            ImpenRegistry.NETHER_DEBRIS_ORE);
 
     @Override
     public ResourceLocation getPluginUid() {
