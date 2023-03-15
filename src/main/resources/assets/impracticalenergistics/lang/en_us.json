@@ -79,6 +79,11 @@
     "gui.impracticalenergistics.jei.src_recipe_title": "Spatial Rift Collapsing",
     "gui.impracticalenergistics.jei.srm_recipe_title": "Spatial Rift Manipulation",
     
+    "gui.impracticalenergistics.tooltip.disintegrator_capsule_luck": "Improves odds of other capsule effects",
+    "gui.impracticalenergistics.tooltip.disintegrator_capsule_loot": "Causes trapped mobs to drop more items",
+    "gui.impracticalenergistics.tooltip.disintegrator_capsule_egg": "Gives a chance for trapped mobs to drop spawn eggs on death",
+    "gui.impracticalenergistics.tooltip.disintegrator_capsule_player_kill": "Causes trapped mobs to drop player kill-only loot",
+    
     "dimension.minecraft:overworld": "Dimension: Overworld",
     "dimension.minecraft:the_nether": "Dimension: The Nether",
     "dimension.minecraft:the_end": "Dimension: The End",

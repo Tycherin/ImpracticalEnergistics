@@ -32,6 +32,7 @@ import com.tycherin.impen.client.particle.DisintegratorDamageParticle;
 import com.tycherin.impen.client.particle.DisintegratorLockParticle;
 import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
+import com.tycherin.impen.item.StaticTooltipItem;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
@@ -205,10 +206,10 @@ public class ImpenRegistry {
     public static final ItemDefinition RIFT_ALLOY_INGOT = makeItem("rift_alloy_ingot");
 
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem(
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItemWithTooltip("disintegrator_capsule_luck");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItemWithTooltip("disintegrator_capsule_loot");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItemWithTooltip("disintegrator_capsule_egg");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItemWithTooltip(
             "disintegrator_capsule_player_kill");
 
     public static final ItemDefinition CIRCUIT_QUANTIZED = makeItem("circuit_quantized");
@@ -347,6 +348,10 @@ public class ImpenRegistry {
 
     public static ItemDefinition makeItem(final String name) {
         return makeItem(name, Item::new);
+    }
+
+    public static ItemDefinition makeItemWithTooltip(final String name) {
+        return makeItem(name, StaticTooltipItem::new);
     }
 
     public static ItemDefinition makeItem(final String name, final Supplier<Item> sup) {
