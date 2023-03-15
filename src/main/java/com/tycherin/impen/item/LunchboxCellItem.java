@@ -23,7 +23,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -37,18 +36,33 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LunchboxCellItem extends Item implements IBasicCellItem {
 
-    public LunchboxCellItem() {
-        super(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
+    public LunchboxCellItem(final Item.Properties props) {
+        super(props);
     }
 
     // TODO Change item model when food is available vs. not
 
+    @Override
     public InteractionResultHolder<ItemStack> use(final Level level, final Player player, final InteractionHand hand) {
         final ItemStack lunchIs = player.getItemInHand(hand);
         final Optional<ItemStack> storedIs = this.getStoredItemStack(lunchIs);
-        return storedIs.isPresent() ? storedIs.get().use(level, player, hand) : InteractionResultHolder.pass(lunchIs);
+        
+        // Adapted from Item#use
+        if (storedIs.isPresent()) {
+            if (player.canEat(storedIs.get().getFoodProperties(player).canAlwaysEat())) {
+                player.startUsingItem(hand);
+                return InteractionResultHolder.consume(lunchIs);
+            }
+            else {
+                return InteractionResultHolder.fail(lunchIs);
+            }
+        }
+        else {
+            return InteractionResultHolder.pass(lunchIs);
+        }
     }
 
+    @Override
     public ItemStack finishUsingItem(final ItemStack is, final Level level, final LivingEntity entity) {
         final StorageCell storCell = StorageCells.getCellInventory(is, null);
         final KeyCounter storedItems = storCell.getAvailableStacks();
