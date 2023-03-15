@@ -19,14 +19,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.LimitCount;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 public class ImpenLootProvider extends LootTableProvider {
 
@@ -60,6 +65,7 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.EJECTION_DRIVE.block());
             this.dropSelf(ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK.block());
             this.dropSelf(ImpenRegistry.POSSIBILITY_DISINTEGRATOR.block());
+            this.dropSelf(ImpenRegistry.RIFT_ALLOY_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFT_SHARD_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE_STAIRS.block());
@@ -70,14 +76,13 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_COLLAPSER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_SPAWNER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.block());
-            this.dropSelf(ImpenRegistry.RIFT_ALLOY_BLOCK.block());
 
             this.add(ImpenRegistry.RIFTSTONE_SLAB.asBlock(), BlockLoot::createSlabItemTable);
             this.add(ImpenRegistry.RIFTSTONE_BRICK_SLAB.asBlock(), BlockLoot::createSlabItemTable);
             this.add(ImpenRegistry.SMOOTH_RIFTSTONE_SLAB.asBlock(), BlockLoot::createSlabItemTable);
 
-            // Give Unstable Riftstone a chance to drop Riftstone Dust when broken, but nothing else
             this.add(ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock(), (block) -> {
+                // Has a chance to drop Riftstone Dust when broken, but nothing else
                 final var lootItem = LootItem.lootTableItem(ImpenRegistry.RIFTSTONE_DUST.asItem())
                         .when(BonusLevelTableCondition.bonusLevelFlatChance(
                                 Enchantments.BLOCK_FORTUNE, 0.1F, 0.14285715F, 0.25F, 1.0F));
@@ -88,20 +93,29 @@ public class ImpenLootProvider extends LootTableProvider {
             });
 
             this.add(ImpenRegistry.RIFT_SHARD_ORE.block(), (block) -> {
-                // TODO This should drop more
-                return createOreDrop(block, ImpenRegistry.RIFT_SHARD.asItem());
+                return createSilkTouchDispatchTable(block,
+                        applyExplosionDecay(block, LootItem.lootTableItem(ImpenRegistry.RIFT_SHARD.asItem())
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
+                                .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
+                                .apply(LimitCount.limitCount(IntRange.range(1, 4)))));
             });
             this.add(ImpenRegistry.NETHER_GLOWSTONE_ORE.block(), (block) -> {
-                // TODO This should probably be... different
-                return createOreDrop(block, Items.GLOWSTONE_DUST);
+                // Nerfed version of the actual Glowstone drop table
+                return createSilkTouchDispatchTable(block,
+                        applyExplosionDecay(block, LootItem.lootTableItem(Items.GLOWSTONE_DUST)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
+                                .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))
+                                .apply(LimitCount.limitCount(IntRange.range(1, 4)))));
             });
             this.add(ImpenRegistry.NETHER_DEBRIS_ORE.block(), (block) -> {
-                // TODO This should probably be nerfed
+                // TODO Change this to produce Tiny Scrap instead
                 return createOreDrop(block, Items.NETHERITE_SCRAP);
             });
             this.add(ImpenRegistry.END_AMETHYST_ORE.block(), (block) -> {
-                // TODO This should probably be buffed?
-                return createOreDrop(block, Items.AMETHYST_SHARD);
+                return createSilkTouchDispatchTable(block,
+                        applyExplosionDecay(block, LootItem.lootTableItem(Items.AMETHYST_SHARD)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE))));
             });
         }
 
