@@ -34,10 +34,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEntity
         implements BeamNetworkGridPropagator, IPowerChannelState, IGridTickable {
 
-    private static final int MAX_DISTANCE = 16;
-
     private final double basePower;
-
+    private final int maxDistance;
+    
     private boolean hasPower = false;
     private boolean receivedPowerLastCycle = false;
 
@@ -50,6 +49,7 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
                 .setFlags(); // force to not require a channel
 
         this.basePower = ImpenConfig.POWER.beamedNetworkEmitterCost();
+        this.maxDistance = ImpenConfig.SETTINGS.beamedNetworkLinkRange();
     }
 
     @Override
@@ -151,7 +151,8 @@ public class BeamNetworkEmitterBlockEntity extends BeamRenderingNetworkBlockEnti
 
     @Override
     public List<BeamNetworkPhysicalConnection> propagate() {
-        return BeamNetworkConnectionHelper.findVisualConnection(this, getBlockPos(), getForward(), MAX_DISTANCE, level)
+        return BeamNetworkConnectionHelper
+                .findVisualConnection(this, getBlockPos(), getForward(), this.maxDistance, level)
                 .map(List::of)
                 .orElseGet(Collections::emptyList);
     }
