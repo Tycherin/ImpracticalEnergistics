@@ -381,6 +381,11 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .smelting(Ingredient.of(ImpenRegistry.RIFTSTONE), ImpenRegistry.SMOOTH_RIFTSTONE, 0.1F, 200)
                 .unlockedBy("has_riftstone", has(ImpenRegistry.RIFTSTONE))
                 .save(consumer);
+        // TODO Change this to a conditional recipe & add conditional alternatives for Thermal & Mek instead
+        SimpleCookingRecipeBuilder
+                .smelting(Ingredient.of(ImpenRegistry.RIFT_SHARD_BLOCK), ImpenRegistry.RIFTSTONE_DUST, 0.1F, 200)
+                .unlockedBy("has_rift_shard", has(ImpenRegistry.RIFT_SHARD))
+                .save(consumer);
 
         addOreRecipes(consumer, ImpenRegistry.RIFT_SHARD_ORE, ImpenRegistry.RIFT_SHARD);
         addOreRecipes(consumer, ImpenRegistry.NETHER_GLOWSTONE_ORE, Items.GLOWSTONE);

@@ -105,6 +105,17 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                         .build(),
 
                 SpatialRiftBaseBlockData.builder()
+                        .block(ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock())
+                        .ingredientId(ImpenRegistry.RIFTSTONE_DUST.asItem().getRegistryName().toString())
+                        .ingredientCount(16)
+                        .baseWeights(new MapBuilder()
+                                // Impractical Energistics
+                                .put(ImpenRegistry.RIFT_SHARD_ORE, 10)
+                                .put(ImpenRegistry.RIFTSTONE, 200)
+                                .build())
+                        .build(),
+
+                SpatialRiftBaseBlockData.builder()
                         .block(ImpenRegistry.RIFTSTONE.asBlock())
                         .ingredientId(ImpenRegistry.RIFTSTONE.asItem().getRegistryName().toString())
                         .ingredientCount(16)
@@ -112,6 +123,7 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                                 // Impractical Energistics
                                 .put(ImpenRegistry.RIFT_SHARD_ORE, 40)
                                 .put(ImpenRegistry.END_AMETHYST_ORE, 40)
+                                .put(ImpenRegistry.UNSTABLE_RIFTSTONE, 1000)
                                 .build())
                         .build())
                 .forEach(data -> {
