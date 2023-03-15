@@ -73,7 +73,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ImpenRegistry {
-    
+
     private static final List<ItemLike> ITEMS_LIST = new ArrayList<>();
     private static final List<BlockLike> BLOCKS_LIST = new ArrayList<>();
 
@@ -129,14 +129,14 @@ public class ImpenRegistry {
         BEAM_NETWORK_SPLITTER.block().setBlockEntity(BeamNetworkSplitterBlockEntity.class,
                 BEAM_NETWORK_SPLITTER.blockEntity(), null, null);
         EJECTION_DRIVE.block().setBlockEntity(EjectionDriveBlockEntity.class, EJECTION_DRIVE.blockEntity(), null,
-                (level, pos, state, be) -> ((ServerTickingBlockEntity) be).serverTick());
+                (level, pos, state, be) -> ((ServerTickingBlockEntity)be).serverTick());
 
         // AE2 upgrades need to be registered after normal registry events
         Upgrades.add(AEItems.SPEED_CARD, ATMOSPHERIC_CRYSTALLIZER.item(), 3);
         Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
         Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
     }
-    
+
     private static final BlockBehaviour.Properties MACHINE_BLOCK_PROPS = BlockBehaviour.Properties.of(Material.METAL)
             .strength(3f, 10f)
             .sound(SoundType.METAL)
@@ -203,12 +203,13 @@ public class ImpenRegistry {
     public static final ItemDefinition SPATIAL_MACHINE_CORE = makeItem("spatial_machine_core");
     public static final ItemDefinition RIFTSTONE_DUST = makeItem("riftstone_dust");
     public static final ItemDefinition RIFT_ALLOY_INGOT = makeItem("rift_alloy_ingot");
-    
+
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItem("disintegrator_capsule_luck");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItem("disintegrator_capsule_loot");
     public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItem("disintegrator_capsule_egg");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem("disintegrator_capsule_player_kill");
+    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItem(
+            "disintegrator_capsule_player_kill");
 
     public static final ItemDefinition CIRCUIT_QUANTIZED = makeItem("circuit_quantized");
     public static final ItemDefinition CIRCUIT_MAGNIFIED = makeItem("circuit_magnified");
@@ -216,7 +217,7 @@ public class ImpenRegistry {
     public static final ItemDefinition PROCESSOR_QUANTIZED = makeItem("processor_quantized");
     public static final ItemDefinition PROCESSOR_MAGNIFIED = makeItem("processor_magnified");
     public static final ItemDefinition PROCESSOR_EQUALIZED = makeItem("processor_equalized");
-    
+
     // Fake item that is hidden in JEI
     public static final ItemDefinition FAKE_DIMENSION_PLACEHOLDER = makeItem("fake_dimension_placeholder");
 
@@ -226,13 +227,13 @@ public class ImpenRegistry {
             () -> new StairBlock(RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
     public static final BlockDefinition RIFTSTONE_SLAB = makeCustomBlock("riftstone_slab",
             () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
-    
+
     public static final BlockDefinition SMOOTH_RIFTSTONE = makeBasicBlock("smooth_riftstone", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition SMOOTH_RIFTSTONE_STAIRS = makeCustomBlock("smooth_riftstone_stairs",
             () -> new StairBlock(SMOOTH_RIFTSTONE.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
     public static final BlockDefinition SMOOTH_RIFTSTONE_SLAB = makeCustomBlock("smooth_riftstone_slab",
             () -> new SlabBlock(RIFTSTONE_BLOCK_PROPS));
-    
+
     public static final BlockDefinition RIFTSTONE_BRICK = makeBasicBlock("riftstone_brick", RIFTSTONE_BLOCK_PROPS);
     public static final BlockDefinition RIFTSTONE_BRICK_STAIRS = makeCustomBlock("riftstone_brick_stairs",
             () -> new StairBlock(RIFTSTONE_BRICK.block()::defaultBlockState, RIFTSTONE_BLOCK_PROPS));
@@ -253,7 +254,7 @@ public class ImpenRegistry {
     public static final BlockDefinition NETHER_GLOWSTONE_ORE = makeOreBlock("nether_glowstone_ore");
     public static final BlockDefinition NETHER_DEBRIS_ORE = makeOreBlock("nether_debris_ore");
     public static final BlockDefinition END_AMETHYST_ORE = makeOreBlock("end_amethyst_ore");
-    
+
     // Special items
     public static final ItemDefinition LUNCHBOX_CELL_ITEM = makeItem("lunchbox_cell", LunchboxCellItem::new);
 
@@ -296,7 +297,7 @@ public class ImpenRegistry {
             .register("disintegrator_damage_particle", () -> DisintegratorDamageParticle.TYPE);
     public static final RegistryObject<ParticleType<SimpleParticleType>> DISINTEGRATOR_LOCK_PARTICLE = PARTICLES
             .register("disintegrator_lock_particle", () -> DisintegratorLockParticle.TYPE);
-    
+
     // ***
     // Helper methods
     // ***
@@ -357,8 +358,9 @@ public class ImpenRegistry {
     public static ItemDefinition makeRiftCellItem(final String name, final ItemLike originalItem) {
         return makeItem(name, () -> new SpatialRiftCellItem(getItemProps(), originalItem));
     }
-    
-    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key, final RecipeSerializer<T> serializer) {
+
+    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> makeRecipeType(final String key,
+            final RecipeSerializer<T> serializer) {
         final RegistryObject<RecipeType<T>> recipeType = RECIPE_TYPES.register(key, () -> new RecipeType<T>() {
             @Override
             public String toString() {
@@ -383,7 +385,7 @@ public class ImpenRegistry {
         return ImpenRegistry.makeBasicBlock(name, BlockBehaviour.Properties.of(mat)
                 .strength(1f, 2f));
     }
-    
+
     private static BlockDefinition makeBasicBlock(final String name, final BlockBehaviour.Properties props) {
         return ImpenRegistry.makeCustomBlock(name, () -> new Block(props));
     }
@@ -395,7 +397,7 @@ public class ImpenRegistry {
     private static Item.Properties getItemProps() {
         return new Item.Properties().tab(ImpenCreativeModeTab.TAB);
     }
-    
+
     // ***
     // Convenience methods for scanning the registry
     // ***
@@ -407,7 +409,7 @@ public class ImpenRegistry {
     public static List<BlockLike> getRegisteredBlocks() {
         return BLOCKS_LIST;
     }
-    
+
     // ***
     // Many static inner classes
     // ***
@@ -553,7 +555,7 @@ public class ImpenRegistry {
             return itemHolder.getId().getPath();
         }
     }
-    
+
     public static class ItemDefinition implements ItemLike, RegistryIdProvider {
         private final RegistryObject<? extends Item> itemHolder;
 
@@ -571,7 +573,7 @@ public class ImpenRegistry {
             return itemHolder.getId().getPath();
         }
     }
-    
+
     public static interface RegistryIdProvider {
         String getKey();
     }
