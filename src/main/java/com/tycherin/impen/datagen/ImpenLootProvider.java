@@ -70,6 +70,7 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_COLLAPSER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_SPAWNER.block());
             this.dropSelf(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.block());
+            this.dropSelf(ImpenRegistry.RIFT_ALLOY_BLOCK.block());
 
             this.add(ImpenRegistry.RIFTSTONE_SLAB.asBlock(), BlockLoot::createSlabItemTable);
             this.add(ImpenRegistry.RIFTSTONE_BRICK_SLAB.asBlock(), BlockLoot::createSlabItemTable);
@@ -101,10 +102,6 @@ public class ImpenLootProvider extends LootTableProvider {
             this.add(ImpenRegistry.END_AMETHYST_ORE.block(), (block) -> {
                 // TODO This should probably be buffed?
                 return createOreDrop(block, Items.AMETHYST_SHARD);
-            });
-
-            this.add(ImpenRegistry.SMOOTH_RIFTSTONE.block(), (block) -> {
-                return createSingleItemTableWithSilkTouch(block, ImpenRegistry.RIFTSTONE.block());
             });
         }
 
