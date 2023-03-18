@@ -6,16 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.tycherin.impen.ImpenRegistry;
-import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.part.PhaseFieldEmitterPart;
 
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.upgrades.IUpgradeInventory;
-import appeng.api.upgrades.IUpgradeableObject;
-import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.grid.AENetworkBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,14 +20,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
-        implements IGridTickable, IUpgradeableObject {
+        implements IGridTickable {
 
-    // Should this go in config, or is it set by capsules?
     private static final int TICKS_PER_OPERATION = 20;
-
-    private final IUpgradeInventory upgrades;
-    private final int baseTicksPerOperation;
-    private final double basePowerPerOperation;
 
     private Set<PhaseFieldEmitterPart> emitters = Collections.emptySet();
     private int tickCount = TICKS_PER_OPERATION;
@@ -43,13 +34,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
         this.getMainNode()
                 .setExposedOnSides(EnumSet.noneOf(Direction.class))
                 .addService(IGridTickable.class, this)
-                .setIdlePowerUsage(ImpenConfig.POWER.possibilityDisintegratorCostTick())
                 .setFlags();
-
-        this.upgrades = UpgradeInventories.forMachine(ImpenRegistry.PHASE_FIELD_CONTROLLER.item(), 4,
-                this::saveChanges);
-        this.baseTicksPerOperation = ImpenConfig.SETTINGS.possibilityDisintegratorWorkRate();
-        this.basePowerPerOperation = ImpenConfig.POWER.possibilityDisintegratorCostOperation();
     }
 
     @Override
@@ -80,7 +65,6 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
             return TickRateModulation.SLEEP;
         }
 
-        // TODO Handle power calculations
         this.tickCount--;
         if (this.tickCount <= 0) {
             this.tickCount = TICKS_PER_OPERATION;
