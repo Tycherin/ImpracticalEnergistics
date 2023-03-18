@@ -18,9 +18,9 @@ import net.minecraftforge.client.model.data.IModelData;
 
 public class PhaseFieldEmitterPart extends AEBasePart {
 
-    // TODO Update these
-    private static final PlaneModels MODELS = new PlaneModels("part/capture_plane",
-            "part/capture_plane_on");
+    private static final PlaneModels MODELS = new PlaneModels(
+            "part/phase_field_emitter",
+            "part/phase_field_emitter_on");
 
     @PartModels
     public static List<IPartModel> getModels() {

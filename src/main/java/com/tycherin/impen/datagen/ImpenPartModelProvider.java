@@ -19,6 +19,8 @@ public class ImpenPartModelProvider extends PartModelProvider {
     protected void registerModels() {
         addBuiltInModel("part/capture_plane");
         addBuiltInModel("part/capture_plane_on");
+        addBuiltInModel("part/phase_field_emitter");
+        addBuiltInModel("part/phase_field_emitter_on");
     }
 
     private void addBuiltInModel(final String name) {
@@ -27,7 +29,7 @@ public class ImpenPartModelProvider extends PartModelProvider {
 
     private BiFunction<BlockModelBuilder, ExistingFileHelper, CustomLoaderBuilder<BlockModelBuilder>> customLoader(
             final String name) {
-        return (bmb, efh) -> new CustomLoaderBuilder<>(AppEng.makeId(name), bmb, efh) {
+        return (modelBuilder, fileHelper) -> new CustomLoaderBuilder<>(AppEng.makeId(name), modelBuilder, fileHelper) {
         };
     }
 }

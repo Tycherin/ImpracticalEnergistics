@@ -67,8 +67,8 @@ public class ImpracticalEnergisticsClientSetup {
 
         addPlaneModel("part/capture_plane", "part/capture_plane");
         addPlaneModel("part/capture_plane_on", "part/capture_plane_on");
-        addPlaneModel("part/phase_field_emitter", "part/capture_plane");
-        addPlaneModel("part/phase_field_emitter_on", "part/capture_plane_on");
+        addPlaneModel("part/phase_field_emitter", "part/phase_field_emitter");
+        addPlaneModel("part/phase_field_emitter_on", "part/phase_field_emitter_on");
     }
 
     private static void addPlaneModel(final String planeName, final String frontTexture) {

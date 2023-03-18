@@ -16,8 +16,6 @@ import com.tycherin.impen.datagen.recipe.ImpenRecipeProvider;
 import com.tycherin.impen.part.CapturePlanePart;
 import com.tycherin.impen.service.PhaseFieldService;
 
-import appeng.api.parts.PartModels;
-import appeng.items.parts.PartModelsHelper;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,8 +47,6 @@ public class ImpracticalEnergisticsMod {
         modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addListener(CapturePlanePart::handleProjectileEvent);
-
-        PartModels.registerModels(PartModelsHelper.createModels(CapturePlanePart.class));
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImpenConfig.SPEC);
 

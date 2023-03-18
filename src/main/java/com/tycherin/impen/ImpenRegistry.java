@@ -45,11 +45,15 @@ import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorSpecialRecipe;
 import com.tycherin.impen.recipe.SpatialRiftSpawnerRecipe;
 
+import appeng.api.parts.IPartItem;
+import appeng.api.parts.PartModels;
 import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.items.parts.PartItem;
+import appeng.items.parts.PartModelsHelper;
+import appeng.parts.AEBasePart;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -267,11 +271,11 @@ public class ImpenRegistry {
     // Special items
     public static final ItemDefinition LUNCHBOX_CELL_ITEM = makeItem("lunchbox_cell", LunchboxCellItem::new);
 
-    public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
-            () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
+    public static final ItemDefinition CAPTURE_PLANE_ITEM = makePart("capture_plane", CapturePlanePart.class,
+            CapturePlanePart::new);
 
-    public static final ItemDefinition PHASE_FIELD_EMITTER_ITEM = makeItem("phase_field_emitter",
-            () -> new PartItem<>(getItemProps(), PhaseFieldEmitterPart.class, PhaseFieldEmitterPart::new));
+    public static final ItemDefinition PHASE_FIELD_EMITTER_ITEM = makePart("phase_field_emitter",
+            PhaseFieldEmitterPart.class, PhaseFieldEmitterPart::new);
 
     public static final ItemDefinition SPATIAL_RIFT_CELL_2_ITEM = makeRiftCellItem("spatial_rift_cell_2",
             AEItems.SPATIAL_CELL2);
@@ -412,6 +416,11 @@ public class ImpenRegistry {
 
     private static Item.Properties getItemProps() {
         return new Item.Properties().tab(ImpenCreativeModeTab.TAB);
+    }
+    
+    public static <T extends AEBasePart> ItemDefinition makePart(final String name, final Class<T> partClass, final Function<IPartItem<T>, T> partCtor) {
+        PartModels.registerModels(PartModelsHelper.createModels(partClass));
+        return makeItem(name, () -> new PartItem<>(getItemProps(), partClass, partCtor));
     }
 
     // ***
