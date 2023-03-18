@@ -15,7 +15,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class ImpenItemModelProvider extends ItemModelProvider {
 
     private static final Set<ItemLike> ITEMS_WITH_CUSTOM_MODEL = Set.of(
-            ImpenRegistry.CAPTURE_PLANE_ITEM);
+            ImpenRegistry.CAPTURE_PLANE_ITEM,
+            ImpenRegistry.PHASE_FIELD_EMITTER_ITEM);
     
     public ImpenItemModelProvider(final DataGenerator generator, final String modid,
             final ExistingFileHelper existingFileHelper) {

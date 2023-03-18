@@ -1,6 +1,6 @@
 package com.tycherin.impen;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
@@ -67,16 +67,20 @@ public class ImpracticalEnergisticsClientSetup {
 
         addPlaneModel("part/capture_plane", "part/capture_plane");
         addPlaneModel("part/capture_plane_on", "part/capture_plane_on");
+        addPlaneModel("part/phase_field_emitter", "part/capture_plane");
+        addPlaneModel("part/phase_field_emitter_on", "part/capture_plane_on");
     }
 
-    private static void addPlaneModel(String planeName, String frontTexture) {
-        ResourceLocation frontTextureId = AppEng.makeId(frontTexture);
-        ResourceLocation sidesTextureId = AppEng.makeId("part/plane_sides");
-        ResourceLocation backTextureId = AppEng.makeId("part/transition_plane_back");
-        addBuiltInModel(planeName, () -> new PlaneModel(frontTextureId, sidesTextureId, backTextureId));
+    private static void addPlaneModel(final String planeName, final String frontTexture) {
+        addBuiltInModel(planeName, () -> new PlaneModel(
+                // We want to use the AE2 side & back textures, but the model loader only lets us look in one namespace
+                // for textures, so our textures also need to be in the AE2 namespace
+                AppEng.makeId(frontTexture),
+                AppEng.makeId("part/plane_sides"),
+                AppEng.makeId("part/transition_plane_back")));
     }
 
-    private static <T extends IModelGeometry<T>> void addBuiltInModel(String id, Supplier<T> modelFactory) {
+    private static <T extends IModelGeometry<T>> void addBuiltInModel(final String id, final Supplier<T> modelFactory) {
         ModelLoaderRegistry.registerLoader(new ResourceLocation(AppEng.MOD_ID, id),
                 new SimpleModelLoader<>(modelFactory));
     }
@@ -126,10 +130,11 @@ public class ImpracticalEnergisticsClientSetup {
         // happen before BEs are instantiated, or else AE2 will explode.
         //
         // Weirdly, this needs to be done for anything extending AEBaseBlockEntity, not just ones that are networked.
-        Arrays.asList(
+        List.of(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
                 ImpenRegistry.EJECTION_DRIVE,
                 ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
+                ImpenRegistry.PHASE_FIELD_CONTROLLER,
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,
                 ImpenRegistry.SPATIAL_RIFT_COLLAPSER,

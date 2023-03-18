@@ -5,6 +5,7 @@ import java.util.List;
 import com.tycherin.impen.util.MobUtil;
 
 import appeng.api.config.Actionable;
+import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.parts.IPartCollisionHelper;
@@ -17,7 +18,7 @@ import appeng.api.util.AECableType;
 import appeng.blockentity.networking.CableBusBlockEntity;
 import appeng.items.parts.PartModels;
 import appeng.me.helpers.MachineSource;
-import appeng.parts.BasicStatePart;
+import appeng.parts.AEBasePart;
 import appeng.parts.automation.PlaneConnectionHelper;
 import appeng.parts.automation.PlaneModelData;
 import appeng.parts.automation.PlaneModels;
@@ -49,7 +50,7 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 
-public class CapturePlanePart extends BasicStatePart {
+public class CapturePlanePart extends AEBasePart {
 
     private static final PlaneModels MODELS = new PlaneModels("part/capture_plane",
             "part/capture_plane_on");
@@ -64,16 +65,17 @@ public class CapturePlanePart extends BasicStatePart {
 
     public CapturePlanePart(final IPartItem<?> partItem) {
         super(partItem);
+        this.getMainNode().setFlags(GridFlags.REQUIRE_CHANNEL);
     }
 
     @Override
-    public void getBoxes(final IPartCollisionHelper bch) {
+    public void getBoxes(final IPartCollisionHelper collisionHelper) {
         // Same behavior here as in AnnihilationPlanePart
-        if (bch.isBBCollision()) {
-            bch.addBox(0, 0, 14, 16, 16, 15.5);
+        if (collisionHelper.isBBCollision()) {
+            collisionHelper.addBox(0, 0, 14, 16, 16, 15.5);
             return;
         }
-        connectionHelper.getBoxes(bch);
+        connectionHelper.getBoxes(collisionHelper);
     }
 
     @Override

@@ -10,6 +10,7 @@
     "block.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
     "block.impracticalenergistics.ejection_drive": "Ejection Drive",
     "block.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
+    "block.impracticalenergistics.phase_field_controller": "Phase Field Controller",
     
     "block.impracticalenergistics.riftstone": "Riftstone",
     "block.impracticalenergistics.riftstone_stairs": "Riftstone Stairs",
@@ -47,6 +48,7 @@
     
     "item.impracticalenergistics.lunchbox_cell": "Lunchbox Cell",
     "item.impracticalenergistics.capture_plane": "ME Capture Plane",
+    "item.impracticalenergistics.phase_field_emitter": "Phase Field Emitter",
     "item.impracticalenergistics.spatial_rift_cell_2": "2³ Spatial Rift Cell",
     "item.impracticalenergistics.spatial_rift_cell_16": "16³ Spatial Rift Cell",
     "item.impracticalenergistics.spatial_rift_cell_128": "128³ Spatial Rift Cell",

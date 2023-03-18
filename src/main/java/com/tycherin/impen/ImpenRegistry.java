@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.OreBlock;
+import com.tycherin.impen.block.PhaseFieldControllerBlock;
 import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.beam.BeamNetworkAmplifierBlock;
 import com.tycherin.impen.block.beam.BeamNetworkEmitterBlock;
@@ -19,6 +20,7 @@ import com.tycherin.impen.block.rift.SpatialRiftManipulatorBlock;
 import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
+import com.tycherin.impen.blockentity.PhaseFieldControllerBlockEntity;
 import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkEmitterBlockEntity;
@@ -34,6 +36,7 @@ import com.tycherin.impen.item.LunchboxCellItem;
 import com.tycherin.impen.item.SpatialRiftCellItem;
 import com.tycherin.impen.item.StaticTooltipItem;
 import com.tycherin.impen.part.CapturePlanePart;
+import com.tycherin.impen.part.PhaseFieldEmitterPart;
 import com.tycherin.impen.recipe.AtmosphericCrystallizerRecipe;
 import com.tycherin.impen.recipe.SpatialRiftCollapserRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorBaseBlockRecipe;
@@ -119,6 +122,8 @@ public class ImpenRegistry {
                 ATMOSPHERIC_CRYSTALLIZER.blockEntity(), null, null);
         POSSIBILITY_DISINTEGRATOR.block().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
                 POSSIBILITY_DISINTEGRATOR.blockEntity(), null, null);
+        PHASE_FIELD_CONTROLLER.block().setBlockEntity(PhaseFieldControllerBlockEntity.class,
+                PHASE_FIELD_CONTROLLER.blockEntity(), null, null);
         BEAM_NETWORK_AMPLIFIER.block().setBlockEntity(BeamNetworkAmplifierBlockEntity.class,
                 BEAM_NETWORK_AMPLIFIER.blockEntity(), null, null);
         BEAM_NETWORK_EMITTER.block().setBlockEntity(BeamNetworkEmitterBlockEntity.class,
@@ -162,6 +167,9 @@ public class ImpenRegistry {
 
     public static final MachineDefinition<PossibilityDisintegratorBlock, PossibilityDisintegratorBlockEntity> POSSIBILITY_DISINTEGRATOR =
             makeMachine("possibility_disintegrator", PossibilityDisintegratorBlock::new, PossibilityDisintegratorBlockEntity::new, false);
+
+    public static final MachineDefinition<PhaseFieldControllerBlock, PhaseFieldControllerBlockEntity> PHASE_FIELD_CONTROLLER =
+            makeMachine("phase_field_controller", PhaseFieldControllerBlock::new, PhaseFieldControllerBlockEntity::new, false);
 
     public static final MachineDefinition<EjectionDriveBlock, EjectionDriveBlockEntity> EJECTION_DRIVE =
             makeMachine("ejection_drive", EjectionDriveBlock::new, EjectionDriveBlockEntity::new, true);
@@ -261,6 +269,9 @@ public class ImpenRegistry {
 
     public static final ItemDefinition CAPTURE_PLANE_ITEM = makeItem("capture_plane",
             () -> new PartItem<>(getItemProps(), CapturePlanePart.class, CapturePlanePart::new));
+
+    public static final ItemDefinition PHASE_FIELD_EMITTER_ITEM = makeItem("phase_field_emitter",
+            () -> new PartItem<>(getItemProps(), PhaseFieldEmitterPart.class, PhaseFieldEmitterPart::new));
 
     public static final ItemDefinition SPATIAL_RIFT_CELL_2_ITEM = makeRiftCellItem("spatial_rift_cell_2",
             AEItems.SPATIAL_CELL2);

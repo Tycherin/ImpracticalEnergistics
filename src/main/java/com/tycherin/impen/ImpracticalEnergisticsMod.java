@@ -14,6 +14,7 @@ import com.tycherin.impen.datagen.ImpenLootProvider;
 import com.tycherin.impen.datagen.ImpenPartModelProvider;
 import com.tycherin.impen.datagen.recipe.ImpenRecipeProvider;
 import com.tycherin.impen.part.CapturePlanePart;
+import com.tycherin.impen.service.PhaseFieldService;
 
 import appeng.api.parts.PartModels;
 import appeng.items.parts.PartModelsHelper;
@@ -40,7 +41,7 @@ public class ImpracticalEnergisticsMod {
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ImpenRegistry.register(modEventBus);
-        
+
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ImpracticalEnergisticsClientSetup::init);
 
         modEventBus.addListener(ImpenRegistry::commonSetup);
@@ -50,8 +51,10 @@ public class ImpracticalEnergisticsMod {
         MinecraftForge.EVENT_BUS.addListener(CapturePlanePart::handleProjectileEvent);
 
         PartModels.registerModels(PartModelsHelper.createModels(CapturePlanePart.class));
-        
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ImpenConfig.SPEC);
+
+        PhaseFieldService.init();
     }
 
     public void registerMenus(final RegistryEvent.Register<MenuType<?>> event) {
@@ -73,7 +76,7 @@ public class ImpracticalEnergisticsMod {
         gen.addProvider(blockTagsProvider);
         gen.addProvider(new ImpenItemTagsProvider(gen, blockTagsProvider, MOD_ID, efh));
         // Note that ordering is important here - item models refer to block models, so the block models need to be
-        // generated first 
+        // generated first
         gen.addProvider(new ImpenBlockStateProvider(gen, MOD_ID, efh));
         gen.addProvider(new ImpenItemModelProvider(gen, MOD_ID, efh));
     }
