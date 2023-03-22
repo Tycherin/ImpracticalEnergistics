@@ -3,8 +3,11 @@ package com.tycherin.impen.block;
 import javax.annotation.Nullable;
 
 import com.tycherin.impen.blockentity.PhaseFieldControllerBlockEntity;
+import com.tycherin.impen.client.gui.PhaseFieldControllerMenu;
 
 import appeng.block.AEBaseEntityBlock;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import appeng.util.InteractionUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -28,8 +31,7 @@ public class PhaseFieldControllerBlock extends AEBaseEntityBlock<PhaseFieldContr
             final var be = (PhaseFieldControllerBlockEntity) level.getBlockEntity(pos);
             if (be != null) {
                 if (!level.isClientSide()) {
-                    // TODO Update me
-//                    MenuOpener.open(PossibilityDisintegratorMenu.TYPE, p, MenuLocators.forBlockEntity(be));
+                    MenuOpener.open(PhaseFieldControllerMenu.TYPE, p, MenuLocators.forBlockEntity(be));
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }

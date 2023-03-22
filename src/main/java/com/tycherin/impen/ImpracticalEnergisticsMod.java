@@ -1,6 +1,7 @@
 package com.tycherin.impen;
 
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
+import com.tycherin.impen.client.gui.PhaseFieldControllerMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.SpatialRiftCollapserMenu;
 import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
@@ -56,6 +57,7 @@ public class ImpracticalEnergisticsMod {
     public void registerMenus(final RegistryEvent.Register<MenuType<?>> event) {
         event.getRegistry().registerAll(
                 AtmosphericCrystallizerMenu.TYPE,
+                PhaseFieldControllerMenu.TYPE,
                 PossibilityDisintegratorMenu.TYPE,
                 SpatialRiftSpawnerMenu.TYPE,
                 SpatialRiftManipulatorMenu.TYPE,

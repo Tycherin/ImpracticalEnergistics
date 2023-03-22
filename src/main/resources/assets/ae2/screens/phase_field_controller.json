@@ -1,0 +1,26 @@
+{
+  "$schema": "schema.json",
+  "includes": ["common/common.json", "common/player_inventory.json"],
+  "background": {
+    "texture": "guis/possibility_disintegrator.png",
+    "srcRect": [0, 0, 176, 197]
+  },
+  "slots": {
+    "impen::PFC_CAPSULE": {
+      "left": 35,
+      "top": 40,
+      "grid": "HORIZONTAL"
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "gui.impracticalenergistics.phase_field_controller"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}

@@ -9,6 +9,8 @@ import com.tycherin.impen.blockentity.beam.BeamNetworkMirrorBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkSplitterBlockEntity;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
+import com.tycherin.impen.client.gui.PhaseFieldControllerMenu;
+import com.tycherin.impen.client.gui.PhaseFieldControllerScreen;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
 import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
 import com.tycherin.impen.client.gui.SpatialRiftCollapserMenu;
@@ -98,6 +100,12 @@ public class ImpracticalEnergisticsClientSetup {
                 (menu, playerInv, title) -> {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/atmospheric_crystallizer.json");
                     return new AtmosphericCrystallizerScreen(menu, playerInv, title, style);
+                });
+        MenuScreens.<PhaseFieldControllerMenu, PhaseFieldControllerScreen>register(
+                PhaseFieldControllerMenu.TYPE,
+                (menu, playerInv, title) -> {
+                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/phase_field_controller.json");
+                    return new PhaseFieldControllerScreen(menu, playerInv, title, style);
                 });
         MenuScreens.<PossibilityDisintegratorMenu, PossibilityDisintegratorScreen>register(
                 PossibilityDisintegratorMenu.TYPE,
