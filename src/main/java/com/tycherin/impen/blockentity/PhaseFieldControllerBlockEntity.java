@@ -2,9 +2,11 @@ package com.tycherin.impen.blockentity;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.part.PhaseFieldEmitterPart;
@@ -43,6 +45,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
     private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(3);
     private Set<PhaseFieldEmitterPart> emitters = Collections.emptySet();
     private int tickCount = TICKS_PER_OPERATION;
+    private Optional<List<AABB>> aabbCache = Optional.empty();
 
     public PhaseFieldControllerBlockEntity(final BlockPos pos,
             final BlockState blockState) {
@@ -92,12 +95,15 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
     }
 
     private void doOperation() {
-        final Set<Mob> affectedEntities = new HashSet<>();
-        this.emitters.forEach(emitter -> {
-            final BlockPos affectedPos = emitter.getBlockEntity().getBlockPos().relative(emitter.getSide());
-            // TODO Consider caching the AABBs here, since they should change relatively infrequently
-            affectedEntities.addAll(this.level.getEntitiesOfClass(Mob.class, new AABB(affectedPos)));
-        });
+        if (aabbCache.isEmpty()) {
+            this.aabbCache = Optional.of(this.emitters.stream()
+                    .map(emitter -> new AABB(emitter.getBlockEntity().getBlockPos().relative(emitter.getSide())))
+                    .collect(Collectors.toList()));
+        }
+
+        final Set<Mob> affectedEntities = this.aabbCache.get().stream()
+                .flatMap(aabb -> this.level.getEntitiesOfClass(Mob.class, aabb).stream())
+                .collect(Collectors.toSet());
 
         // Temporary code
         // TODO Replace with proper capsule configuration
@@ -128,6 +134,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
             });
         }
         this.emitters = emitters;
+        this.aabbCache = Optional.empty();
     }
 
     public static final class CapsuleConfigInventory implements InternalInventory {
