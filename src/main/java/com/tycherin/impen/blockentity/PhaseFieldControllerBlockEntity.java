@@ -2,33 +2,24 @@ package com.tycherin.impen.blockentity;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import com.tycherin.impen.ImpenRegistry;
+import com.tycherin.impen.logic.phase.PhaseFieldLogic;
 import com.tycherin.impen.part.PhaseFieldEmitterPart;
 
-import appeng.api.config.Actionable;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.stacks.AEItemKey;
-import appeng.api.storage.MEStorage;
 import appeng.blockentity.grid.AENetworkBlockEntity;
-import appeng.me.helpers.MachineSource;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
         implements IGridTickable {
@@ -41,11 +32,12 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
             ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK,
             ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL);
 
+    private final PhaseFieldLogic logic = new PhaseFieldLogic(this);
     @Getter
     private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(3);
+    @Getter
     private Set<PhaseFieldEmitterPart> emitters = Collections.emptySet();
     private int tickCount = TICKS_PER_OPERATION;
-    private Optional<List<AABB>> aabbCache = Optional.empty();
 
     public PhaseFieldControllerBlockEntity(final BlockPos pos,
             final BlockState blockState) {
@@ -88,42 +80,10 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
         this.tickCount--;
         if (this.tickCount <= 0) {
             this.tickCount = TICKS_PER_OPERATION;
-            this.doOperation();
+            this.logic.doOperation();
         }
 
         return TickRateModulation.SAME;
-    }
-
-    private void doOperation() {
-        if (aabbCache.isEmpty()) {
-            this.aabbCache = Optional.of(this.emitters.stream()
-                    .map(emitter -> new AABB(emitter.getBlockEntity().getBlockPos().relative(emitter.getSide())))
-                    .collect(Collectors.toList()));
-        }
-
-        final Set<Mob> affectedEntities = this.aabbCache.get().stream()
-                .flatMap(aabb -> this.level.getEntitiesOfClass(Mob.class, aabb).stream())
-                .collect(Collectors.toSet());
-
-        // Temporary code
-        // TODO Replace with proper capsule configuration
-        // TODO Replace with proper inventory management
-        final MEStorage storage = this.getGridNode().getGrid().getStorageService().getInventory();
-        final AtomicBoolean gotIngredients = new AtomicBoolean();
-        gotIngredients.set(true);
-        capsuleConfigInv.forEach(configuredInput -> {
-            if (configuredInput.isEmpty()) {
-                return;
-            }
-
-            if (storage.extract(AEItemKey.of(configuredInput), 1, Actionable.SIMULATE, new MachineSource(this)) != 1) {
-                gotIngredients.set(false);
-            }
-        });
-
-        if (gotIngredients.get()) {
-            affectedEntities.forEach(Mob::kill);
-        }
     }
 
     public void setEmitters(final Set<PhaseFieldEmitterPart> emitters) {
@@ -134,7 +94,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkBlockEntity
             });
         }
         this.emitters = emitters;
-        this.aabbCache = Optional.empty();
+        this.logic.recomputeCache();
     }
 
     public static final class CapsuleConfigInventory implements InternalInventory {
