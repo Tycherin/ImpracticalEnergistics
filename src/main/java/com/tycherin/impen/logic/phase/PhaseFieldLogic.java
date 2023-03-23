@@ -24,9 +24,9 @@ public class PhaseFieldLogic {
 
     private Optional<List<AABB>> aabbCache = Optional.empty();
 
-    public void doOperation() {
+    public boolean doOperation() {
         if (this.aabbCache.isEmpty()) {
-            this.recomputeCache();
+            this.recomputeAABBCache();
         }
 
         final Set<Mob> affectedEntities = this.aabbCache.get().stream()
@@ -39,7 +39,7 @@ public class PhaseFieldLogic {
         final MEStorage storage = this.be.getGridNode().getGrid().getStorageService().getInventory();
         final AtomicBoolean gotIngredients = new AtomicBoolean();
         gotIngredients.set(true);
-        this.be.getCapsuleConfigInv().forEach(configuredInput -> {
+        this.be.getInternalInventory().forEach(configuredInput -> {
             if (configuredInput.isEmpty()) {
                 return;
             }
@@ -52,13 +52,15 @@ public class PhaseFieldLogic {
         if (gotIngredients.get()) {
             affectedEntities.forEach(Mob::kill);
         }
+        
+        return true;
     }
 
     private Level getLevel() {
         return this.be.getLevel();
     }
 
-    public void recomputeCache() {
+    public void recomputeAABBCache() {
         this.aabbCache = Optional.of(this.be.getEmitters().stream()
                 .map(emitter -> new AABB(emitter.getBlockEntity().getBlockPos().relative(emitter.getSide())))
                 .collect(Collectors.toList()));

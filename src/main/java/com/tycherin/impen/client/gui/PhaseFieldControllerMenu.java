@@ -25,9 +25,9 @@ public class PhaseFieldControllerMenu extends AEBaseMenu {
             final PhaseFieldControllerBlockEntity be) {
         super(TYPE, id, playerInv, be);
 
-        this.configSlots = new FakeSlot[be.getCapsuleConfigInv().size()];
+        this.configSlots = new FakeSlot[be.getInternalInventory().size()];
         for (int i = 0; i < configSlots.length; i++) {
-            configSlots[i] = new FilteringFakeSlot(be.getCapsuleConfigInv(), i);
+            configSlots[i] = new FilteringFakeSlot(be.getInternalInventory(), i);
             configSlots[i].setHideAmount(true);
             this.addSlot(configSlots[i], ImpenSlotSemantics.PFC_CAPSULE);
         }
