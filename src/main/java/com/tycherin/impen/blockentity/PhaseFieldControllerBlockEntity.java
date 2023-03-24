@@ -19,6 +19,7 @@ import appeng.blockentity.grid.AENetworkInvBlockEntity;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -39,7 +40,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
             ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL);
 
     private final PhaseFieldLogic logic = new PhaseFieldLogic(this);
-    private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(3);
+    private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(this, 3);
     @Getter
     private Set<PhaseFieldEmitterPart> emitters = Collections.emptySet();
     private int tickCount = TICKS_PER_OPERATION;
@@ -74,6 +75,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
     public void onReady() {
         super.onReady();
         this.getMainNode().setExposedOnSides(EnumSet.complementOf(EnumSet.of(this.getForward())));
+        this.logic.recomputeOperation(); // Need to call this to set up initial state
     }
 
     @Override
@@ -122,7 +124,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
 
     @Override
     public void onChangeInventory(final InternalInventory inv, final int slot) {
-        // Nothing to do - updates will get picked up automatically
+        this.logic.recomputeOperation();
     }
 
     @Override
@@ -137,6 +139,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
         // Override the superclass behavior, which is to drop items in the internal inventory
     }
 
+    @Override
     public <T> LazyOptional<T> getCapability(final Capability<T> capability, final Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             // Don't expose this capability to anyone, since it isn't a real inventory
@@ -147,11 +150,33 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
         }
     }
 
+    @Override
+    protected void writeToStream(final FriendlyByteBuf data) {
+        super.writeToStream(data);
+
+        for (int i = 0; i < this.capsuleConfigInv.size(); i++) {
+            data.writeItem(capsuleConfigInv.getStackInSlot(i));
+        }
+    }
+
+    @Override
+    protected boolean readFromStream(FriendlyByteBuf data) {
+        var c = super.readFromStream(data);
+
+        for (int i = 0; i < this.capsuleConfigInv.size(); i++) {
+            this.capsuleConfigInv.setItemDirect(i, data.readItem());
+        }
+
+        return c;
+    }
+
     public static final class CapsuleConfigInventory implements InternalInventory {
 
+        private final PhaseFieldControllerBlockEntity host;
         private final ItemStack[] items;
 
-        public CapsuleConfigInventory(final int size) {
+        public CapsuleConfigInventory(final PhaseFieldControllerBlockEntity host, final int size) {
+            this.host = host;
             this.items = new ItemStack[size];
             for (int i = 0; i < this.items.length; i++) {
                 this.items[i] = ItemStack.EMPTY;
@@ -182,6 +207,8 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
         public void setItemDirect(final int slotIndex, final ItemStack stack) {
             if (isItemValid(slotIndex, stack)) {
                 this.items[slotIndex] = stack;
+                this.host.onChangeInventory(this, slotIndex);
+                this.host.saveChanges();
             }
             else {
                 throw new IllegalArgumentException("Item " + stack + " is not allowed");
