@@ -13,6 +13,7 @@ import java.util.stream.StreamSupport;
 
 import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.PhaseFieldControllerBlockEntity;
+import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.util.MobUtil;
 
 import appeng.api.config.Actionable;
@@ -52,16 +53,18 @@ public class PhaseFieldLogic {
     // Lazy load these two since the level isn't available when the block entity is being instantiated
     private final Lazy<Player> fakePlayer;
     private final Lazy<DamageSource> playerDamageSource;
+    private final Set<Mob> lockedMobs = new HashSet<>();
+    private final double consumeChance;
     /** Cache of AABBs to search for affected entities in */
     private Optional<List<AABB>> aabbCache = Optional.empty();
     private PhaseFieldOperation operation = new PhaseFieldOperation(Collections.emptyList(), new PhaseFieldEffect());
-    private final Set<Mob> lockedMobs = new HashSet<>();
 
     public PhaseFieldLogic(final PhaseFieldControllerBlockEntity be) {
         this.be = be;
         this.actionSource = new MachineSource(be);
         this.fakePlayer = Lazy.of(() -> FakePlayerFactory.getMinecraft((ServerLevel)be.getLevel()));
         this.playerDamageSource = Lazy.of(() -> new EntityDamageSource("possibility_disintegrator", fakePlayer.get()));
+        this.consumeChance = ImpenConfig.SETTINGS.possibilityDisintegratorConsumeChance();
     }
 
     public boolean doOperation() {
@@ -89,18 +92,33 @@ public class PhaseFieldLogic {
 
         final MEStorage storage = this.be.getGridNode().getGrid().getStorageService().getInventory();
         final List<Item> extractedInputs = new ArrayList<>();
+
+        final boolean consumeIngredients = this.rollRandom(this.consumeChance);
+
         for (final var configuredInput : this.operation.inputs()) {
-            final long amountExtracted = storage.extract(AEItemKey.of(configuredInput), 1, Actionable.MODULATE,
-                    this.actionSource);
+            final Actionable act = consumeIngredients ? Actionable.MODULATE : Actionable.SIMULATE;
+            final long amountExtracted = storage.extract(AEItemKey.of(configuredInput), 1, act, this.actionSource);
 
             if (amountExtracted == 1) {
                 extractedInputs.add(configuredInput);
             }
             else {
                 // Found an ingredient that was missing. Return all extracted ingredients and cancel the operation.
-                extractedInputs.forEach(extractedInput -> {
-                    storage.insert(AEItemKey.of(extractedInput), 1, Actionable.MODULATE, this.actionSource);
-                });
+                if (consumeIngredients) {
+                    extractedInputs.forEach(extractedInput -> {
+                        final long remainder = storage.insert(AEItemKey.of(extractedInput), 1, Actionable.MODULATE,
+                                this.actionSource);
+                        if (remainder > 0) {
+                            // This shouldn't happen because we're single-threaded from the point where the item was
+                            // extracted in the first place
+                            log.warn("Failed to put ingredient {} back into ME storage", extractedInput);
+                        }
+                    });
+                }
+                else {
+                    // If no ingredients were consumed, then nothing needs to be cleaned up
+                }
+
                 return false;
             }
         }
@@ -114,9 +132,14 @@ public class PhaseFieldLogic {
 
         if (affectedMobs.isEmpty()) {
             // No valid mobs were in range. Put the ingredients back and mark the operation as failed.
-            extractedInputs.forEach(extractedInput -> {
-                storage.insert(AEItemKey.of(extractedInput), 1, Actionable.MODULATE, this.actionSource);
-            });
+            if (consumeIngredients) {
+                extractedInputs.forEach(extractedInput -> {
+                    storage.insert(AEItemKey.of(extractedInput), 1, Actionable.MODULATE, this.actionSource);
+                });
+            }
+            else {
+                // If no ingredients were consumed, then nothing needs to be cleaned up
+            }
             return false;
         }
 

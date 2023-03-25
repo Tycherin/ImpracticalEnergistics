@@ -112,6 +112,7 @@ public class ImpenConfig {
         private final IntValue bnlRange;
         private final IntValue atmWorkRate;
         private final IntValue psdWorkRate;
+        private final DoubleValue psdConsumeChance;
         private final BooleanValue riftOverwrite;
 
         public MachineSettings(final Builder builder) {
@@ -121,7 +122,11 @@ public class ImpenConfig {
                     .defineInRange("atmospheric_crystallizer_work_rate", 80, 4, Integer.MAX_VALUE);
             this.psdWorkRate = builder.comment("Base number of ticks for each Possibility Disintegrator operation")
                     .defineInRange("possibility_disintegrator_work_rate", 40, 1, Integer.MAX_VALUE);
-            this.riftOverwrite = builder.comment("If true, the Spatial Rift Collapser can overwrite existing blocks in spatial storage")
+            this.psdConsumeChance = builder.comment(
+                    "Chance that the Possibility Disintegrator will consume its inputs on each operation")
+                    .defineInRange("possibility_disintegrator_consume_chance", 0.015, 0.0, 1.0);
+            this.riftOverwrite = builder
+                    .comment("If true, the Spatial Rift Collapser can overwrite existing blocks in spatial storage")
                     .define("spatial_rift_overwrite_blocks", false);
         }
 
@@ -135,6 +140,10 @@ public class ImpenConfig {
 
         public int possibilityDisintegratorWorkRate() {
             return psdWorkRate.get();
+        }
+
+        public double possibilityDisintegratorConsumeChance() {
+            return psdConsumeChance.get();
         }
 
         public boolean canSRCOverwriteBlocks() {
