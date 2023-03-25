@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -60,13 +60,7 @@ public class SpatialRiftManipulatorBaseBlockRecipe implements SpatialRiftManipul
      * Ingredient that sets this base block. In other words, if the SRM adds this item to an unformatted cell, that will
      * mark the cell as using this recipe.
      */
-    private Item ingredient;
-    /**
-     * Number of the ingredient item to require for the SRM recipe.
-     * <p>
-     * There's probably a smarter way to do this, but here we are.
-     */
-    private int ingredientCount;
+    private ItemStack ingredient;
 
     @Override
     public Serializer getSerializer() {
@@ -97,8 +91,7 @@ public class SpatialRiftManipulatorBaseBlockRecipe implements SpatialRiftManipul
         public void toNetwork(final FriendlyByteBuf buffer, final SpatialRiftManipulatorBaseBlockRecipe recipe) {
             buffer.writeRegistryId(recipe.baseBlock);
 
-            buffer.writeRegistryId(recipe.ingredient);
-            buffer.writeInt(recipe.ingredientCount);
+            buffer.writeItemStack(recipe.ingredient, true);
 
             buffer.writeByte(recipe.baseWeights.size());
             recipe.baseWeights.forEach((block, value) -> {
@@ -113,8 +106,7 @@ public class SpatialRiftManipulatorBaseBlockRecipe implements SpatialRiftManipul
                 final FriendlyByteBuf buffer) {
             final Block baseBlock = buffer.readRegistryIdSafe(Block.class);
 
-            final Item ingredient = buffer.readRegistryIdSafe(Item.class);
-            final Integer ingredientCount = buffer.readInt();
+            final ItemStack ingredient = buffer.readItem();
 
             final int weightCount = buffer.readByte();
             final BaseWeightMap baseWeights = new BaseWeightMap();
@@ -124,8 +116,7 @@ public class SpatialRiftManipulatorBaseBlockRecipe implements SpatialRiftManipul
                         buffer.readInt());
             }
 
-            return new SpatialRiftManipulatorBaseBlockRecipe(recipeId, baseBlock, baseWeights, ingredient,
-                    ingredientCount);
+            return new SpatialRiftManipulatorBaseBlockRecipe(recipeId, baseBlock, baseWeights, ingredient);
         }
     }
 

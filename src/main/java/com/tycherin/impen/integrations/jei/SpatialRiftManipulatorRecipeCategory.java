@@ -36,9 +36,24 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
     public SpatialRiftManipulatorRecipeCategory(final IGuiHelper guiHelper) {
         final ResourceLocation location = new ResourceLocation(AppEng.MOD_ID,
                 "textures/guis/spatial_rift_manipulator.png");
-        this.background = guiHelper.createDrawable(location, 60, 31, 89, 40);
+        this.background = guiHelper.createDrawable(location, 40, 31, 109, 40);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR.asItem().getDefaultInstance());
+    }
+
+    private enum Slots {
+        TOP(1, 1),
+        BOTTOM(1, 23),
+        OUT(88, 11),
+        BLOCK(47, 25);
+
+        final int x;
+        final int y;
+
+        Slots(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     @Override
@@ -46,40 +61,37 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
             final IFocusGroup focusGroup) {
 
         if (recipe instanceof SpatialRiftManipulatorCraftingRecipe craftingRecipe) {
-            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
-                    .addIngredients(craftingRecipe.getBottomInput());
-            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.TOP.x, Slots.TOP.y)
                     .addIngredients(craftingRecipe.getTopInput());
-            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.BOTTOM.x, Slots.BOTTOM.y)
+                    .addIngredients(craftingRecipe.getBottomInput());
+            layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.OUT.x, Slots.OUT.y)
                     .addItemStack(craftingRecipe.getOutput());
         }
         else if (recipe instanceof SpatialRiftManipulatorBlockWeightRecipe blockWeightRecipe) {
-            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
-                    .addIngredients(blockWeightRecipe.getBottomInput());
-            final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+            final var topSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.TOP.x, Slots.TOP.y)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
-            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
-                    .addIngredients(SpatialRiftCellItem.getIngredient())
-                    .addTooltipCallback((recipeSlotView, tooltip) -> {
-                        final String itemName = blockWeightRecipe.getBlock().asItem().getDefaultInstance()
-                                .getHoverName().getString();
-                        tooltip.add(new TextComponent("Targeting: " + itemName)
-                                .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
-                    });
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.BOTTOM.x, Slots.BOTTOM.y)
+                    .addIngredients(blockWeightRecipe.getBottomInput());
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.OUT.x, Slots.OUT.y)
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
+            final var blockSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.BLOCK.x, Slots.BLOCK.y)
+                    .addItemStack(blockWeightRecipe.getBlock().asItem().getDefaultInstance());
+
+            blockSlot.addTooltipCallback((recipeSlotView, tooltip) -> {
+                tooltip.add(new TextComponent("Makes this block more likely to appear")
+                        .withStyle(ChatFormatting.DARK_GREEN));
+            });
 
             // Link these two slots together so they rotate in unison
-            layoutBuilder.createFocusLink(inSlot, outSlot);
-
-            // Add the matching block as a "shadow" output so that JEI can search on it
-            layoutBuilder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
-                    .addItemStack(blockWeightRecipe.getBlock().asItem().getDefaultInstance());
+            layoutBuilder.createFocusLink(topSlot, outSlot);
         }
         else if (recipe instanceof SpatialRiftManipulatorSpecialRecipe specialRecipe) {
-            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 23)
-                    .addIngredients(specialRecipe.getBottomInput());
-            final var inSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+            final var topSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.TOP.x, Slots.TOP.y)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
-            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, 68, 11)
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.BOTTOM.x, Slots.BOTTOM.y)
+                    .addIngredients(specialRecipe.getBottomInput());
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.OUT.x, Slots.OUT.y)
                     .addIngredients(SpatialRiftCellItem.getIngredient());
 
             final String effectStr = switch (specialRecipe.getEffectType()) {
@@ -91,11 +103,27 @@ public class SpatialRiftManipulatorRecipeCategory implements IRecipeCategory<Spa
                 tooltip.add(new TextComponent(effectStr)
                         .withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD));
             });
-            
-            layoutBuilder.createFocusLink(inSlot, outSlot);
+
+            // Link these two slots together so they rotate in unison
+            layoutBuilder.createFocusLink(topSlot, outSlot);
         }
         else if (recipe instanceof SpatialRiftManipulatorBaseBlockRecipe baseBlockRecipe) {
-            // TODO Implement this
+            final var topSlot = layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.TOP.x, Slots.TOP.y)
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
+            layoutBuilder.addSlot(RecipeIngredientRole.INPUT, Slots.BOTTOM.x, Slots.BOTTOM.y)
+                    .addItemStack(baseBlockRecipe.getIngredient());
+            final var outSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.OUT.x, Slots.OUT.y)
+                    .addIngredients(SpatialRiftCellItem.getIngredient());
+            final var blockSlot = layoutBuilder.addSlot(RecipeIngredientRole.OUTPUT, Slots.BLOCK.x, Slots.BLOCK.y)
+                    .addItemStack(baseBlockRecipe.getBaseBlock().asItem().getDefaultInstance());
+
+            blockSlot.addTooltipCallback((recipeSlotView, tooltip) -> {
+                tooltip.add(new TextComponent("Sets this block as the base block for the cell")
+                        .withStyle(ChatFormatting.DARK_GREEN));
+            });
+
+            // Link these two slots together so they rotate in unison
+            layoutBuilder.createFocusLink(topSlot, outSlot);
         }
         else {
             throw new RuntimeException("Unrecognized recipe type for " + recipe);

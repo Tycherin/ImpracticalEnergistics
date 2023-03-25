@@ -43,7 +43,7 @@ public class SpatialRiftManipulatorBaseBlockRecipeManager {
 
         this.itemToRecipe = recipes.stream()
                 .collect(Collectors.toMap(
-                        SpatialRiftManipulatorBaseBlockRecipe::getIngredient,
+                        recipe -> recipe.getIngredient().getItem(),
                         Function.identity()));
         this.blockToRecipe = recipes.stream()
                 .collect(Collectors.toMap(
@@ -54,7 +54,7 @@ public class SpatialRiftManipulatorBaseBlockRecipeManager {
     private Optional<SpatialRiftManipulatorBaseBlockRecipe> getRecipeForInput(final ItemStack is) {
         if (this.itemToRecipe.containsKey(is.getItem())) {
             final SpatialRiftManipulatorBaseBlockRecipe recipe = this.itemToRecipe.get(is.getItem());
-            if (is.getCount() >= recipe.getIngredientCount()) {
+            if (is.getCount() >= recipe.getIngredient().getCount()) {
                 return Optional.of(recipe);
             }
         }

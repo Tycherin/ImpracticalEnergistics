@@ -7,6 +7,7 @@ import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.rift.SpatialRiftManipulatorLogic;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
 import com.tycherin.impen.util.ManagedOutputInventory;
 
@@ -14,6 +15,7 @@ import appeng.api.inventories.InternalInventory;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.IAEItemFilter;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +34,9 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     private final IAEItemFilter filter;
     private final double powerPerTick;
     private final ManagedOutputInventory outSlot;
+    /** Currently active recipe, if any. Used by the UI layer. */
+    @Getter
+    private Optional<? extends SpatialRiftManipulatorRecipe> recipeOpt = Optional.empty(); 
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR, pos, blockState);
@@ -61,6 +66,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
         // Conveniently, this will check if the input slots are empty or not
         final var recipeOpt = SpatialRiftManipulatorRecipeManager.getRecipe(this.level,
                 this.inv.getStackInSlot(Slots.TOP), this.inv.getStackInSlot(Slots.BOTTOM));
+        this.recipeOpt = recipeOpt;
         if (recipeOpt.isEmpty()) {
             return false;
         }

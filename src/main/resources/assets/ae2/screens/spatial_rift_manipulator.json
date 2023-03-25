@@ -7,12 +7,16 @@
   },
   "slots": {
     "MACHINE_INPUT": {
-      "left": 61,
+      "left": 41,
       "top": 32
     },
     "INSCRIBER_PLATE_BOTTOM": {
-      "left": 61,
+      "left": 41,
       "top": 54
+    },
+    "impen::SRM_BLOCK": {
+      "left": 87,
+      "top": 56
     },
     "MACHINE_OUTPUT": {
         "left": 128,

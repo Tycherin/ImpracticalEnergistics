@@ -13,8 +13,10 @@ import appeng.core.definitions.AEBlocks;
 import lombok.Builder;
 import lombok.NonNull;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.RegistryObject;
@@ -24,9 +26,8 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
     public void addRecipes(final Consumer<FinishedRecipe> consumer) {
         List.of(
                 SpatialRiftBaseBlockData.builder()
-                        .block(Blocks.STONE)
-                        .ingredientId(Items.STONE.getRegistryName().toString())
-                        .ingredientCount(16)
+                        .baseBlock(Blocks.STONE)
+                        .ingredient(createStack(Items.STONE, 16))
                         .baseWeights(new MapBuilder()
                                 // Vanilla
                                 .put(Blocks.COAL_ORE, 100)
@@ -57,9 +58,8 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                         .build(),
 
                 SpatialRiftBaseBlockData.builder()
-                        .block(Blocks.DEEPSLATE)
-                        .ingredientId(Items.DEEPSLATE.getRegistryName().toString())
-                        .ingredientCount(16)
+                        .baseBlock(Blocks.DEEPSLATE)
+                        .ingredient(createStack(Items.DEEPSLATE, 16))
                         .baseWeights(new MapBuilder()
                                 // Vanilla
                                 .put(Blocks.DEEPSLATE_REDSTONE_ORE, 34)
@@ -91,9 +91,8 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                         .build(),
 
                 SpatialRiftBaseBlockData.builder()
-                        .block(Blocks.NETHERRACK)
-                        .ingredientId(Items.NETHERRACK.getRegistryName().toString())
-                        .ingredientCount(16)
+                        .baseBlock(Blocks.NETHERRACK)
+                        .ingredient(createStack(Items.NETHERRACK, 16))
                         .baseWeights(new MapBuilder()
                                 // Vanilla
                                 .put(Blocks.NETHER_QUARTZ_ORE, 100)
@@ -105,9 +104,8 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                         .build(),
 
                 SpatialRiftBaseBlockData.builder()
-                        .block(ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock())
-                        .ingredientId(ImpenRegistry.RIFTSTONE_DUST.asItem().getRegistryName().toString())
-                        .ingredientCount(16)
+                        .baseBlock(ImpenRegistry.UNSTABLE_RIFTSTONE.asBlock())
+                        .ingredient(createStack(ImpenRegistry.RIFTSTONE_DUST, 16))
                         .baseWeights(new MapBuilder()
                                 // Impractical Energistics
                                 .put(ImpenRegistry.RIFT_SHARD_ORE, 10)
@@ -116,9 +114,8 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                         .build(),
 
                 SpatialRiftBaseBlockData.builder()
-                        .block(ImpenRegistry.RIFTSTONE.asBlock())
-                        .ingredientId(ImpenRegistry.RIFTSTONE.asItem().getRegistryName().toString())
-                        .ingredientCount(16)
+                        .baseBlock(ImpenRegistry.RIFTSTONE.asBlock())
+                        .ingredient(createStack(ImpenRegistry.RIFTSTONE, 16))
                         .baseWeights(new MapBuilder()
                                 // Impractical Energistics
                                 .put(ImpenRegistry.RIFT_SHARD_ORE, 40)
@@ -127,7 +124,7 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
                                 .build())
                         .build())
                 .forEach(data -> {
-                    final String recipeName = data.block.getRegistryName().getPath();
+                    final String recipeName = data.baseBlock.getRegistryName().getPath();
                     consumer.accept(new RecipeTemplate(recipeName, data));
                 });
     }
@@ -157,11 +154,16 @@ public class SpatialRiftManipulatorBaseBlockRecipeProvider {
         }
     }
 
+    private ItemStack createStack(final ItemLike item, final int count) {
+        final var stack = item.asItem().getDefaultInstance().copy();
+        stack.setCount(count);
+        return stack;
+    }
+
     @Builder
     public static record SpatialRiftBaseBlockData(
-            Block block,
-            String ingredientId,
-            Integer ingredientCount,
+            Block baseBlock,
+            ItemStack ingredient,
             Map<MockBlock, Integer> baseWeights) {
     }
 

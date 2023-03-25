@@ -55,8 +55,8 @@ public class SpatialRiftManipulatorRecipeManager {
                 .filter(recipe -> {
                     return (input.topStack.isEmpty() || spatialCell.test(input.topStack))
                             && (input.bottomStack.isEmpty() ||
-                                    (recipe.getIngredient().equals(input.bottomStack.getItem())
-                                            && recipe.getIngredientCount() <= input.bottomStack.getCount()));
+                                    (recipe.getIngredient().getItem().equals(input.bottomStack.getItem())
+                                            && recipe.getIngredient().getCount() <= input.bottomStack.getCount()));
                 })
                 .findFirst();
         if (recipeOpt.isEmpty()) {
