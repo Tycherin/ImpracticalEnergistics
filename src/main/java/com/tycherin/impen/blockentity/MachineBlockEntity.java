@@ -115,7 +115,7 @@ public abstract class MachineBlockEntity extends AENetworkInvBlockEntity impleme
     }
 
     public int getProgress() {
-        return this.runningTicks;
+        return Math.max(0, this.runningTicks);
     }
 
     public static record MachineOperation(

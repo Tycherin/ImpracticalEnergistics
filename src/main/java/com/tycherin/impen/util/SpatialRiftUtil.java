@@ -73,7 +73,8 @@ public class SpatialRiftUtil {
     public static Stream<BlockPos> getEligibleBlocks(final SpatialStoragePlot plot) {
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
         return getAllBlocks(plot)
-                .filter(blockPos -> spatialLevel.getBlockEntity(blockPos) != null);
+                // Only allow replacing blocks that don't have attached entities
+                .filter(blockPos -> spatialLevel.getBlockEntity(blockPos) == null);
     }
 
     /**

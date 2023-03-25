@@ -6,6 +6,7 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.blockentity.MachineBlockEntity;
 import com.tycherin.impen.config.ImpenConfig;
 import com.tycherin.impen.logic.rift.SpatialRiftManipulatorLogic;
+import com.tycherin.impen.recipe.SpatialRiftManipulatorBaseBlockRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorCraftingRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipe;
 import com.tycherin.impen.recipe.SpatialRiftManipulatorRecipeManager;
@@ -36,7 +37,7 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     private final ManagedOutputInventory outSlot;
     /** Currently active recipe, if any. Used by the UI layer. */
     @Getter
-    private Optional<? extends SpatialRiftManipulatorRecipe> recipeOpt = Optional.empty(); 
+    private Optional<? extends SpatialRiftManipulatorRecipe> recipeOpt = Optional.empty();
 
     public SpatialRiftManipulatorBlockEntity(final BlockPos pos, final BlockState blockState) {
         super(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR, pos, blockState);
@@ -63,14 +64,21 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
     }
 
     private boolean enableOperation() {
+        final var topStack = this.inv.getStackInSlot(Slots.TOP);
+        final var bottomStack = this.inv.getStackInSlot(Slots.BOTTOM);
         // Conveniently, this will check if the input slots are empty or not
-        final var recipeOpt = SpatialRiftManipulatorRecipeManager.getRecipe(this.level,
-                this.inv.getStackInSlot(Slots.TOP), this.inv.getStackInSlot(Slots.BOTTOM));
-        this.recipeOpt = recipeOpt;
+        final var recipeOpt = SpatialRiftManipulatorRecipeManager.getRecipe(this.level, topStack, bottomStack);
         if (recipeOpt.isEmpty()) {
+            this.recipeOpt = Optional.empty();
+            return false;
+        }
+        else if (topStack.isEmpty() || bottomStack.isEmpty()) {
+            // We matched a recipe, but we don't actually have the necessary inputs for it
+            this.recipeOpt = Optional.empty();
             return false;
         }
         else {
+            this.recipeOpt = recipeOpt;
             final var recipe = recipeOpt.get();
             if (recipe instanceof SpatialRiftManipulatorCraftingRecipe craftingRecipe) {
                 return this.outSlot.canAdd(craftingRecipe.getOutput());
@@ -99,7 +107,14 @@ public class SpatialRiftManipulatorBlockEntity extends MachineBlockEntity {
                 // Regular crafting recipe - consume input
                 topInput.setCount(topInput.getCount() - 1);
             }
-            bottomInput.setCount(bottomInput.getCount() - 1);
+            
+            if (this.recipeOpt.get() instanceof SpatialRiftManipulatorBaseBlockRecipe baseBlockRecipe) {
+                bottomInput.setCount(bottomInput.getCount() - baseBlockRecipe.getIngredient().getCount());
+            }
+            else {
+                bottomInput.setCount(bottomInput.getCount() - 1);
+            }
+            
             this.inv.setItemDirect(Slots.OUTPUT, output);
             return true;
         }

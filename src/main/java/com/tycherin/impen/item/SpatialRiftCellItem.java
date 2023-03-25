@@ -116,7 +116,7 @@ public class SpatialRiftCellItem extends AEBaseItem {
             lines.add(Tooltips.of(description.toString()));
 
             data.getBaseBlock().ifPresent(block -> {
-                lines.add(Tooltips.of("Base block:" + block.getName().getString()));
+                lines.add(Tooltips.of("Base block: " + block.getName().getString()));
             });
 
             if (!data.getBoosts().isEmpty()) {

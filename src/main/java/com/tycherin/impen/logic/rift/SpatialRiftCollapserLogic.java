@@ -16,10 +16,12 @@ import com.tycherin.impen.util.SpatialRiftUtil;
 
 import appeng.spatial.SpatialStoragePlot;
 import appeng.spatial.SpatialStoragePlotManager;
+import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
+@Slf4j
 public class SpatialRiftCollapserLogic {
 
     private static final Random RAND = new Random();
@@ -36,6 +38,8 @@ public class SpatialRiftCollapserLogic {
         if (blocksToReplace.size() == 0) {
             return;
         }
+
+        log.info("Preparing to replace {} blocks", blocksToReplace.size());
 
         final Supplier<Block> blockReplacer = getBlockReplacer(data, blocksToReplace.size(), level);
         final var spatialLevel = SpatialStoragePlotManager.INSTANCE.getLevel();
@@ -96,7 +100,7 @@ public class SpatialRiftCollapserLogic {
         baseRecipe.getBaseWeights().forEach((block, weight) -> {
             // One weight here = 1 block per 4000 input blocks
             final double convertedWeight = weight / 4000.0;
-            final double randFactor = .2 - RAND.nextDouble(0.2);
+            final double randFactor = 1.15 - RAND.nextDouble(0.3); // 85-115%
 
             final double rateModifier;
             if (boostSet.containsKey(block)) {
@@ -114,7 +118,16 @@ public class SpatialRiftCollapserLogic {
             }
 
             final double aggregateRate = convertedWeight * randFactor * rateModifier;
-            final int blockCount = (int)(aggregateRate * numBlocks);
+            final double impreciseBlockCount = aggregateRate * numBlocks;
+            final int blockCount;
+            if (impreciseBlockCount < 1) {
+                // For very small chances, we'll always fail them due to int rounding. To make those chances slightly
+                // better, we randomize that case based on the effective rate.
+                blockCount = RAND.nextDouble() < impreciseBlockCount ? 1 : 0;
+            }
+            else {
+                blockCount = (int)impreciseBlockCount;
+            }
 
             for (int i = 0; i < blockCount; i++) {
                 replacementBlocks.add(block);

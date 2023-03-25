@@ -96,13 +96,7 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
         // We want all of these to appear under a single category
         final List<SpatialRiftManipulatorRecipe> srmRecipes = new ArrayList<>();
         srmRecipes.addAll(
-                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BASE_BLOCK_RECIPE_TYPE.get())); // TOOD
-                                                                                                                      // Maybe
-                                                                                                                      // this
-                                                                                                                      // one
-                                                                                                                      // should
-                                                                                                                      // be
-                                                                                                                      // separate?
+                recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_BASE_BLOCK_RECIPE_TYPE.get()));
         srmRecipes.addAll(
                 recipeManager.getAllRecipesFor(ImpenRegistry.SPATIAL_RIFT_MANIPULATOR_SPECIAL_RECIPE_TYPE.get()));
         srmRecipes.addAll(
