@@ -2,11 +2,11 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"0": "impracticalenergistics:block/possibility_disintegrator_top",
-		"1": "impracticalenergistics:block/possibility_disintegrator_inner",
-		"2": "impracticalenergistics:block/possibility_disintegrator_base_end",
-		"3": "impracticalenergistics:block/possibility_disintegrator_base_side",
-		"particle": "impracticalenergistics:block/possibility_disintegrator_base_side"
+		"0": "impracticalenergistics:block/phase_field_controller_top",
+		"1": "impracticalenergistics:block/phase_field_controller_inner",
+		"2": "impracticalenergistics:block/phase_field_controller_base_end",
+		"3": "impracticalenergistics:block/phase_field_controller_base_side",
+		"particle": "impracticalenergistics:block/phase_field_controller_base_side"
 	},
 	"elements": [
 		{

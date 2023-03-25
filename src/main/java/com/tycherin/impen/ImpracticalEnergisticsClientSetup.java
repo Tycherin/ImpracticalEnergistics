@@ -11,8 +11,6 @@ import com.tycherin.impen.client.gui.AtmosphericCrystallizerMenu;
 import com.tycherin.impen.client.gui.AtmosphericCrystallizerScreen;
 import com.tycherin.impen.client.gui.PhaseFieldControllerMenu;
 import com.tycherin.impen.client.gui.PhaseFieldControllerScreen;
-import com.tycherin.impen.client.gui.PossibilityDisintegratorMenu;
-import com.tycherin.impen.client.gui.PossibilityDisintegratorScreen;
 import com.tycherin.impen.client.gui.SpatialRiftCollapserMenu;
 import com.tycherin.impen.client.gui.SpatialRiftCollapserScreen;
 import com.tycherin.impen.client.gui.SpatialRiftManipulatorMenu;
@@ -107,12 +105,6 @@ public class ImpracticalEnergisticsClientSetup {
                     final ScreenStyle style = StyleManager.loadStyleDoc("/screens/phase_field_controller.json");
                     return new PhaseFieldControllerScreen(menu, playerInv, title, style);
                 });
-        MenuScreens.<PossibilityDisintegratorMenu, PossibilityDisintegratorScreen>register(
-                PossibilityDisintegratorMenu.TYPE,
-                (menu, playerInv, title) -> {
-                    final ScreenStyle style = StyleManager.loadStyleDoc("/screens/possibility_disintegrator.json");
-                    return new PossibilityDisintegratorScreen(menu, playerInv, title, style);
-                });
         MenuScreens.<SpatialRiftSpawnerMenu, SpatialRiftSpawnerScreen>register(
                 SpatialRiftSpawnerMenu.TYPE,
                 (menu, playerInv, title) -> {
@@ -141,7 +133,6 @@ public class ImpracticalEnergisticsClientSetup {
         List.of(
                 ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
                 ImpenRegistry.EJECTION_DRIVE,
-                ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
                 ImpenRegistry.PHASE_FIELD_CONTROLLER,
                 ImpenRegistry.SPATIAL_RIFT_SPAWNER,
                 ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,

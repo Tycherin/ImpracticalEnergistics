@@ -150,8 +150,8 @@ public class ImpenRecipeProvider extends RecipeProvider {
                 .define('D', Items.DROPPER)
                 .unlockedBy("has_me_chest", has(AEBlocks.CHEST))
                 .save(consumer);
-        // Possibility Disintegrator
-        ShapedRecipeBuilder.shaped(ImpenRegistry.POSSIBILITY_DISINTEGRATOR)
+        // Phase Field Controller
+        ShapedRecipeBuilder.shaped(ImpenRegistry.PHASE_FIELD_CONTROLLER)
                 .pattern("IPI")
                 .pattern("IRI")
                 .pattern("IQI")

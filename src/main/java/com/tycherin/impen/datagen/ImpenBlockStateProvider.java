@@ -28,7 +28,6 @@ public class ImpenBlockStateProvider extends AE2BlockStateProvider {
     // These blocks have custom models but not blockstates
     private static final Set<BlockLike> BLOCKS_WITH_CUSTOM_MODEL = Set.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
-            ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
             ImpenRegistry.PHASE_FIELD_CONTROLLER,
             ImpenRegistry.SPATIAL_RIFT_SPAWNER,
             ImpenRegistry.SPATIAL_RIFT_MANIPULATOR,

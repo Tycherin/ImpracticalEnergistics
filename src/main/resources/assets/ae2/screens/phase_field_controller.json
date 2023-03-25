@@ -2,7 +2,7 @@
   "$schema": "schema.json",
   "includes": ["common/common.json", "common/player_inventory.json"],
   "background": {
-    "texture": "guis/possibility_disintegrator.png",
+    "texture": "guis/phase_field_controller.png",
     "srcRect": [0, 0, 176, 197]
   },
   "slots": {

@@ -9,7 +9,6 @@ import com.tycherin.impen.block.AtmosphericCrystallizerBlock;
 import com.tycherin.impen.block.EjectionDriveBlock;
 import com.tycherin.impen.block.OreBlock;
 import com.tycherin.impen.block.PhaseFieldControllerBlock;
-import com.tycherin.impen.block.PossibilityDisintegratorBlock;
 import com.tycherin.impen.block.beam.BeamNetworkAmplifierBlock;
 import com.tycherin.impen.block.beam.BeamNetworkEmitterBlock;
 import com.tycherin.impen.block.beam.BeamNetworkMirrorBlock;
@@ -21,7 +20,6 @@ import com.tycherin.impen.block.rift.SpatialRiftSpawnerBlock;
 import com.tycherin.impen.blockentity.AtmosphericCrystallizerBlockEntity;
 import com.tycherin.impen.blockentity.EjectionDriveBlockEntity;
 import com.tycherin.impen.blockentity.PhaseFieldControllerBlockEntity;
-import com.tycherin.impen.blockentity.PossibilityDisintegratorBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkAmplifierBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkEmitterBlockEntity;
 import com.tycherin.impen.blockentity.beam.BeamNetworkMirrorBlockEntity;
@@ -124,8 +122,6 @@ public class ImpenRegistry {
                 SPATIAL_RIFT_MANIPULATOR.blockEntity(), null, null);
         ATMOSPHERIC_CRYSTALLIZER.block().setBlockEntity(AtmosphericCrystallizerBlockEntity.class,
                 ATMOSPHERIC_CRYSTALLIZER.blockEntity(), null, null);
-        POSSIBILITY_DISINTEGRATOR.block().setBlockEntity(PossibilityDisintegratorBlockEntity.class,
-                POSSIBILITY_DISINTEGRATOR.blockEntity(), null, null);
         PHASE_FIELD_CONTROLLER.block().setBlockEntity(PhaseFieldControllerBlockEntity.class,
                 PHASE_FIELD_CONTROLLER.blockEntity(), null, null);
         BEAM_NETWORK_AMPLIFIER.block().setBlockEntity(BeamNetworkAmplifierBlockEntity.class,
@@ -143,8 +139,6 @@ public class ImpenRegistry {
 
         // AE2 upgrades need to be registered after normal registry events
         Upgrades.add(AEItems.SPEED_CARD, ATMOSPHERIC_CRYSTALLIZER.item(), 3);
-        Upgrades.add(AEItems.SPEED_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
-        Upgrades.add(AEItems.CAPACITY_CARD, POSSIBILITY_DISINTEGRATOR.item(), 2);
     }
 
     private static final BlockBehaviour.Properties MACHINE_BLOCK_PROPS = BlockBehaviour.Properties.of(Material.METAL)
@@ -168,9 +162,6 @@ public class ImpenRegistry {
     //@formatter:off
     public static final MachineDefinition<AtmosphericCrystallizerBlock, AtmosphericCrystallizerBlockEntity> ATMOSPHERIC_CRYSTALLIZER =
             makeMachine("atmospheric_crystallizer", AtmosphericCrystallizerBlock::new, AtmosphericCrystallizerBlockEntity::new, true);
-
-    public static final MachineDefinition<PossibilityDisintegratorBlock, PossibilityDisintegratorBlockEntity> POSSIBILITY_DISINTEGRATOR =
-            makeMachine("possibility_disintegrator", PossibilityDisintegratorBlock::new, PossibilityDisintegratorBlockEntity::new, false);
 
     public static final MachineDefinition<PhaseFieldControllerBlock, PhaseFieldControllerBlockEntity> PHASE_FIELD_CONTROLLER =
             makeMachine("phase_field_controller", PhaseFieldControllerBlock::new, PhaseFieldControllerBlockEntity::new, false);

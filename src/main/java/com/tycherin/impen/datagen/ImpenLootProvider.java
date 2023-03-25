@@ -64,7 +64,7 @@ public class ImpenLootProvider extends LootTableProvider {
             this.dropSelf(ImpenRegistry.BLAZING_AEROCRYSTAL_BLOCK.block());
             this.dropSelf(ImpenRegistry.EJECTION_DRIVE.block());
             this.dropSelf(ImpenRegistry.EXOTIC_AEROCRYSTAL_BLOCK.block());
-            this.dropSelf(ImpenRegistry.POSSIBILITY_DISINTEGRATOR.block());
+            this.dropSelf(ImpenRegistry.PHASE_FIELD_CONTROLLER.block());
             this.dropSelf(ImpenRegistry.RIFT_ALLOY_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFT_SHARD_BLOCK.block());
             this.dropSelf(ImpenRegistry.RIFTSTONE.block());

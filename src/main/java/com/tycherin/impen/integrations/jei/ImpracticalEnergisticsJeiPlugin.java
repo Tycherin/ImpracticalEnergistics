@@ -50,7 +50,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
             ImpenRegistry.CAPTURE_PLANE_ITEM,
             ImpenRegistry.LUNCHBOX_CELL_ITEM,
-            ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
             ImpenRegistry.EJECTION_DRIVE);
 
     /** List of items to hide from JEI */

@@ -9,7 +9,6 @@
     "block.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",
     "block.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
     "block.impracticalenergistics.ejection_drive": "Ejection Drive",
-    "block.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
     "block.impracticalenergistics.phase_field_controller": "Phase Field Controller",
     
     "block.impracticalenergistics.riftstone": "Riftstone",
@@ -79,8 +78,6 @@
     "gui.impracticalenergistics.spatial_rift_manipulator": "Spatial Rift Manipulator",
     "gui.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",
     "gui.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
-    "gui.impracticalenergistics.possibility_disintegrator": "Possibility Disintegrator",
-    "gui.impracticalenergistics.possibility_disintegrator.description": "Available Capsules",
     "gui.impracticalenergistics.phase_field_controller": "Phase Field Controller",
     
     "gui.impracticalenergistics.jei.rift_recipe_title": "Rift Space Manipulation",
@@ -108,7 +105,6 @@
     "jei.impracticalenergistics.description.atmospheric_crystallizer": "Atmospheric Crystallizers use ME network energy to gradually form crystals out of the surrounding air. This produces different items depending on which dimension the Crystallizer is placed in.",
     "jei.impracticalenergistics.description.capture_plane": "Converts projectiles that hit the plane into items. Works on all types of arrows, thrown items like snowballs and eggs, and more!",
     "jei.impracticalenergistics.description.lunchbox_cell": "A specially modified Storage Cell that you can eat from directly. Use while holding to eat any items stored in the cell.",
-    "jei.impracticalenergistics.description.possibility_disintegrator": "Traps mobs that walk on it and gradually disintegrates them. Can consume Disintegrator Capsule items from an attached ME storage system to add additional effects.",
     "jei.impracticalenergistics.description.spatial_rift_manipulator": "Fills spatial storage cells with blocks from alternate spacetimes. Requires catalysts provided by Spatial Rift Stabilizers on the same ME network.",
     "jei.impracticalenergistics.description.spatial_rift_stabilizer": "Supplies Rift Catalysts to Spatial Rift Manipulators on the same ME network. Note that providing the same catalyst multiple times will have a diminishing effect.",
     "jei.impracticalenergistics.description.ejection_drive": "A specially modified ME Chest that ejects its storage cell when the cell is full of items or types. Will push into any inventory above it, or into the world otherwise.",
