@@ -217,12 +217,18 @@ public class ImpenRegistry {
     public static final ItemDefinition RIFTSTONE_DUST = makeItem("riftstone_dust");
     public static final ItemDefinition RIFT_ALLOY_INGOT = makeItem("rift_alloy_ingot");
 
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EMPTY = makeItem("disintegrator_capsule_empty");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LUCK = makeItemWithTooltip("disintegrator_capsule_luck");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_LOOT = makeItemWithTooltip("disintegrator_capsule_loot");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_EGG = makeItemWithTooltip("disintegrator_capsule_egg");
-    public static final ItemDefinition DISINTEGRATOR_CAPSULE_PLAYER_KILL = makeItemWithTooltip(
-            "disintegrator_capsule_player_kill");
+    public static final ItemDefinition PHASIC_CAPSULE_EMPTY = makeItem("phasic_capsule_empty");
+    public static final ItemDefinition PHASIC_CAPSULE_RED = makeItemWithTooltip("phasic_capsule_red");
+    public static final ItemDefinition PHASIC_CAPSULE_ORANGE = makeItemWithTooltip("phasic_capsule_orange");
+    public static final ItemDefinition PHASIC_CAPSULE_YELLOW = makeItemWithTooltip("phasic_capsule_yellow");
+    public static final ItemDefinition PHASIC_CAPSULE_LIME = makeItemWithTooltip("phasic_capsule_lime");
+    public static final ItemDefinition PHASIC_CAPSULE_GREEN = makeItemWithTooltip("phasic_capsule_green");
+    public static final ItemDefinition PHASIC_CAPSULE_WHITE = makeItemWithTooltip("phasic_capsule_white");
+    public static final ItemDefinition PHASIC_CAPSULE_BLUE = makeItemWithTooltip("phasic_capsule_blue");
+    public static final ItemDefinition PHASIC_CAPSULE_GRAY = makeItemWithTooltip("phasic_capsule_gray");
+    public static final ItemDefinition PHASIC_CAPSULE_PALE = makeItemWithTooltip("phasic_capsule_pale");
+    public static final ItemDefinition PHASIC_CAPSULE_SLIMY = makeItemWithTooltip("phasic_capsule_slimy");
+    public static final ItemDefinition PHASIC_CAPSULE_FLORAL = makeItemWithTooltip("phasic_capsule_floral");
 
     public static final ItemDefinition CIRCUIT_QUANTIZED = makeItem("circuit_quantized");
     public static final ItemDefinition CIRCUIT_MAGNIFIED = makeItem("circuit_magnified");

@@ -56,10 +56,10 @@ import net.minecraftforge.common.util.Lazy;
 public class PossibilityDisintegratorBlockEntity extends AENetworkBlockEntity
         implements IGridTickable, IUpgradeableObject {
 
-    public static final ItemDefinition CONSUMABLE_LUCK = ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK;
-    public static final ItemDefinition CONSUMABLE_EGG = ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG;
-    public static final ItemDefinition CONSUMABLE_LOOT = ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT;
-    public static final ItemDefinition CONSUMABLE_PLAYER_KILL = ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL;
+    public static final ItemDefinition CONSUMABLE_LUCK = ImpenRegistry.PHASIC_CAPSULE_WHITE;
+    public static final ItemDefinition CONSUMABLE_EGG = ImpenRegistry.PHASIC_CAPSULE_YELLOW;
+    public static final ItemDefinition CONSUMABLE_LOOT = ImpenRegistry.PHASIC_CAPSULE_BLUE;
+    public static final ItemDefinition CONSUMABLE_PLAYER_KILL = ImpenRegistry.PHASIC_CAPSULE_ORANGE;
 
     private static final Random RAND = new Random();
     private static final DamageSource DAMAGE_SOURCE = new DamageSource("possibility_disintegrator");

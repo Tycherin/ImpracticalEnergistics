@@ -49,10 +49,6 @@ public class ImpracticalEnergisticsJeiPlugin implements IModPlugin {
     private static final List<ItemLike> ITEMS_WITH_DESCRIPTION = ImmutableList.of(
             ImpenRegistry.ATMOSPHERIC_CRYSTALLIZER,
             ImpenRegistry.CAPTURE_PLANE_ITEM,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL,
             ImpenRegistry.LUNCHBOX_CELL_ITEM,
             ImpenRegistry.POSSIBILITY_DISINTEGRATOR,
             ImpenRegistry.EJECTION_DRIVE);

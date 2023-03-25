@@ -34,10 +34,17 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
     private static final int TICKS_PER_OPERATION = 20;
 
     private static final Ingredient USABLE_CAPSULES = Ingredient.of(
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_EGG,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_LOOT,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_LUCK,
-            ImpenRegistry.DISINTEGRATOR_CAPSULE_PLAYER_KILL);
+            ImpenRegistry.PHASIC_CAPSULE_RED,
+            ImpenRegistry.PHASIC_CAPSULE_ORANGE,
+            ImpenRegistry.PHASIC_CAPSULE_YELLOW,
+            ImpenRegistry.PHASIC_CAPSULE_LIME,
+            ImpenRegistry.PHASIC_CAPSULE_GREEN,
+            ImpenRegistry.PHASIC_CAPSULE_WHITE,
+            ImpenRegistry.PHASIC_CAPSULE_BLUE,
+            ImpenRegistry.PHASIC_CAPSULE_GRAY,
+            ImpenRegistry.PHASIC_CAPSULE_PALE,
+            ImpenRegistry.PHASIC_CAPSULE_SLIMY,
+            ImpenRegistry.PHASIC_CAPSULE_FLORAL);
 
     private final PhaseFieldLogic logic = new PhaseFieldLogic(this);
     private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(this, 3);

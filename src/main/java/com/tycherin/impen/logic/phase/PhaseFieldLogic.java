@@ -416,15 +416,15 @@ public class PhaseFieldLogic {
         for (var entry : inputCounts.entrySet()) {
             final Item item = entry.getKey();
             final Integer count = entry.getValue();
-            if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Red
+            if (item.equals(ImpenRegistry.PHASIC_CAPSULE_RED.asItem())) {
                 fixedDamage += count * 2;
                 timeBasedDamageScalingLevel += count;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Orange
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_ORANGE.asItem())) {
                 fixedDamage += count;
                 playerKillLoot = true;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Yellow
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_YELLOW.asItem())) {
                 fixedDamage += count;
                 eggSpawnChance += switch (count) {
                 case 1 -> 0.1;
@@ -433,30 +433,30 @@ public class PhaseFieldLogic {
                 default -> 0;
                 };
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Lime
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_LIME.asItem())) {
                 fixedHealing += count * 2;
                 timeBasedExperienceDropLevel = count;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Green
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_GREEN.asItem())) {
                 doBreeding = true;
                 timeBasedBreedCdrLevel = count;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO White
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_WHITE.asItem())) {
                 consumeRateChange += count * 0.3;
                 globalEffectModifier += count * 0.5;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Blue
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_BLUE.asItem())) {
                 timeBasedLootDropLevel = count;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Gray
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_GRAY.asItem())) {
                 globalEffectModifier += count * 0.1;
                 consumeRateChange -= count * 0.1;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Pale
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_PALE.asItem())) {
                 fieldSizeBoost += count * 2;
                 timedEffectBoostLevel += count;
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Slimy
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_SLIMY.asItem())) {
                 slimeifyChance = switch (count) {
                 case 1 -> 0.1;
                 case 2 -> 0.25;
@@ -465,7 +465,7 @@ public class PhaseFieldLogic {
                 };
                 consumeRateChange = consumeRateChange / (1 + count);
             }
-            else if (item.equals(ImpenRegistry.DISINTEGRATOR_CAPSULE_EMPTY.asItem())) { // TODO Floral
+            else if (item.equals(ImpenRegistry.PHASIC_CAPSULE_FLORAL.asItem())) {
                 floralEffectLevel = count;
             }
             else {
@@ -495,7 +495,7 @@ public class PhaseFieldLogic {
         this.operation = new PhaseFieldOperation(configuredInputs, effect);
 
         // If the new operation doesn't do damage but the old one did, release any locked mobs
-        if (oldOperation.effect.shouldLock() && !this.operation.effect.shouldLock()) {
+        if (oldOperation.effect != null && oldOperation.effect.shouldLock() && !this.operation.effect.shouldLock()) {
             this.inFieldMap.keySet().forEach(entity -> {
                 if (entity instanceof Mob mob) {
                     this.setLocked(mob, false);
