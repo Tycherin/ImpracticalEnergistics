@@ -10,12 +10,15 @@ import com.tycherin.impen.ImpenRegistry;
 import com.tycherin.impen.logic.phase.PhaseFieldLogic;
 import com.tycherin.impen.part.PhaseFieldEmitterPart;
 
+import appeng.api.config.Actionable;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.stacks.AEItemKey;
 import appeng.blockentity.grid.AENetworkInvBlockEntity;
+import appeng.me.helpers.MachineSource;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,6 +51,7 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
 
     private final PhaseFieldLogic logic = new PhaseFieldLogic(this);
     private final InternalInventory capsuleConfigInv = new CapsuleConfigInventory(this, 3);
+    private final MachineSource actionSource = new MachineSource(this);
     @Getter
     private Set<PhaseFieldEmitterPart> emitters = Collections.emptySet();
     private int tickCount = TICKS_PER_OPERATION;
@@ -175,6 +179,14 @@ public class PhaseFieldControllerBlockEntity extends AENetworkInvBlockEntity
         }
 
         return c;
+    }
+
+    public ItemStack getStoredItemCount(final ItemStack configItem) {
+        final long amount = this.getGridNode().getGrid().getStorageService().getInventory()
+                .extract(AEItemKey.of(configItem), 64, Actionable.SIMULATE, this.actionSource);
+        final var newStack = configItem.copy();
+        newStack.setCount(amount > 64 ? 64 : (int)amount);
+        return newStack;
     }
 
     public static final class CapsuleConfigInventory implements InternalInventory {

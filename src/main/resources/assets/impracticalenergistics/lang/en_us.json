@@ -79,6 +79,8 @@
     "gui.impracticalenergistics.spatial_rift_collapser": "Spatial Rift Collapser",
     "gui.impracticalenergistics.atmospheric_crystallizer": "Atmospheric Crystallizer",
     "gui.impracticalenergistics.phase_field_controller": "Phase Field Controller",
+    "gui.impracticalenergistics.phase_field_controller.config_header": "Capsule Configuration",
+    "gui.impracticalenergistics.phase_field_controller.mirror_header": "Available Capsules",
     
     "gui.impracticalenergistics.jei.rift_recipe_title": "Rift Space Manipulation",
     "gui.impracticalenergistics.jei.atmospheric_crystallizer_recipe_title": "Atmospheric Crystallization",

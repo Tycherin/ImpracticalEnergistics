@@ -7,8 +7,13 @@
   },
   "slots": {
     "impen::PFC_CAPSULE": {
-      "left": 35,
-      "top": 40,
+      "left": 63,
+      "top": 29,
+      "grid": "HORIZONTAL"
+    },
+    "impen::PFC_CAPSULE_MIRROR": {
+      "left": 63,
+      "top": 68,
       "grid": "HORIZONTAL"
     }
   },
@@ -20,6 +25,24 @@
       "position": {
         "left": 8,
         "top": 6
+      }
+    },
+    "config_header": {
+      "text": {
+        "translate": "gui.impracticalenergistics.phase_field_controller.config_header"
+      },
+      "position": {
+        "left": 20,
+        "top": 19
+      }
+    },
+    "mirror_header": {
+      "text": {
+        "translate": "gui.impracticalenergistics.phase_field_controller.mirror_header"
+      },
+      "position": {
+        "left": 20,
+        "top": 58
       }
     }
   }
